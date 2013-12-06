@@ -28,6 +28,8 @@
 //Functions
 void main_game();
 bool is_tile_passable(int whichX,int whichY);
-void overwrite_tile(int x,int y,bool is_passable,std::string bitmap);
-bool check_if_player_under_door(float door_Y);
+void overwrite_tile(int x,int y,bool is_passable,std::string bitmap,int held_object);
+float return_player_Y();
+float return_player_X();
+
 //Vars

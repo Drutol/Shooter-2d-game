@@ -21,24 +21,26 @@ void Doors::set_up(int tile_X,int tile_Y)
 	this->tile_Y=tile_Y;
 	exists=true;
 	Doors::update_map();
+	overwrite_tile(tile_X,tile_Y,0,"NULL",DOOR);
+
 }
 void Doors::update_map()
 {
 	if(state==OPEN)
 	{
-		overwrite_tile(tile_X,tile_Y,1,"NULL");
+		overwrite_tile(tile_X,tile_Y,1,"NULL",-1);
 	}
 	else if(state==CLOSED)
 	{
-		overwrite_tile(tile_X,tile_Y,0,"NULL");
+		overwrite_tile(tile_X,tile_Y,0,"NULL",-1);
 	}
 	else if(state==OPENING&&crop_Y>=96)
 	{
-		overwrite_tile(tile_X,tile_Y,1,"NULL");
+		overwrite_tile(tile_X,tile_Y,1,"NULL",-1);
 	}
 	else if(state==CLOSING&&crop_Y<=96)
 	{
-		overwrite_tile(tile_X,tile_Y,0,"NULL");
+		overwrite_tile(tile_X,tile_Y,0,"NULL",-1);
 	}
 
 }
@@ -59,9 +61,6 @@ void Doors::change_state()
 		state_to=CLOSED;
 	else
 		state_to=OPEN;
-	
-	if(check_if_player_under_door(crop_Y))
-		state=state_to;
 
 	if(this->state!=state_to)
 	{

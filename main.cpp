@@ -14,11 +14,13 @@ void init()
    if(!al_init()) {
       fprintf(stderr, "failed to initialize allegro!\n");
    }
+      al_set_new_display_flags(ALLEGRO_RESIZABLE);
    ALLEGRO_DISPLAY *display = al_create_display(ScreenWidth, ScreenHeight);
+
    if(!display) {
       fprintf(stderr, "failed to create display!\n");
    }
- 
+
    al_clear_to_color(al_map_rgb(0,0,0));
  
 }

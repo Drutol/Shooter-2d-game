@@ -37,6 +37,9 @@ public:
 	//PHYSICS STUFF END
 	float player_get_posx();
 	float player_get_posy();
+	int player_get_tile_X();
+	int player_get_tile_Y();
+	void player_die();
 
 	Player(void);
 	~Player(void);

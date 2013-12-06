@@ -6,6 +6,17 @@ enum bitmaps {DIRT,DIRT_BACK,DIRT_BACK_DOWN,DIRT_BACK_UP};
 ALLEGRO_TRANSFORM camera;
 tile map[20][20];
 Player player;
+bool check_door_collison()
+{
+	if(map[player.player_get_tile_X()][player.player_get_tile_Y()].passable==false&&map[player.player_get_tile_X()][player.player_get_tile_Y()].held_object==DOOR)
+		return true;
+	else
+		return false;
+}
+void kill_player()
+{
+	player.player_die();
+}
 float return_player_X()
 {
 	return player.player_get_posx();
@@ -14,18 +25,13 @@ float return_player_Y()
 {
 	return player.player_get_posy();
 }
-bool check_if_player_under_door(float door_Y)
-{
-	if(door_Y-1==return_player_Y())
-		return true;
-	else
-		return false;
-}
-void overwrite_tile(int x,int y,bool is_passable,std::string bitmap)
+void overwrite_tile(int x,int y,bool is_passable,std::string bitmap,int held_object)
 {
 		map[x][y].passable=is_passable;
 	if(bitmap!="NULL")
 		map[x][y].bitmap=bitmap;
+	if(held_object>-1)
+		map[x][y].held_object=DOOR;
 }
 void save_map()
 {
@@ -168,7 +174,10 @@ void main_game()
 		cameraY=camera_update(keyboard_input(),cameraY,1);
 		map_draw();
 		door.draw_door();
-		cout<<map[4][5].passable;
+		cout<<player.player_get_tile_X()<<","<<player.player_get_tile_Y()<<endl;
+		
+		if(check_door_collison())
+			kill_player();
 		if(keyboard_input()==ALLEGRO_KEY_E)
 			door.change_state();
 		//----------------------//

@@ -142,3 +142,16 @@ float Player::player_get_posy()
 {
 	return PosY;
 }
+void Player::player_die()
+{
+	PosX=70;
+	PosY=150;
+}
+int Player::player_get_tile_X()
+{
+	return current_tile_X_right;
+}
+int Player::player_get_tile_Y()
+{
+	return current_tile_Y;
+}
