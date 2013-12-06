@@ -1,11 +1,11 @@
 #include "link.h"
 #include "GameFunctions.h"
-#include "Player.h"
-#include "Doors.h"
 enum bitmaps {DIRT,DIRT_BACK,DIRT_BACK_DOWN,DIRT_BACK_UP};
 ALLEGRO_TRANSFORM camera;
 tile map[20][20];
 Player player;
+Doors doors[20];
+Lever levers[20];
 bool check_door_collison()
 {
 	if(map[player.player_get_tile_X()][player.player_get_tile_Y()].passable==false&&map[player.player_get_tile_X()][player.player_get_tile_Y()].held_object==DOOR)
@@ -35,7 +35,15 @@ void overwrite_tile(int x,int y,bool is_passable,std::string bitmap,int held_obj
 }
 void save_map()
 {
-	std::ofstream out("test.dat");
+	std::ofstream out("Levels/Level1/doors.dat");
+	out<<count_doors();
+	for(int j=0;j<count_doors();j++)
+	{
+		out<<doors[j].tile_X;
+		out<<doors[j].tile_Y;
+	}
+	out.close();
+	out.open("Levels/Level1/map.dat");
 	for(int i=0;i<20;i++)
 	{
 		for(int j=0;j<20;j++)
@@ -46,19 +54,54 @@ void save_map()
 			out<<std::endl;
 			out<<map[i][j].passable;
 			out<<std::endl;
+			out<<map[i][j].held_object;
+			out<<std::endl;
 			out<<map[i][j].bitmap;
-			/*if(map[i][j].bitmap=="dirt")
-			out<<DIRT;
-			if(map[i][j].bitmap=="dirt_back")
-			out<<DIRT_BACK;
-			if(map[i][j].bitmap=="dirt_back_down")
-			out<<DIRT_BACK_DOWN;
-			if(map[i][j].bitmap=="dirt_back_up")
-			out<<DIRT_BACK_UP;*/
 			out<<std::endl;
 		}
 	}
+
 }
+//EXPERIMANTAL
+//void load_level(int level)
+//{
+//	string line;
+//	std::fstream file("Levels/Level1/doors.dat");
+//	getline(file,line);
+//	cout<<line<<endl;
+//	_getch();
+//	int door_number=atoi(line.c_str());
+//	for(int i=0;i<door_number;i++)
+//	{
+//		int x,y;
+//		getline(file,line);
+//		cout<<line<<endl;
+//		_getch();
+//		x=atoi(line.c_str());
+//		getline(file,line);
+//		y=atoi(line.c_str());
+//		doors[i].set_up(x,y);
+//	}
+//	file.close();
+//	file.open("Levels/Level1/map.dat");
+//	for(int i=0;i<20;i++)
+//	{
+//		for(int j=0;j<20;j++)
+//		{
+//			getline(file,line);
+//			map[i][j].x=atoi(line.c_str());
+//			getline(file,line);
+//			map[i][j].y=atoi(line.c_str());
+//			getline(file,line);
+//			map[i][j].passable=atoi(line.c_str());
+//			getline(file,line);
+//			map[i][j].bitmap=line;
+//		}
+//	}
+//
+//}
+//EXPERIMENTAL
+
 void load_level(int level)
 {
 	std::fstream file("Levels/level1.dat");
@@ -131,9 +174,8 @@ void main_game()
 	Load_font = al_load_font("Resources/leadcoat.ttf",40,NULL);
 	al_install_keyboard();
 	al_init_image_addon();
-	Doors door;
-
-
+	levers[0].set_up(3,195,256,LEVER);
+	levers[0].add_affected_objects(DOOR,0);
 	//map_init();
 	//map[1][2].bitmap="dirt_back_up";
 	//map[1][2].passable=true;
@@ -162,7 +204,7 @@ void main_game()
 	bool game_done=false;
 
 	load_level(1);
-	door.set_up(4,5);
+	doors[0].set_up(4,5);
 		//save_map();
 	ALLEGRO_EVENT_QUEUE *game_events = al_create_event_queue();
 	al_register_event_source(game_events, al_get_keyboard_event_source());
@@ -173,13 +215,16 @@ void main_game()
 		cameraX=camera_update(keyboard_input(),cameraX,0);
 		cameraY=camera_update(keyboard_input(),cameraY,1);
 		map_draw();
-		door.draw_door();
+		doors[0].draw_door();
 		cout<<player.player_get_tile_X()<<","<<player.player_get_tile_Y()<<endl;
 		
+
+		levers[0].object_draw();
+
 		if(check_door_collison())
 			kill_player();
 		if(keyboard_input()==ALLEGRO_KEY_E)
-			door.change_state();
+			check_interactions(player.player_get_tile_X(),player.player_get_tile_Y(),ALLEGRO_KEY_E);
 		//----------------------//
 		
 		//PLAYER STUFF

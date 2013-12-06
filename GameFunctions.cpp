@@ -8,7 +8,7 @@ ALLEGRO_BITMAP *dirt_back;
 ALLEGRO_BITMAP *dirt_back_up;
 ALLEGRO_BITMAP *dirt_back_down;
 ALLEGRO_BITMAP *door_bitmap;
-
+ALLEGRO_BITMAP *lever_bitmap;
 bool bitmaps_initialized=false;
 using namespace std;
 int keyboard_input()
@@ -89,6 +89,8 @@ ALLEGRO_BITMAP* return_appropriate_bitmap(std::string which)
 	//////////////////////////
 	if(which=="door")
 		return door_bitmap;
+	if(which=="lever")
+		return lever_bitmap;
 
 }
 
@@ -100,4 +102,53 @@ void init_bitmaps(int for_lvl)
 	dirt_back_down=al_load_bitmap("Resources/dirt_back_down.png");
 	//OBJECTS//
 	door_bitmap=al_load_bitmap("Resources/Doors.png");
+	lever_bitmap=al_load_bitmap("Resources/lever.png");
+}
+
+int count_doors()
+{
+	int counted_doors=0;
+	for(int i=0;i<20;i++)
+	{
+		if(doors[i].exists)
+		{
+			counted_doors++;
+		}
+		else break;
+	}
+	return counted_doors;
+}
+
+void check_interactions(int tile_X,int tile_Y,int with_key)
+{
+
+	if(map[tile_X][tile_Y].held_object==LEVER)
+	{
+		int ID=search_for_object_ID(tile_X,tile_Y,LEVER);
+		if(ID!=-1)
+		{
+			levers[ID].apply_new_state();
+		}
+	}
+
+
+
+}
+
+int search_for_object_ID(int tile_X,int tile_Y,int type)
+{
+	if(type==LEVER)
+	{
+		for(int i=0;i<20;i++)
+		{
+			if(levers[i].PosX/TileSize==tile_X&&levers[i].PosY/TileSize==tile_Y&&levers[i].exists)
+				return i;
+			
+			
+			if(levers[i].exists==false)
+				break;
+		}
+
+	}
+	return -1;
 }
