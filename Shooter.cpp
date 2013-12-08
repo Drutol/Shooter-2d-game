@@ -174,7 +174,7 @@ void main_game()
 	Load_font = al_load_font("Resources/leadcoat.ttf",40,NULL);
 	al_install_keyboard();
 	al_init_image_addon();
-	levers[0].set_up(3,195,256,LEVER);
+	levers[0].set_up(3,195,256,LEVER,0);
 	levers[0].add_affected_objects(DOOR,0);
 	//map_init();
 	//map[1][2].bitmap="dirt_back_up";

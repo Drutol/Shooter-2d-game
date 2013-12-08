@@ -7,6 +7,7 @@ struct tile
 	int y;
 	bool passable;
 	int held_object;
+	int held_object_ID;
 	std::string bitmap;
 };
  enum tile_objects {NOTHING,DOOR,LEVER};

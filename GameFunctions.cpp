@@ -139,15 +139,17 @@ int search_for_object_ID(int tile_X,int tile_Y,int type)
 {
 	if(type==LEVER)
 	{
-		for(int i=0;i<20;i++)
-		{
-			if(levers[i].PosX/TileSize==tile_X&&levers[i].PosY/TileSize==tile_Y&&levers[i].exists)
-				return i;
-			
-			
-			if(levers[i].exists==false)
-				break;
-		}
+		//for(int i=0;i<20;i++)
+		//{
+		//	if(levers[i].PosX/TileSize==tile_X&&levers[i].PosY/TileSize==tile_Y&&levers[i].exists)
+		//		return i;
+		//	
+		//	
+		//	if(levers[i].exists==false)
+		//		break;
+		//}
+		if(map[tile_X][tile_Y].held_object==LEVER)
+			return map[tile_X][tile_Y].held_object_ID;
 
 	}
 	return -1;
