@@ -118,7 +118,19 @@ int count_doors()
 	}
 	return counted_doors;
 }
-
+int count_levers()
+{
+	int counted_levers=0;
+	for(int i=0;i<20;i++)
+	{
+		if(levers[i].exists)
+		{
+			counted_levers++;
+		}
+		else break;
+	}
+	return counted_levers;
+}
 void check_interactions(int tile_X,int tile_Y,int with_key)
 {
 

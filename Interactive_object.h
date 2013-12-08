@@ -11,11 +11,11 @@ class Interactive_object
 protected:
 	std::string bitmap;
 private:
-	int connections;
 	bool active;
-	object *affected_object;
 	void create_array_of_affected_objects(int how_many);
 public:
+	int connections;
+	object *affected_object;
 	int PosX;
 	int PosY;
 	bool exists;

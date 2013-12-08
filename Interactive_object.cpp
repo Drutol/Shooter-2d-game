@@ -5,6 +5,7 @@
 Interactive_object::Interactive_object(void)
 {
 	this->connections=0;
+	this->exists=false;
 }
 
 
