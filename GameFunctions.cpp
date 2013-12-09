@@ -139,7 +139,7 @@ void check_interactions(int tile_X,int tile_Y,int with_key)
 		int ID=search_for_object_ID(tile_X,tile_Y,LEVER);
 		if(ID!=-1)
 		{
-			levers[ID].apply_new_state();
+			levers[ID].apply_new_state(with_key);
 		}
 	}
 

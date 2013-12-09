@@ -10,6 +10,7 @@ class Interactive_object
 {
 protected:
 	std::string bitmap;
+	int button_to_interact_with;
 private:
 	bool active;
 	void create_array_of_affected_objects(int how_many);
@@ -21,7 +22,7 @@ public:
 	bool exists;
 	void send_state();
 	void object_draw();
-	void set_up(int how_many_connections,int x,int y,int object_type, int ID);
+	void set_up(int how_many_connections,int x,int y,int object_type, int ID, int button);
 	void add_affected_objects(int type,int ID);
 	Interactive_object(void);
 	~Interactive_object(void);

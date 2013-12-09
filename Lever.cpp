@@ -14,12 +14,15 @@ Lever::~Lever(void)
 {
 }
 
-void Lever::apply_new_state()
+void Lever::apply_new_state(int with_key)
 {
-	if(state==ON)
-		state=OFF;
-	if(state==OFF)
-		state=ON;
+	if(with_key==button_to_interact_with)
+	{
+		if(state==ON)
+			state=OFF;
+		if(state==OFF)
+			state=ON;
 
-	Interactive_object::send_state();
+		Interactive_object::send_state();
+	}
 }		

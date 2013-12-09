@@ -98,7 +98,7 @@ void load_level(int level)
 		y=atoi(line.c_str());
 		getline(file,line);
 		conns=atoi(line.c_str());
-		levers[i].set_up(conns,x,y,LEVER,i);
+		levers[i].set_up(conns,x,y,LEVER,i,ALLEGRO_KEY_E);
 		for(int j=0;j<conns;j++)
 		{
 			int type,obj_ID;
@@ -123,7 +123,6 @@ void load_level(int level)
 		getline(file,line);
 		y=atoi(line.c_str());
 		cout<<y;
-		_getch();
 		doors[i].set_up(x,y);
 	}
 	file.close();

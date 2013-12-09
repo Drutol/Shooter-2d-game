@@ -6,7 +6,7 @@ private:
 	int state;
 	std::string object_name;
 public:
-	void apply_new_state();
+	void apply_new_state(int with_key);
 	Lever(void);
 	~Lever(void);
 };
