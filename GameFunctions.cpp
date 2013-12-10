@@ -17,23 +17,24 @@ int keyboard_input()
 	al_get_keyboard_state(&keystate);
 	if(al_key_down(&keystate,ALLEGRO_KEY_D))
 		return ALLEGRO_KEY_D;
-	else if(al_key_down(&keystate,ALLEGRO_KEY_A))
+	if(al_key_down(&keystate,ALLEGRO_KEY_A))
 		return ALLEGRO_KEY_A;
-	else if(al_key_down(&keystate,ALLEGRO_KEY_W))
+	if(al_key_down(&keystate,ALLEGRO_KEY_W))
 		return ALLEGRO_KEY_W;
-	else if(al_key_down(&keystate,ALLEGRO_KEY_S))
+	if(al_key_down(&keystate,ALLEGRO_KEY_S))
 		return ALLEGRO_KEY_S;
-	else if(al_key_down(&keystate,ALLEGRO_KEY_ESCAPE))
+	if(al_key_down(&keystate,ALLEGRO_KEY_ESCAPE))
 		return ALLEGRO_KEY_ESCAPE;
-	else if(al_key_down(&keystate,ALLEGRO_KEY_RIGHT))
+	if(al_key_down(&keystate,ALLEGRO_KEY_RIGHT))
 		return ALLEGRO_KEY_RIGHT;
-	else if(al_key_down(&keystate,ALLEGRO_KEY_LEFT))
+	if(al_key_down(&keystate,ALLEGRO_KEY_LEFT))
 		return ALLEGRO_KEY_LEFT;
-	else if(al_key_down(&keystate,ALLEGRO_KEY_SPACE))
+	if(al_key_down(&keystate,ALLEGRO_KEY_SPACE))
 		return ALLEGRO_KEY_SPACE;
-	else if(al_key_down(&keystate,ALLEGRO_KEY_E))
+	if(al_key_down(&keystate,ALLEGRO_KEY_E))
 		return ALLEGRO_KEY_E;
-	else return NULL;
+	
+	return NULL;
 }
 int camera_update(int pressed_key,float previous_camera_position,int camera)
 {
@@ -123,10 +124,8 @@ int count_levers()
 	int counted_levers=0;
 	for(int i=0;i<20;i++)
 	{
-		if(levers[i].exists)
-		{
+		if(levers[i].exists==1)
 			counted_levers++;
-		}
 		else break;
 	}
 	return counted_levers;
@@ -166,3 +165,18 @@ int search_for_object_ID(int tile_X,int tile_Y,int type)
 	}
 	return -1;
 }
+
+void draw_objects()
+{
+	for(int i=0;i<count_doors();i++)
+		{
+			if(doors[i].exists)
+				doors[i].draw_door();
+		}
+	for(int i=0;i<count_levers();i++)
+		{
+			if(levers[i].exists)
+				levers[i].object_draw();
+		}
+		
+}		

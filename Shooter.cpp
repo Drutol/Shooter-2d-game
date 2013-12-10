@@ -262,12 +262,7 @@ void main_game()
 		cameraX=camera_update(keyboard_input(),cameraX,0);
 		cameraY=camera_update(keyboard_input(),cameraY,1);
 		map_draw();
-		doors[0].draw_door();
-		cout<<player.player_get_tile_X()<<","<<player.player_get_tile_Y()<<endl;
-		
-
-		levers[0].object_draw();
-
+		draw_objects();
 		if(check_door_collison())
 			kill_player();
 		if(keyboard_input()==ALLEGRO_KEY_E)

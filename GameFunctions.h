@@ -20,6 +20,7 @@ void kill_player();
 int count_doors();
 int count_levers();
 void check_interactions(int tile_X,int tile_Y,int with_key);
+void draw_objects();
 int search_for_object_ID(int tile_X,int tile_Y,int type);
 ALLEGRO_BITMAP* return_appropriate_bitmap(std::string which);
 
