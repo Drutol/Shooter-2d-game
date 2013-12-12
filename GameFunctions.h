@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Doors.h"
 #include "Lever.h"
+#include "Interaction_Indicator.h"
 struct tile
 {
 	int x;
@@ -12,6 +13,7 @@ struct tile
 };
  enum tile_objects {NOTHING,DOOR,LEVER};
 int keyboard_input();
+bool keyboard_input_specific(int which_key);
 int camera_update(int pressed_key,float previous_camera_position,int camera);
 int get_random_number(int min , int max);
 int get_mouse_state(char task);
@@ -30,4 +32,8 @@ extern tile map[20][20];
 extern Player player;
 extern Doors *doors;
 extern Lever *levers;
-
+extern Interaction_Indicator indicator;
+///Not so important but still
+extern ALLEGRO_FONT *game_font;
+extern float cameraX;
+extern float cameraY;

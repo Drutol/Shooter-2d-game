@@ -6,7 +6,8 @@ tile map[20][20];
 Player player;
 Doors *doors;
 Lever *levers;
-
+ALLEGRO_FONT *game_font;
+float cameraX,cameraY;
 bool check_door_collison()
 {
 	if(map[player.player_get_tile_X()][player.player_get_tile_Y()].passable==false&&map[player.player_get_tile_X()][player.player_get_tile_Y()].held_object==DOOR)
@@ -82,8 +83,29 @@ void save_map()
 void load_level(int level)
 {
 	string line;
-	std::fstream file("Levels/Level1/levers.dat");
+	std::fstream file("Levels/Level1/map.dat");
 	
+	for(int i=0;i<20;i++)
+	{
+		for(int j=0;j<20;j++)
+		{
+			getline(file,line);
+			map[i][j].x=atoi(line.c_str());
+			getline(file,line);
+			map[i][j].y=atoi(line.c_str());
+			getline(file,line);
+			map[i][j].passable=atoi(line.c_str());
+			getline(file,line);
+			map[i][j].held_object=atoi(line.c_str());
+			getline(file,line);
+			map[i][j].held_object_ID=atoi(line.c_str());
+			getline(file,line);
+			map[i][j].bitmap=line;
+		}
+	}
+	
+	file.close();
+	file.open("Levels/Level1/levers.dat");
 	getline(file,line);
 	int lever_number=atoi(line.c_str());
 	levers = new Lever[lever_number];
@@ -114,7 +136,8 @@ void load_level(int level)
 	file.open("Levels/Level1/doors.dat");
 	getline(file,line);
 	int door_number=atoi(line.c_str());
-	doors = new Doors[door_number];
+	doors = new Doors[door_number+1];
+
 	for(int i=0;i<door_number;i++)
 	{
 		int x,y;
@@ -126,49 +149,7 @@ void load_level(int level)
 		doors[i].set_up(x,y);
 	}
 	file.close();
-	file.open("Levels/Level1/map.dat");
-	for(int i=0;i<20;i++)
-	{
-		for(int j=0;j<20;j++)
-		{
-			getline(file,line);
-			map[i][j].x=atoi(line.c_str());
-			getline(file,line);
-			map[i][j].y=atoi(line.c_str());
-			getline(file,line);
-			map[i][j].passable=atoi(line.c_str());
-			getline(file,line);
-			map[i][j].held_object=atoi(line.c_str());
-			getline(file,line);
-			map[i][j].held_object_ID=atoi(line.c_str());
-			getline(file,line);
-			map[i][j].bitmap=line;
-		}
-	}
-
 }
-
-//void load_level(int level)
-//{
-//	std::fstream file("Levels/level1.dat");
-//	string line;
-//
-//	for(int i=0;i<20;i++)
-//	{
-//		for(int j=0;j<20;j++)
-//		{
-//			getline(file,line);
-//			map[i][j].x=atoi(line.c_str());
-//			getline(file,line);
-//			map[i][j].y=atoi(line.c_str());
-//			getline(file,line);
-//			map[i][j].passable=atoi(line.c_str());
-//			getline(file,line);
-//			map[i][j].bitmap=line;
-//		}
-//	}
-//
-//}
 bool is_tile_passable(int whichX,int whichY)
 {
 	return map[whichX][whichY].passable;
@@ -178,21 +159,6 @@ void use_tranform(float cameraX,float cameraY)
 		al_identity_transform(&camera);
 		al_translate_transform(&camera, -cameraX,-cameraY);
 		al_use_transform(&camera);
-}
-void map_init()
-{
-	for(int i=0;i<20;i++)
-	{
-		for(int j=0;j<20;j++)
-		{
-			map[i][j].x=i*TileSize;
-			map[i][j].y=j*TileSize;
-			map[i][j].passable=false;
-			map[i][j].bitmap="dirt";
-			
-		}
-	}
-
 }
 void map_draw()
 {
@@ -208,53 +174,35 @@ void map_draw()
 }
 void main_game()
 {
-	//ALLEGRO TYPES
-		ALLEGRO_FONT *Load_font;
 
 	// Cam vars
-	float cameraX=0.5,cameraY=0.5;
+	cameraX=0.5,
+	cameraY=0.5;
 	al_rest(1.0);
 
 	al_clear_to_color(al_map_rgb(255,255,255));
 	levers = new Lever[20];
 	doors = new Doors[20];
-	Load_font = al_load_font("Resources/leadcoat.ttf",40,NULL);
+	game_font = al_load_font("Resources/leadcoat.ttf",40,NULL);
 	al_install_keyboard();
 	al_init_image_addon();
-	//levers[0].set_up(3,195,256,LEVER,0);
-	//levers[0].add_affected_objects(DOOR,0);
-	//map_init();
-	//map[1][2].bitmap="dirt_back_up";
-	//map[1][2].passable=true;
-	//map[1][3].bitmap="dirt_back";
-	//map[1][3].passable=true;
-	//map[1][4].bitmap="dirt_back_down";
-	//map[1][4].passable=true;
-	//////////////////////////////////
-	//map[2][2].bitmap="dirt_back_up";
-	//map[2][2].passable=true;
-	//map[2][3].bitmap="dirt_back_down";
-	//map[2][3].passable=true;
-	/////////////////////////////////
+	
+	load_level(1);
+	doors[1].set_up(3,3);
+	//map[4][4].bitmap="dirt";
+	//map[4][4].passable=false;
+	//map[3][2].bitmap="dirt_back";
+	//map[3][2].passable=true;
 	//map[3][3].bitmap="dirt_back";
 	//map[3][3].passable=true;
 	//map[3][4].bitmap="dirt_back";
 	//map[3][4].passable=true;
-	////////////////////////////////////
-	//map[4][4].bitmap="dirt_back";
-	//map[4][4].passable=true;
-	//map[4][5].bitmap="dirt_back";
-	//map[4][5].passable=true;
-	//////////////////////////////////
-	//map[5][5].bitmap="dirt_back_down";
-	//map[5][5].passable=true;
-	bool game_done=false;
-	
-	load_level(1);
-	//doors[0].set_up(4,5);
-	//save_map();
+	//map[3][5].bitmap="dirt_back_down";
+	//map[3][5].passable=true;
 	ALLEGRO_EVENT_QUEUE *game_events = al_create_event_queue();
 	al_register_event_source(game_events, al_get_keyboard_event_source());
+	
+	bool game_done=false;
 	while(!game_done)
 	{
 		ALLEGRO_EVENT game_event;
@@ -265,13 +213,12 @@ void main_game()
 		draw_objects();
 		if(check_door_collison())
 			kill_player();
-		if(keyboard_input()==ALLEGRO_KEY_E)
-			check_interactions(player.player_get_tile_X(),player.player_get_tile_Y(),ALLEGRO_KEY_E);
+		check_interactions(player.player_get_tile_X(),player.player_get_tile_Y(),keyboard_input());
 		//----------------------//
 		
 		//PLAYER STUFF
 		player.player_move();
-		player.player_apply_move(keyboard_input());
+		player.player_apply_move();
 		player.player_draw();
 		//END Player STUFF
 		
@@ -294,8 +241,9 @@ void main_game()
 
 	}
 	al_clear_to_color(al_map_rgb(0,0,0));
-	al_draw_text(Load_font,al_map_rgb(180,123,90),350,350,ALLEGRO_ALIGN_CENTRE,"Loading...");
+	al_draw_text(game_font,al_map_rgb(180,123,90),350,350,ALLEGRO_ALIGN_CENTRE,"Loading...");
 	al_flip_display();
 	game_done=true;
 	al_rest(1.0);
+	save_map();
 }

@@ -9,8 +9,20 @@ ALLEGRO_BITMAP *dirt_back_up;
 ALLEGRO_BITMAP *dirt_back_down;
 ALLEGRO_BITMAP *door_bitmap;
 ALLEGRO_BITMAP *lever_bitmap;
+ALLEGRO_BITMAP *overlay;
 bool bitmaps_initialized=false;
+Interaction_Indicator indicator;
 using namespace std;
+bool keyboard_input_specific(int which_key)
+{
+	ALLEGRO_KEYBOARD_STATE keystate;
+	al_get_keyboard_state(&keystate);
+	if(al_key_down(&keystate,which_key))
+		return true;
+}
+
+
+
 int keyboard_input()
 {
 	ALLEGRO_KEYBOARD_STATE keystate;
@@ -85,6 +97,8 @@ ALLEGRO_BITMAP* return_appropriate_bitmap(std::string which)
 		return dirt_back;
 	if(which=="dirt_back_down")
 		return dirt_back_down;
+	if(which=="overlay")
+		return overlay;
 	///////////////////////////
 			//OBJECTS//
 	//////////////////////////
@@ -101,6 +115,7 @@ void init_bitmaps(int for_lvl)
 	dirt_back=al_load_bitmap("Resources/dirt_back.png");
 	dirt_back_up=al_load_bitmap("Resources/dirt_back_up.png");
 	dirt_back_down=al_load_bitmap("Resources/dirt_back_down.png");
+	overlay=al_load_bitmap("Resources/Overlay.png");
 	//OBJECTS//
 	door_bitmap=al_load_bitmap("Resources/Doors.png");
 	lever_bitmap=al_load_bitmap("Resources/lever.png");
@@ -133,18 +148,29 @@ int count_levers()
 void check_interactions(int tile_X,int tile_Y,int with_key)
 {
 
-	if(map[tile_X][tile_Y].held_object==LEVER)
-	{
-		int ID=search_for_object_ID(tile_X,tile_Y,LEVER);
-		if(ID!=-1)
+		if(map[tile_X][tile_Y].held_object==LEVER)
 		{
-			levers[ID].apply_new_state(with_key);
+			int ID=search_for_object_ID(tile_X,tile_Y,LEVER);
+			if(with_key!=NULL&&with_key!=ALLEGRO_KEY_SPACE&&with_key!=ALLEGRO_KEY_LEFT&&with_key!=ALLEGRO_KEY_RIGHT)
+			{
+				if(ID!=-1)
+				{
+					levers[ID].apply_new_state(with_key);
+				}
+			}
+			else
+			{
+				for(int i=0;i<levers[ID].connections;i++)
+				{
+					if(levers[ID].affected_object[i].type==DOOR)
+					indicator.highlight_object(doors[levers[ID].affected_object[i].ID].tile_X,doors[levers[ID].affected_object[i].ID].tile_Y);
+				}
+			}
+			indicator.display_keys(LEVER,ID);
+			}
+		
+		
 		}
-	}
-
-
-
-}
 
 int search_for_object_ID(int tile_X,int tile_Y,int type)
 {

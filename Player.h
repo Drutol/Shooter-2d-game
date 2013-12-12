@@ -28,7 +28,7 @@ private:
 	int jump_speed_base;
 public:
 	//PHYSICS STUFF
-	void player_apply_move(int which_direction);
+	void player_apply_move();
 	void player_move();
 	void player_draw();
 	void player_locate();

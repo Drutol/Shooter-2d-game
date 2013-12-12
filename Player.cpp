@@ -1,5 +1,5 @@
 #include "Player.h"
-
+#include "GameFunctions.h"
 
 Player::Player(void)
 {
@@ -19,24 +19,25 @@ Player::~Player(void)
 {
 }
 //MOVEMENT AND PHYSICS
-void Player::player_apply_move(int which_direction)
+void Player::player_apply_move()
 {
-	Player::player_set_direction(which_direction);
+
+	Player::player_set_direction(keyboard_input());
 	if(is_tile_passable(current_tile_X_right_next,current_tile_Y))
 		{
-			if(which_direction==ALLEGRO_KEY_RIGHT)
+			if(keyboard_input_specific(ALLEGRO_KEY_RIGHT))
 					{
 						VelX++;
 					}
 		}
 	if(is_tile_passable(current_tile_X_left_next,current_tile_Y))
 		{
-			if(which_direction==ALLEGRO_KEY_LEFT)
+			if(keyboard_input_specific(ALLEGRO_KEY_LEFT))
 					{
 						VelX--;
 					}
 		}
-	if(on_ground&&is_tile_passable(current_tile_X_left,current_tile_Y_up)&&is_tile_passable(current_tile_X_right,current_tile_Y_up)&&which_direction==ALLEGRO_KEY_SPACE)
+	if(on_ground&&is_tile_passable(current_tile_X_left,current_tile_Y_up)&&is_tile_passable(current_tile_X_right,current_tile_Y_up)&&keyboard_input_specific(ALLEGRO_KEY_SPACE))
 			{
 				VelY+=jump_height;
 			}

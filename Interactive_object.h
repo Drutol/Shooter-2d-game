@@ -10,11 +10,11 @@ class Interactive_object
 {
 protected:
 	std::string bitmap;
-	int button_to_interact_with;
 private:
-	bool active;
 	void create_array_of_affected_objects(int how_many);
 public:
+	int button_to_interact_with;
+	bool active;
 	int connections;
 	object *affected_object;
 	int PosX;
