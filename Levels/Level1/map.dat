@@ -1,8 +1,8 @@
 0
 0
 0
-0
-0
+1
+2
 dirt
 0
 64
@@ -270,9 +270,9 @@ dirt_back
 dirt_back
 128
 320
+0
 1
-0
-0
+1
 dirt_back_down
 128
 384
@@ -391,8 +391,8 @@ dirt_back
 192
 320
 1
-0
-0
+2
+1
 dirt_back_down
 192
 384

@@ -31,14 +31,14 @@ void Interactive_object::object_draw()
 	al_draw_bitmap(return_appropriate_bitmap(bitmap),PosX,PosY,NULL);
 }
 
-void Interactive_object::set_up(int how_many_connections,int x,int y,int object_type,int ID,int button)
+void Interactive_object::set_up(int how_many_connections,int x,int y,int ID,int button)
 {
 	create_array_of_affected_objects(how_many_connections);
 	PosX=x;
 	PosY=y;
 	exists=true;
 	button_to_interact_with=button;
-	map[PosX/TileSize][PosY/TileSize].held_object=object_type;
+	map[PosX/TileSize][PosY/TileSize].held_object=LEVER;
 	map[PosX/TileSize][PosY/TileSize].held_object_ID=ID;
 }
 

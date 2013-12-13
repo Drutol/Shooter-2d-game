@@ -12,6 +12,8 @@ struct tile
 	std::string bitmap;
 };
  enum tile_objects {NOTHING,DOOR,LEVER};
+ enum directions {RIGHT,LEFT,UP,DOWN};
+ enum states {OPEN,CLOSED,OPENING,CLOSING};
 int keyboard_input();
 bool keyboard_input_specific(int which_key);
 int camera_update(int pressed_key,float previous_camera_position,int camera);

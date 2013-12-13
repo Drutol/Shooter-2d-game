@@ -5,7 +5,7 @@ struct object
 	int type;
 	int ID;
 };
-enum states{ON,OFF};
+enum object_states{ON,OFF};
 class Interactive_object
 {
 protected:
@@ -22,7 +22,7 @@ public:
 	bool exists;
 	void send_state();
 	void object_draw();
-	void set_up(int how_many_connections,int x,int y,int object_type, int ID, int button);
+	void set_up(int how_many_connections,int x,int y, int ID, int button);
 	void add_affected_objects(int type,int ID);
 	Interactive_object(void);
 	~Interactive_object(void);

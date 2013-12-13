@@ -40,6 +40,7 @@ void Player::player_apply_move()
 	if(on_ground&&is_tile_passable(current_tile_X_left,current_tile_Y_up)&&is_tile_passable(current_tile_X_right,current_tile_Y_up)&&keyboard_input_specific(ALLEGRO_KEY_SPACE))
 			{
 				VelY+=jump_height;
+				on_ground=false;
 			}
 }
 
@@ -48,6 +49,8 @@ void Player::player_apply_move()
 void Player::player_move()
 {
 
+	if(VelY>jump_height)
+		VelY=0;
 	if(VelX>0)
 	{
 		PosX+=speed;

@@ -21,7 +21,6 @@ private:
 	int current_tile_Y_up;
 	bool on_ground;
 	ALLEGRO_BITMAP *player_bitmap;
-	enum directions {RIGHT,LEFT,UP,DOWN};
 	int direction;
 	int jump_height;
 	int jump_speed;

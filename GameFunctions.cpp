@@ -10,6 +10,7 @@ ALLEGRO_BITMAP *dirt_back_down;
 ALLEGRO_BITMAP *door_bitmap;
 ALLEGRO_BITMAP *lever_bitmap;
 ALLEGRO_BITMAP *overlay;
+ALLEGRO_BITMAP *dark_test;
 bool bitmaps_initialized=false;
 Interaction_Indicator indicator;
 using namespace std;
@@ -45,6 +46,8 @@ int keyboard_input()
 		return ALLEGRO_KEY_SPACE;
 	if(al_key_down(&keystate,ALLEGRO_KEY_E))
 		return ALLEGRO_KEY_E;
+	if(al_key_down(&keystate,ALLEGRO_KEY_K))
+		return ALLEGRO_KEY_K;
 	
 	return NULL;
 }
@@ -99,6 +102,8 @@ ALLEGRO_BITMAP* return_appropriate_bitmap(std::string which)
 		return dirt_back_down;
 	if(which=="overlay")
 		return overlay;
+	if(which=="darkener")
+		return dark_test;
 	///////////////////////////
 			//OBJECTS//
 	//////////////////////////
@@ -116,6 +121,7 @@ void init_bitmaps(int for_lvl)
 	dirt_back_up=al_load_bitmap("Resources/dirt_back_up.png");
 	dirt_back_down=al_load_bitmap("Resources/dirt_back_down.png");
 	overlay=al_load_bitmap("Resources/Overlay.png");
+	dark_test=al_load_bitmap("Resources/darkener.png");
 	//OBJECTS//
 	door_bitmap=al_load_bitmap("Resources/Doors.png");
 	lever_bitmap=al_load_bitmap("Resources/lever.png");
@@ -126,10 +132,8 @@ int count_doors()
 	int counted_doors=0;
 	for(int i=0;i<20;i++)
 	{
-		if(doors[i].exists)
-		{
+		if(doors[i].exists==1)
 			counted_doors++;
-		}
 		else break;
 	}
 	return counted_doors;
