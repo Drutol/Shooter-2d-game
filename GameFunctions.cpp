@@ -20,6 +20,8 @@ bool keyboard_input_specific(int which_key)
 	al_get_keyboard_state(&keystate);
 	if(al_key_down(&keystate,which_key))
 		return true;
+	else
+		return false;
 }
 
 
@@ -210,3 +212,23 @@ void draw_objects()
 		}
 		
 }		
+
+void check_affection_box_collision(int radius)
+{
+	int xr,xl,yt,yb;
+	xl=player.player_get_posx()-radius;
+	xr=player.player_get_posx()+32+radius;
+	yt=player.player_get_posy()-radius;
+	yb=player.player_get_posy()+32+radius;
+
+	if(test_box.check_if_inside(xl,yt))
+		cout<<"IN"<<endl;
+	else if(test_box.check_if_inside(xl,yb))
+		cout<<"IN"<<endl;
+	else if(test_box.check_if_inside(xr,yt))
+		cout<<"IN"<<endl;
+	else if(test_box.check_if_inside(xr,yb))
+		cout<<"IN"<<endl;
+	else cout<<"OUT"<<endl;
+
+}

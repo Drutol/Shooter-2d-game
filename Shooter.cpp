@@ -1,11 +1,11 @@
 #include "link.h"
 #include "GameFunctions.h"
-enum bitmaps {DIRT,DIRT_BACK,DIRT_BACK_DOWN,DIRT_BACK_UP};
 ALLEGRO_TRANSFORM camera;
 tile map[20][20];
 Player player;
 Doors *doors;
 Lever *levers;
+Affection_box test_box;
 ALLEGRO_FONT *game_font;
 float cameraX,cameraY;
 bool check_door_collison()
@@ -15,7 +15,7 @@ bool check_door_collison()
 		if(doors[map[player.player_get_tile_X()][player.player_get_tile_Y()].held_object_ID].state==OPENING||doors[map[player.player_get_tile_X()][player.player_get_tile_Y()].held_object_ID].state==CLOSING)
 			return true;
 	}
-	else return false;
+	return false;
 }
 void kill_player()
 {
@@ -248,7 +248,7 @@ void main_game()
 	//map[3][5].passable=true;
 	ALLEGRO_EVENT_QUEUE *game_events = al_create_event_queue();
 	al_register_event_source(game_events, al_get_keyboard_event_source());
-	
+	test_box.set_up(100,100,100,100,NOTHING,NULL,0);
 	bool game_done=false;
 	while(!game_done)
 	{
@@ -262,6 +262,11 @@ void main_game()
 		if(check_door_collison())
 			kill_player();
 		check_interactions(player.player_get_tile_X(),player.player_get_tile_Y(),keyboard_input());
+
+		
+		test_box.debug_draw_frame();
+		check_affection_box_collision(0);
+
 
 		//----------------------//
 		

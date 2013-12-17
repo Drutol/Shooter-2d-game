@@ -2,6 +2,7 @@
 #include "Doors.h"
 #include "Lever.h"
 #include "Interaction_Indicator.h"
+#include "Affection_box.h"
 struct tile
 {
 	int x;
@@ -14,6 +15,8 @@ struct tile
  enum tile_objects {NOTHING,DOOR,LEVER};
  enum directions {RIGHT,LEFT,UP,DOWN};
  enum states {OPEN,CLOSED,OPENING,CLOSING};
+ enum flags {PASSABLE,UNPASSABLE,DAMAGING};
+ enum bitmaps {DIRT,DIRT_BACK,DIRT_BACK_DOWN,DIRT_BACK_UP};
 int keyboard_input();
 bool keyboard_input_specific(int which_key);
 int camera_update(int pressed_key,float previous_camera_position,int camera);
@@ -25,6 +28,7 @@ int count_doors();
 int count_levers();
 void check_interactions(int tile_X,int tile_Y,int with_key);
 void draw_objects();
+void check_affection_box_collision(int radius);
 int search_for_object_ID(int tile_X,int tile_Y,int type);
 ALLEGRO_BITMAP* return_appropriate_bitmap(std::string which);
 
@@ -39,3 +43,4 @@ extern Interaction_Indicator indicator;
 extern ALLEGRO_FONT *game_font;
 extern float cameraX;
 extern float cameraY;
+extern Affection_box test_box;
