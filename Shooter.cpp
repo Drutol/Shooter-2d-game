@@ -252,7 +252,7 @@ void main_game()
 	
 	
 	
-	affection_boxes[0].set_up(100,320,50,32,NOTHING,NULL,0);
+	affection_boxes[0].set_up(100,300,50,32,NOTHING,NULL,0);
 	//affection_boxes[1].set_up(200,250,50,100,NOTHING,NULL,0);
 	affection_boxes[0].add_flags(1,FLAG_UNPASSABLE);
 	

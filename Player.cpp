@@ -17,6 +17,7 @@ Player::Player(void)
 	this->can_fall=true;
 	this->can_jump=true;
 	this->force_ground=false;
+	this->on_affection_box=false;
 }
 
 
@@ -122,7 +123,7 @@ void Player::player_locate()
 	}
 	if(!is_tile_passable(current_tile_X_left,(PosY-5)/TileSize)||!is_tile_passable(current_tile_X_left,(PosY-5)/TileSize))
 		VelY=0;
-	if((int)(PosY+32)%64!=0&&on_ground)
+	if((int)(PosY+32)%64!=0&&on_ground&&!check_for_box_below())
 		PosY-=2;
 
 }
@@ -139,9 +140,8 @@ void Player::player_set_direction(int ALLEGRO_KEY)
 }
 void Player::player_fall()
 {
-	if(!on_ground&&is_tile_passable(current_tile_X_right,current_tile_Y_below)&&is_tile_passable(current_tile_X_left,current_tile_Y_below)&&can_fall&&!force_ground)
+	if(!on_ground&&is_tile_passable(current_tile_X_right,current_tile_Y_below)&&is_tile_passable(current_tile_X_left,current_tile_Y_below)&&!check_for_box_below())
 		VelY--;
-
 	//cout<<on_ground<<endl;
 }
 void Player::remove_momentum(bool upwards)
@@ -149,12 +149,27 @@ void Player::remove_momentum(bool upwards)
 	if(VelY>0&&upwards)
 	VelY=0;
 }
+bool Player::check_for_box_below()
+{
+	for(int i=0;i<count_boxes();i++)
+	{
+		if(affection_boxes[i].check_if_inside(PosX,PosY+36)||affection_boxes[i].check_if_inside(PosX+32,PosY+36))
+		{
+			force_ground=true;
+			return true;
+		}
+	}
+	
+	force_ground=false;
+	return false;
+
+}
 //END OF MOVEMENT AND PHYSIC
-float Player::player_get_posx()
+int Player::player_get_posx()
 {
 	return PosX;
 }
-float Player::player_get_posy()
+int Player::player_get_posy()
 {
 	return PosY;
 }

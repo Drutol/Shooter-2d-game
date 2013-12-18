@@ -229,8 +229,10 @@ void check_affection_box_collision(int radius)
 	bool approaching_right=false;
 	bool approaching_top=false;
 	bool approaching_bottom=false;
-
 	bool passable=true;
+	
+	
+	
 	for(int i=0;i<count_boxes();i++)
 	{
 		int modifier=0;
@@ -272,29 +274,23 @@ void check_affection_box_collision(int radius)
 					approaching_right=true;
 				}
 			}
+
 		if(affection_boxes[i].check_if_inside(xl+2,yt)||affection_boxes[i].check_if_inside(xr-2,yt))
 			approaching_bottom=true;
-		if(affection_boxes[i].check_if_inside(xl,yb)||affection_boxes[i].check_if_inside(xr,yb)||affection_boxes[i].check_if_inside(xl,yb+1)||affection_boxes[i].check_if_inside(xr,yb+1)||affection_boxes[i].check_if_inside(xl,yb-1)||affection_boxes[i].check_if_inside(xr,yb-1)||affection_boxes[i].check_if_inside(xl,yb+2)||affection_boxes[i].check_if_inside(xr,yb+2)||affection_boxes[i].check_if_inside(xl,yb-2)||affection_boxes[i].check_if_inside(xr,yb-2))
-			approaching_top=true;
-		if(inside)
-			break;
+		if(affection_boxes[i].check_if_inside(xl,yb+3)||affection_boxes[i].check_if_inside(xr,yb+3))
+				approaching_top=true;
 
+		
 		if(affection_boxes[i].check_flag(FLAG_UNPASSABLE,false))
 			passable=false;
 	}
-	cout<<approaching_top<<endl;
+
 	if(!passable)
 	{
-		if(approaching_top)
-			{
-				player.can_fall=false;
-				player.force_ground=true;
-			}
-		else
-			{
-				player.can_fall=true;
-				player.force_ground=false;
-			}
+		//if(approaching_top)
+		//	player.force_ground=true;
+		//else
+		//	player.force_ground=false;
 		if(approaching_left&&!approaching_top)
 			player.can_move_left=false;
 		else
