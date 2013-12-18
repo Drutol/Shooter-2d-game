@@ -102,19 +102,23 @@ void Affection_box::set_up(int x,int y,int width,int height,int object_type,int 
 		held_object.type=object_type;
 		held_object.ID=object_ID;
 	}
+	if(height<32)
+		shorter_than_player=true;
+	else
+		shorter_than_player=false;
 
 }
 void Affection_box::debug_draw_frame()
 {
 	if(exists)	
-	al_draw_rectangle(PosX_left,PosY_top,PosX_right,PosY_bottom,al_map_rgb(68,23,99),5);
+	al_draw_rectangle(PosX_left,PosY_top,PosX_right,PosY_bottom,al_map_rgb(68,23,99),2);
 
 }
 bool Affection_box::check_if_inside(int x,int y)
 {
-	if(x>PosX_left&&x<PosX_right)
+	if(x>=PosX_left&&x<=PosX_right)
 	{
-		if(y>PosY_top&&y<PosY_bottom)
+		if(y>=PosY_top&&y<=PosY_bottom)
 		{
 			return true;
 		}

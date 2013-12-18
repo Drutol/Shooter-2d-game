@@ -23,6 +23,7 @@ public:
 	int ID;
 	object_box held_object;
 	bool exists;
+	bool shorter_than_player;
 	/////////////////////////////////////////////		FLAG STUFF
 	int check_flag(int which,bool want_index);
 	int find_first_free_space();

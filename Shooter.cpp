@@ -5,7 +5,7 @@ tile map[20][20];
 Player player;
 Doors *doors;
 Lever *levers;
-Affection_box test_box;
+Affection_box *affection_boxes;
 ALLEGRO_FONT *game_font;
 float cameraX,cameraY;
 bool check_door_collison()
@@ -108,7 +108,6 @@ void load_level(int level)
 			map[i][j].bitmap=line;
 		}
 	}
-	
 	file.close();
 	file.open("Levels/Level1/levers.dat");
 	getline(file,line);
@@ -193,7 +192,7 @@ void use_tranform(float cameraX,float cameraY)
 //}
 //EXPERIMENTAL LIGHT
 
-
+//////////////////////////////////////////////////////////////// Drawing
 void map_draw_back()
 {
 		
@@ -220,6 +219,7 @@ void map_draw_front()
 		}
 	}
 }
+//////////////////////////////////////////////////////////////// Drawing
 void main_game()
 {
 
@@ -234,7 +234,7 @@ void main_game()
 	game_font = al_load_font("Resources/leadcoat.ttf",40,NULL);
 	al_install_keyboard();
 	al_init_image_addon();
-	
+	map[2][5].passable=true;
 	load_level(1);
 	//map[4][4].bitmap="dirt";
 	//map[4][4].passable=false;
@@ -246,9 +246,17 @@ void main_game()
 	//map[3][4].passable=true;
 	//map[3][5].bitmap="dirt_back_down";
 	//map[3][5].passable=true;
+	affection_boxes=new Affection_box[2];
 	ALLEGRO_EVENT_QUEUE *game_events = al_create_event_queue();
 	al_register_event_source(game_events, al_get_keyboard_event_source());
-	test_box.set_up(100,100,100,100,NOTHING,NULL,0);
+	
+	
+	
+	affection_boxes[0].set_up(100,320,50,32,NOTHING,NULL,0);
+	//affection_boxes[1].set_up(200,250,50,100,NOTHING,NULL,0);
+	affection_boxes[0].add_flags(1,FLAG_UNPASSABLE);
+	
+	
 	bool game_done=false;
 	while(!game_done)
 	{
@@ -263,9 +271,10 @@ void main_game()
 			kill_player();
 		check_interactions(player.player_get_tile_X(),player.player_get_tile_Y(),keyboard_input());
 
-		
-		test_box.debug_draw_frame();
-		check_affection_box_collision(0);
+
+		affection_boxes[0].debug_draw_frame();
+		affection_boxes[1].debug_draw_frame();
+		check_affection_box_collision(3);
 
 
 		//----------------------//
@@ -299,5 +308,5 @@ void main_game()
 	al_flip_display();
 	game_done=true;
 	al_rest(1.0);
-	save_map();
+	//save_map();
 }

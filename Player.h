@@ -25,6 +25,7 @@ private:
 	int jump_height;
 	int jump_speed;
 	int jump_speed_base;
+
 public:
 	//PHYSICS STUFF
 	void player_apply_move();
@@ -33,6 +34,12 @@ public:
 	void player_locate();
 	void player_set_direction(int ALLEGRO_KEY);
 	void player_fall();
+	void remove_momentum(bool upwards);
+	bool can_move_right;
+	bool can_move_left;
+	bool can_jump;
+	bool can_fall;
+	bool force_ground;
 	//PHYSICS STUFF END
 	float player_get_posx();
 	float player_get_posy();

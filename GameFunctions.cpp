@@ -128,7 +128,7 @@ void init_bitmaps(int for_lvl)
 	door_bitmap=al_load_bitmap("Resources/Doors.png");
 	lever_bitmap=al_load_bitmap("Resources/lever.png");
 }
-
+////////////////////////////////////////////////////////////////	Counting
 int count_doors()
 {
 	int counted_doors=0;
@@ -151,6 +151,18 @@ int count_levers()
 	}
 	return counted_levers;
 }
+int count_boxes()
+{
+	int counted_boxes=0;
+	for(int i=0;i<20;i++)
+	{
+		if(affection_boxes[i].exists==1)
+			counted_boxes++;
+		else break;
+	}
+	return counted_boxes;
+}
+//////////////////////////////////////////////////////////////// End Counting
 void check_interactions(int tile_X,int tile_Y,int with_key)
 {
 
@@ -182,15 +194,6 @@ int search_for_object_ID(int tile_X,int tile_Y,int type)
 {
 	if(type==LEVER)
 	{
-		//for(int i=0;i<20;i++)
-		//{
-		//	if(levers[i].PosX/TileSize==tile_X&&levers[i].PosY/TileSize==tile_Y&&levers[i].exists)
-		//		return i;
-		//	
-		//	
-		//	if(levers[i].exists==false)
-		//		break;
-		//}
 		if(map[tile_X][tile_Y].held_object==LEVER)
 			return map[tile_X][tile_Y].held_object_ID;
 
@@ -221,14 +224,92 @@ void check_affection_box_collision(int radius)
 	yt=player.player_get_posy()-radius;
 	yb=player.player_get_posy()+32+radius;
 
-	if(test_box.check_if_inside(xl,yt))
-		cout<<"IN"<<endl;
-	else if(test_box.check_if_inside(xl,yb))
-		cout<<"IN"<<endl;
-	else if(test_box.check_if_inside(xr,yt))
-		cout<<"IN"<<endl;
-	else if(test_box.check_if_inside(xr,yb))
-		cout<<"IN"<<endl;
-	else cout<<"OUT"<<endl;
+	bool inside=false;
+	bool approaching_left=false;
+	bool approaching_right=false;
+	bool approaching_top=false;
+	bool approaching_bottom=false;
+
+	bool passable=true;
+	for(int i=0;i<count_boxes();i++)
+	{
+		int modifier=0;
+		if(affection_boxes[i].shorter_than_player)
+			modifier=16;
+		if(affection_boxes[i].check_if_inside(xl,yt+modifier))
+			{
+				if(radius==0)
+				inside=true;
+				else
+				{
+					approaching_left=true;
+				}
+			}
+		else if(affection_boxes[i].check_if_inside(xl,yb-modifier))
+			{
+				if(radius==0)
+				inside=true;
+				else
+				{
+					approaching_left=true;
+				}
+			}
+		else if(affection_boxes[i].check_if_inside(xr,yt+modifier))
+			{
+				if(radius==0)
+				inside=true;
+				else
+				{
+					approaching_right=true;
+				}
+			}
+		else if(affection_boxes[i].check_if_inside(xr,yb-modifier))
+			{
+				if(radius==0)
+				inside=true;
+				else
+				{
+					approaching_right=true;
+				}
+			}
+		if(affection_boxes[i].check_if_inside(xl+2,yt)||affection_boxes[i].check_if_inside(xr-2,yt))
+			approaching_bottom=true;
+		if(affection_boxes[i].check_if_inside(xl,yb)||affection_boxes[i].check_if_inside(xr,yb)||affection_boxes[i].check_if_inside(xl,yb+1)||affection_boxes[i].check_if_inside(xr,yb+1)||affection_boxes[i].check_if_inside(xl,yb-1)||affection_boxes[i].check_if_inside(xr,yb-1)||affection_boxes[i].check_if_inside(xl,yb+2)||affection_boxes[i].check_if_inside(xr,yb+2)||affection_boxes[i].check_if_inside(xl,yb-2)||affection_boxes[i].check_if_inside(xr,yb-2))
+			approaching_top=true;
+		if(inside)
+			break;
+
+		if(affection_boxes[i].check_flag(FLAG_UNPASSABLE,false))
+			passable=false;
+	}
+	cout<<approaching_top<<endl;
+	if(!passable)
+	{
+		if(approaching_top)
+			{
+				player.can_fall=false;
+				player.force_ground=true;
+			}
+		else
+			{
+				player.can_fall=true;
+				player.force_ground=false;
+			}
+		if(approaching_left&&!approaching_top)
+			player.can_move_left=false;
+		else
+			player.can_move_left=true;
+		if(approaching_right&&!approaching_top)
+			player.can_move_right=false;
+		else
+			player.can_move_right=true;
+		if(approaching_bottom)
+			{
+				player.can_jump=false;
+				player.remove_momentum(true);
+			}
+		else
+			player.can_jump=true;
+	}
 
 }

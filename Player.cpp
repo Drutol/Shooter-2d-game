@@ -12,6 +12,11 @@ Player::Player(void)
 	this->jump_height=32;
 	this->jump_speed_base=6;
 	this->jump_speed=6;
+	this->can_move_left=true;
+	this->can_move_right=true;
+	this->can_fall=true;
+	this->can_jump=true;
+	this->force_ground=false;
 }
 
 
@@ -25,19 +30,19 @@ void Player::player_apply_move()
 	Player::player_set_direction(keyboard_input());
 	if(is_tile_passable(current_tile_X_right_next,current_tile_Y))
 		{
-			if(keyboard_input_specific(ALLEGRO_KEY_RIGHT))
+			if(keyboard_input_specific(ALLEGRO_KEY_RIGHT)&&can_move_right)
 					{
 						VelX++;
 					}
 		}
-	if(is_tile_passable(current_tile_X_left_next,current_tile_Y))
+	if(is_tile_passable(current_tile_X_left_next,current_tile_Y)&&can_move_left)
 		{
 			if(keyboard_input_specific(ALLEGRO_KEY_LEFT))
 					{
 						VelX--;
 					}
 		}
-	if(on_ground&&is_tile_passable(current_tile_X_left,current_tile_Y_up)&&is_tile_passable(current_tile_X_right,current_tile_Y_up)&&keyboard_input_specific(ALLEGRO_KEY_SPACE))
+	if(on_ground&&is_tile_passable(current_tile_X_left,current_tile_Y_up)&&is_tile_passable(current_tile_X_right,current_tile_Y_up)&&keyboard_input_specific(ALLEGRO_KEY_SPACE)&&can_jump)
 			{
 				VelY+=jump_height;
 				on_ground=false;
@@ -48,9 +53,9 @@ void Player::player_apply_move()
 
 void Player::player_move()
 {
-
+	//cout<<VelY<<endl;
 	if(VelY>jump_height)
-		VelY=0;
+		VelY=jump_height;
 	if(VelX>0)
 	{
 		PosX+=speed;
@@ -96,7 +101,7 @@ void Player::player_locate()
 	current_tile_Y=(PosY)/TileSize;
 	current_tile_Y_below=(PosY+33)/TileSize;
 	current_tile_Y_up=(PosY-TileSize)/TileSize;
-	if(!is_tile_passable(current_tile_X_left,current_tile_Y_below)||!is_tile_passable(current_tile_X_right,current_tile_Y_below))
+	if(!is_tile_passable(current_tile_X_left,current_tile_Y_below)||!is_tile_passable(current_tile_X_right,current_tile_Y_below)||force_ground)
 		on_ground=true;
 	else
 		on_ground=false;
@@ -134,8 +139,15 @@ void Player::player_set_direction(int ALLEGRO_KEY)
 }
 void Player::player_fall()
 {
-	if(!on_ground&&is_tile_passable(current_tile_X_right,current_tile_Y_below)&&is_tile_passable(current_tile_X_left,current_tile_Y_below))
+	if(!on_ground&&is_tile_passable(current_tile_X_right,current_tile_Y_below)&&is_tile_passable(current_tile_X_left,current_tile_Y_below)&&can_fall&&!force_ground)
 		VelY--;
+
+	//cout<<on_ground<<endl;
+}
+void Player::remove_momentum(bool upwards)
+{
+	if(VelY>0&&upwards)
+	VelY=0;
 }
 //END OF MOVEMENT AND PHYSIC
 float Player::player_get_posx()
