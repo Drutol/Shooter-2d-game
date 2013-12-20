@@ -5,7 +5,6 @@
 Doors::Doors(void)
 {
 	this->exists=false;
-	this->state=CLOSED;
 	this->crop_X=0;
 	this->crop_Y=64;
 	this->door_speed=0.1;
@@ -15,32 +14,41 @@ Doors::Doors(void)
 Doors::~Doors(void)
 {
 }
-void Doors::set_up(int tile_X,int tile_Y)
+void Doors::set_up(int tile_X,int tile_Y,int ID,int speed,int initial_state,int direction)
 {
+	exists=true;
+	
 	this->tile_X=tile_X;
 	this->tile_Y=tile_Y;
-	exists=true;
+	this->direction=direction;
+	door_speed=speed;
+	state=initial_state;
+	if(initial_state==OPEN&&direction==UP)
+		crop_Y=124;
+	else if(initial_state==OPEN&&direction==DOWN)
+		crop_Y=0;
+	map[tile_X][tile_Y].held_object=DOOR;
+	map[tile_X][tile_Y].held_object_ID=ID;
 	Doors::update_map();
-	overwrite_tile(tile_X,tile_Y,0,"NULL",DOOR);
 
 }
 void Doors::update_map()
 {
 	if(state==OPEN)
 	{
-		overwrite_tile(tile_X,tile_Y,1,"NULL",-1);
+		map[tile_X][tile_Y].passable=true;
 	}
 	else if(state==CLOSED)
 	{
-		overwrite_tile(tile_X,tile_Y,0,"NULL",-1);
+		map[tile_X][tile_Y].passable=false;
 	}
 	else if(state==OPENING&&crop_Y>=96)
 	{
-		overwrite_tile(tile_X,tile_Y,1,"NULL",-1);
+		map[tile_X][tile_Y].passable=true;
 	}
 	else if(state==CLOSING&&crop_Y<=96)
 	{
-		overwrite_tile(tile_X,tile_Y,0,"NULL",-1);
+		map[tile_X][tile_Y].passable=false;
 	}
 
 }
@@ -80,17 +88,35 @@ void Doors::calculate_crop()
 	if(state==OPENING||state==CLOSING)
 	{
 		
-		if(state==OPENING)
+		if(direction==UP)
 		{
-			crop_Y+=door_speed;
-			if(crop_Y>=124)
-				state=OPEN;
+			if(state==OPENING)
+			{
+				crop_Y+=door_speed;
+				if(crop_Y>=124)
+					state=OPEN;
+			}
+			else if(state==CLOSING)
+			{
+				crop_Y-=door_speed;
+				if(crop_Y<=64)
+					state=CLOSED;
+			}
 		}
-		else if(state==CLOSING)
+		else if(direction==DOWN)
 		{
-			crop_Y-=door_speed;
-			if(crop_Y<=64)
-				state=CLOSED;
+			if(state==OPENING)
+			{
+				crop_Y-=door_speed;
+				if(crop_Y<=0)
+					state=OPEN;
+			}
+			else if(state==CLOSING)
+			{
+				crop_Y+=door_speed;
+				if(crop_Y>=64)
+					state=CLOSED;
+			}
 		}
 		Doors::update_map();
 	}

@@ -24,6 +24,8 @@
 #include <fstream>
 #include <algorithm>
 #include <functional>
+#include <cstdarg>
+#include <stdio.h>
 
 //Functions
 void main_game();
@@ -33,3 +35,4 @@ float return_player_Y();
 float return_player_X();
 
 //Vars
+

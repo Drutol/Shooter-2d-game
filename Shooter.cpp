@@ -1,19 +1,21 @@
 #include "link.h"
 #include "GameFunctions.h"
-enum bitmaps {DIRT,DIRT_BACK,DIRT_BACK_DOWN,DIRT_BACK_UP};
 ALLEGRO_TRANSFORM camera;
 tile map[20][20];
 Player player;
 Doors *doors;
 Lever *levers;
+Affection_box *affection_boxes;
 ALLEGRO_FONT *game_font;
 float cameraX,cameraY;
 bool check_door_collison()
 {
 	if(map[player.player_get_tile_X()][player.player_get_tile_Y()].passable==false&&map[player.player_get_tile_X()][player.player_get_tile_Y()].held_object==DOOR)
-		return true;
-	else
-		return false;
+	{
+		if(doors[map[player.player_get_tile_X()][player.player_get_tile_Y()].held_object_ID].state==OPENING||doors[map[player.player_get_tile_X()][player.player_get_tile_Y()].held_object_ID].state==CLOSING)
+			return true;
+	}
+	return false;
 }
 void kill_player()
 {
@@ -57,6 +59,9 @@ void save_map()
 	{
 		out<<doors[j].tile_X<<endl;
 		out<<doors[j].tile_Y<<endl;
+		out<<doors[j].door_speed<<endl;
+		out<<doors[j].state<<endl;
+		out<<doors[j].direction<<endl;
 	}
 	out.close();
 	out.open("Levels/Level1/map.dat");
@@ -78,7 +83,7 @@ void save_map()
 			out<<std::endl;
 		}
 	}
-
+	out.close();
 }
 void load_level(int level)
 {
@@ -103,7 +108,6 @@ void load_level(int level)
 			map[i][j].bitmap=line;
 		}
 	}
-	
 	file.close();
 	file.open("Levels/Level1/levers.dat");
 	getline(file,line);
@@ -120,7 +124,7 @@ void load_level(int level)
 		y=atoi(line.c_str());
 		getline(file,line);
 		conns=atoi(line.c_str());
-		levers[i].set_up(conns,x,y,LEVER,i,ALLEGRO_KEY_E);
+		levers[i].set_up(conns,x,y,i,ALLEGRO_KEY_E);
 		for(int j=0;j<conns;j++)
 		{
 			int type,obj_ID;
@@ -136,17 +140,24 @@ void load_level(int level)
 	file.open("Levels/Level1/doors.dat");
 	getline(file,line);
 	int door_number=atoi(line.c_str());
-	doors = new Doors[door_number+1];
+	doors = new Doors[door_number];
 
 	for(int i=0;i<door_number;i++)
 	{
-		int x,y;
+		int x,y,speed,dir,state;
 		getline(file,line);
 		x=atoi(line.c_str());
 		getline(file,line);
 		y=atoi(line.c_str());
-		cout<<y;
-		doors[i].set_up(x,y);
+		getline(file,line);
+		speed=atoi(line.c_str());
+		getline(file,line);
+		state=atoi(line.c_str());
+		getline(file,line);
+		dir=atoi(line.c_str());
+		
+		
+		doors[i].set_up(x,y,i,speed,state,dir);
 	}
 	file.close();
 }
@@ -160,18 +171,55 @@ void use_tranform(float cameraX,float cameraY)
 		al_translate_transform(&camera, -cameraX,-cameraY);
 		al_use_transform(&camera);
 }
-void map_draw()
+//void makeCircleLight() MAY BE USEFUL IN THE FUTURE
+//  {
+//     float r = 1.0f;
+//	 float g = 1.0f;
+//	 float b = 1.0f;
+//	 float a = 0.03f;
+//	 int size = 125;
+//       for(int i = 0; i < 30; i++)
+//		 {
+//		   al_draw_filled_circle(player.player_get_posx(), player.player_get_posy(), size, al_map_rgba_f(r*a , g*a , b*a , a));
+//		   if(i < 6)
+//       {
+//       size -= (rand() % 7) + 3;
+//       }
+//       else
+//       size -= (rand() % 4) + 1;
+//       }
+//      
+//}
+//EXPERIMENTAL LIGHT
+
+//////////////////////////////////////////////////////////////// Drawing
+void map_draw_back()
 {
 		
 	for(int i=0;i<20;i++)
 	{
 		for(int j=0;j<20;j++)
 		{
+			if(map[i][j].bitmap=="dirt")
 			al_draw_bitmap(return_appropriate_bitmap(map[i][j].bitmap),map[i][j].x,map[i][j].y,NULL);
 		}
 	}
 
 }
+void map_draw_front()
+{
+		
+	for(int i=0;i<20;i++)
+	{
+		for(int j=0;j<20;j++)
+		{
+			if(map[i][j].bitmap!="dirt")	
+				al_draw_bitmap(return_appropriate_bitmap(map[i][j].bitmap),map[i][j].x,map[i][j].y,NULL);
+		
+		}
+	}
+}
+//////////////////////////////////////////////////////////////// Drawing
 void main_game()
 {
 
@@ -186,9 +234,7 @@ void main_game()
 	game_font = al_load_font("Resources/leadcoat.ttf",40,NULL);
 	al_install_keyboard();
 	al_init_image_addon();
-	
 	load_level(1);
-	doors[1].set_up(3,3);
 	//map[4][4].bitmap="dirt";
 	//map[4][4].passable=false;
 	//map[3][2].bitmap="dirt_back";
@@ -199,8 +245,16 @@ void main_game()
 	//map[3][4].passable=true;
 	//map[3][5].bitmap="dirt_back_down";
 	//map[3][5].passable=true;
+	affection_boxes=new Affection_box[2];
 	ALLEGRO_EVENT_QUEUE *game_events = al_create_event_queue();
 	al_register_event_source(game_events, al_get_keyboard_event_source());
+	
+	
+	
+	affection_boxes[0].set_up(100,300,50,32,NOTHING,NULL,0);
+	//affection_boxes[1].set_up(200,250,50,100,NOTHING,NULL,0);
+	affection_boxes[0].add_flags(1,FLAG_UNPASSABLE);
+	
 	
 	bool game_done=false;
 	while(!game_done)
@@ -209,11 +263,19 @@ void main_game()
 		al_wait_for_event_timed(game_events,&game_event,0.01);
 		cameraX=camera_update(keyboard_input(),cameraX,0);
 		cameraY=camera_update(keyboard_input(),cameraY,1);
-		map_draw();
+		map_draw_front();
 		draw_objects();
+		map_draw_back();
 		if(check_door_collison())
 			kill_player();
 		check_interactions(player.player_get_tile_X(),player.player_get_tile_Y(),keyboard_input());
+
+
+		affection_boxes[0].debug_draw_frame();
+		affection_boxes[1].debug_draw_frame();
+		check_affection_box_collision(3);
+
+
 		//----------------------//
 		
 		//PLAYER STUFF
@@ -245,5 +307,5 @@ void main_game()
 	al_flip_display();
 	game_done=true;
 	al_rest(1.0);
-	save_map();
+	//save_map();
 }
