@@ -240,39 +240,23 @@ void check_affection_box_collision(int radius)
 			modifier=16;
 		if(affection_boxes[i].check_if_inside(xl,yt+modifier))
 			{
-				if(radius==0)
-				inside=true;
-				else
-				{
+					inside=true;
 					approaching_left=true;
-				}
 			}
 		else if(affection_boxes[i].check_if_inside(xl,yb-modifier))
 			{
-				if(radius==0)
-				inside=true;
-				else
-				{
+					inside=true;
 					approaching_left=true;
-				}
 			}
 		else if(affection_boxes[i].check_if_inside(xr,yt+modifier))
 			{
-				if(radius==0)
-				inside=true;
-				else
-				{
+					inside=true;
 					approaching_right=true;
-				}
 			}
 		else if(affection_boxes[i].check_if_inside(xr,yb-modifier))
 			{
-				if(radius==0)
-				inside=true;
-				else
-				{
+					inside=true;
 					approaching_right=true;
-				}
 			}
 
 		if(affection_boxes[i].check_if_inside(xl+2,yt)||affection_boxes[i].check_if_inside(xr-2,yt))
@@ -284,7 +268,11 @@ void check_affection_box_collision(int radius)
 		if(affection_boxes[i].check_flag(FLAG_UNPASSABLE,false))
 			passable=false;
 	}
-
+	cout<<inside<<endl;
+	if(inside)
+	{
+		player.PosY-=2;
+	}
 	if(!passable)
 	{
 		//if(approaching_top)

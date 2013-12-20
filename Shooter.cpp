@@ -234,7 +234,6 @@ void main_game()
 	game_font = al_load_font("Resources/leadcoat.ttf",40,NULL);
 	al_install_keyboard();
 	al_init_image_addon();
-	map[2][5].passable=true;
 	load_level(1);
 	//map[4][4].bitmap="dirt";
 	//map[4][4].passable=false;
