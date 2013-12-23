@@ -216,13 +216,13 @@ void draw_objects()
 		
 }		
 
-void check_affection_box_collision(int radius)
+void check_affection_box_collision_NPC(int radius,NPC &npc)
 {
 	int xr,xl,yt,yb;
-	xl=player.player_get_posx()-radius;
-	xr=player.player_get_posx()+32+radius;
-	yt=player.player_get_posy()-radius;
-	yb=player.player_get_posy()+32+radius;
+	xl=npc.get_posx()-radius;
+	xr=npc.get_posx()+32+radius;
+	yt=npc.get_posy()-radius;
+	yb=npc.get_posy()+32+radius;
 
 	bool inside=false;
 	bool approaching_left=false;
@@ -268,7 +268,82 @@ void check_affection_box_collision(int radius)
 		if(affection_boxes[i].check_flag(FLAG_UNPASSABLE,false))
 			passable=false;
 	}
-	cout<<inside<<endl;
+	if(inside)
+	{
+		npc.PosY-=2;
+	}
+	if(!passable)
+	{
+		if(approaching_left&&!approaching_top)
+			npc.can_move_left=false;
+		else
+			npc.can_move_left=true;
+		if(approaching_right&&!approaching_top)
+			npc.can_move_right=false;
+		else
+			npc.can_move_right=true;
+		if(approaching_bottom)
+			{
+				npc.can_jump=false;
+				npc.remove_momentum(true);
+			}
+		else
+			npc.can_jump=true;
+	}
+
+}
+void check_affection_box_collision_player(int radius)
+{
+	int xr,xl,yt,yb;
+	xl=player.get_posx()-radius;
+	xr=player.get_posx()+32+radius;
+	yt=player.get_posy()-radius;
+	yb=player.get_posy()+32+radius;
+
+	bool inside=false;
+	bool approaching_left=false;
+	bool approaching_right=false;
+	bool approaching_top=false;
+	bool approaching_bottom=false;
+	bool passable=true;
+	
+	
+	
+	for(int i=0;i<count_boxes();i++)
+	{
+		int modifier=0;
+		if(affection_boxes[i].shorter_than_player)
+			modifier=16;
+		if(affection_boxes[i].check_if_inside(xl,yt+modifier))
+			{
+					inside=true;
+					approaching_left=true;
+			}
+		else if(affection_boxes[i].check_if_inside(xl,yb-modifier))
+			{
+					inside=true;
+					approaching_left=true;
+			}
+		else if(affection_boxes[i].check_if_inside(xr,yt+modifier))
+			{
+					inside=true;
+					approaching_right=true;
+			}
+		else if(affection_boxes[i].check_if_inside(xr,yb-modifier))
+			{
+					inside=true;
+					approaching_right=true;
+			}
+
+		if(affection_boxes[i].check_if_inside(xl+2,yt)||affection_boxes[i].check_if_inside(xr-2,yt))
+			approaching_bottom=true;
+		if(affection_boxes[i].check_if_inside(xl,yb+3)||affection_boxes[i].check_if_inside(xr,yb+3))
+				approaching_top=true;
+
+		
+		if(affection_boxes[i].check_flag(FLAG_UNPASSABLE,false))
+			passable=false;
+	}
 	if(inside)
 	{
 		player.PosY-=2;

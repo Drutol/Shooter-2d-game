@@ -50,7 +50,6 @@ void main_menu::get_mouse_input()
 		isDone=true;
 	else if(increasing_in_progress1||increasing_in_progress1||decreasing_in_progress1||decreasing_in_progress2||decreasing_in_progress_all)
 		main_menu::set_mouse_position();
-	std::cout<<menu_event.mouse.y<<std::endl;
 }
 
 void main_menu::set_mouse_position()

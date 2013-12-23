@@ -7,27 +7,28 @@ Doors *doors;
 Lever *levers;
 Affection_box *affection_boxes;
 ALLEGRO_FONT *game_font;
+NPC test_NPC;
 float cameraX,cameraY;
 bool check_door_collison()
 {
-	if(map[player.player_get_tile_X()][player.player_get_tile_Y()].passable==false&&map[player.player_get_tile_X()][player.player_get_tile_Y()].held_object==DOOR)
+	if(map[player.get_tile_X()][player.get_tile_Y()].passable==false&&map[player.get_tile_X()][player.get_tile_Y()].held_object==DOOR)
 	{
-		if(doors[map[player.player_get_tile_X()][player.player_get_tile_Y()].held_object_ID].state==OPENING||doors[map[player.player_get_tile_X()][player.player_get_tile_Y()].held_object_ID].state==CLOSING)
+		if(doors[map[player.get_tile_X()][player.get_tile_Y()].held_object_ID].state==OPENING||doors[map[player.get_tile_X()][player.get_tile_Y()].held_object_ID].state==CLOSING)
 			return true;
 	}
 	return false;
 }
 void kill_player()
 {
-	player.player_die();
+	player.die();
 }
 float return_player_X()
 {
-	return player.player_get_posx();
+	return player.get_posx();
 }
 float return_player_Y()
 {
-	return player.player_get_posy();
+	return player.get_posy();
 }
 void overwrite_tile(int x,int y,bool is_passable,std::string bitmap,int held_object)
 {
@@ -249,8 +250,10 @@ void main_game()
 	ALLEGRO_EVENT_QUEUE *game_events = al_create_event_queue();
 	al_register_event_source(game_events, al_get_keyboard_event_source());
 	
-	
-	
+	test_NPC.PosX=200;
+	test_NPC.PosY=200;
+
+
 	affection_boxes[0].set_up(100,300,50,32,NOTHING,NULL,0);
 	//affection_boxes[1].set_up(200,250,50,100,NOTHING,NULL,0);
 	affection_boxes[0].add_flags(1,FLAG_UNPASSABLE);
@@ -268,20 +271,27 @@ void main_game()
 		map_draw_back();
 		if(check_door_collison())
 			kill_player();
-		check_interactions(player.player_get_tile_X(),player.player_get_tile_Y(),keyboard_input());
+		check_interactions(player.get_tile_X(),player.get_tile_Y(),keyboard_input());
 
 
+		check_affection_box_collision_NPC(3,test_NPC);
+
+		test_NPC.Gather_data();
+		test_NPC.move();
+		test_NPC.draw();
+		//----------------------//
+		
+		
 		affection_boxes[0].debug_draw_frame();
 		affection_boxes[1].debug_draw_frame();
-		check_affection_box_collision(3);
-
+		check_affection_box_collision_player(3);
 
 		//----------------------//
 		
 		//PLAYER STUFF
-		player.player_move();
-		player.player_apply_move();
-		player.player_draw();
+		player.move();
+		player.apply_move(NULL);
+		player.draw();
 		//END Player STUFF
 		
 		//----------------------//

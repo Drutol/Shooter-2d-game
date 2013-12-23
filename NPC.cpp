@@ -1,7 +1,7 @@
-#include "Player.h"
-#include "GameFunctions.h"
+#include "NPC.h"
 
-Player::Player(void)
+
+NPC::NPC(void)
 {
 	this->PosX=70;
 	this->PosY=150;
@@ -18,17 +18,10 @@ Player::Player(void)
 	this->can_jump=true;
 	this->force_ground=false;
 	this->on_affection_box=false;
-	this->keyboard_enabled=true;
+	this->keyboard_enabled=false;
 }
 
 
-Player::~Player(void)
+NPC::~NPC(void)
 {
-}
-//MOVEMENT AND PHYSICS
-
-void Player::die()
-{
-	PosX=70;
-	PosY=150;
 }

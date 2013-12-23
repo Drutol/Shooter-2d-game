@@ -3,6 +3,7 @@
 #include "Lever.h"
 #include "Interaction_Indicator.h"
 #include "Affection_box.h"
+#include "NPC.h"
 struct tile
 {
 	int x;
@@ -12,10 +13,15 @@ struct tile
 	int held_object_ID;
 	std::string bitmap;
 };
- enum tile_objects {NOTHING,DOOR,LEVER};
+struct coords
+{
+	int x;
+	int y;
+};
+ enum tile_objects {NOTHING,DOOR,LEVER,BOX};
  enum directions {RIGHT,LEFT,UP,DOWN};
  enum states {OPEN,CLOSED,OPENING,CLOSING};
- enum flags {FLAG_PASSABLE,FLAG_UNPASSABLE,FLAG_DAMAGING};
+ enum flags {FLAG_PASSABLE,FLAG_UNPASSABLE,FLAG_DAMAGING,FLAG_PLAYER};
  enum bitmaps {DIRT,DIRT_BACK,DIRT_BACK_DOWN,DIRT_BACK_UP};
 int keyboard_input();
 bool keyboard_input_specific(int which_key);
@@ -29,7 +35,8 @@ int count_levers();
 int count_boxes();
 void check_interactions(int tile_X,int tile_Y,int with_key);
 void draw_objects();
-void check_affection_box_collision(int radius);
+void check_affection_box_collision_NPC(int radius,NPC &npc);
+void check_affection_box_collision_player(int radius);
 int search_for_object_ID(int tile_X,int tile_Y,int type);
 ALLEGRO_BITMAP* return_appropriate_bitmap(std::string which);
 
@@ -40,6 +47,7 @@ extern Player player;
 extern Doors *doors;
 extern Lever *levers;
 extern Interaction_Indicator indicator;
+extern NPC test_NPC;
 ///Not so important but still
 extern ALLEGRO_FONT *game_font;
 extern float cameraX;

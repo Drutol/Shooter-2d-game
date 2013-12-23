@@ -26,6 +26,7 @@
 #include <functional>
 #include <cstdarg>
 #include <stdio.h>
+#include <vector>
 
 //Functions
 void main_game();

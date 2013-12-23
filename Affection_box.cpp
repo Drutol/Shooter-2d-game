@@ -97,6 +97,8 @@ void Affection_box::set_up(int x,int y,int width,int height,int object_type,int 
 	PosX_right=x+width;
 	PosY_top=y;
 	PosY_bottom=y+height;
+	//map[(int)PosX_left*TileSize][(int)PosY_top*TileSize].held_object=BOX;
+	//map[(int)PosX_left*TileSize][(int)PosY_top*TileSize].held_object_ID=box_ID;
 	if(object_type!=NOTHING)
 	{
 		held_object.type=object_type;
