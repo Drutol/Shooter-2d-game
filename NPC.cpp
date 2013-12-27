@@ -25,3 +25,8 @@ NPC::NPC(void)
 NPC::~NPC(void)
 {
 }
+
+void NPC::draw()
+{
+	al_draw_filled_rectangle(PosX,PosY,PosX+32,PosY+32,al_map_rgb(230,65,89));
+}

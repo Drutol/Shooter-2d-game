@@ -15,6 +15,18 @@ void Dynamic_Object::apply_move(int key)
 {
 
 	Dynamic_Object::set_direction(keyboard_input());
+	if(!is_tile_passable(current_tile_X_right_next,current_tile_Y))
+			can_move_right=false;
+	if(!is_tile_passable(current_tile_X_left_next,current_tile_Y))
+			can_move_left=false;
+	if(!keyboard_enabled)
+	{
+		if(!can_move_right&&VelX>0)
+			VelX=0;
+		if(!can_move_left&&VelX<0)
+			VelX=0;
+	}
+	
 	if(is_tile_passable(current_tile_X_right_next,current_tile_Y))
 		{
 			if(keyboard_input_specific(ALLEGRO_KEY_RIGHT)&&can_move_right&&keyboard_enabled||!keyboard_enabled&&can_move_right&&key==ALLEGRO_KEY_RIGHT)
@@ -22,8 +34,7 @@ void Dynamic_Object::apply_move(int key)
 						VelX++;
 					}
 		}
-	else
-		can_move_right=false;
+
 	if(is_tile_passable(current_tile_X_left_next,current_tile_Y))
 		{
 			if(keyboard_input_specific(ALLEGRO_KEY_LEFT)&&can_move_left&&keyboard_enabled||!keyboard_enabled&&can_move_left&&key==ALLEGRO_KEY_LEFT)
@@ -31,8 +42,7 @@ void Dynamic_Object::apply_move(int key)
 						VelX--;
 					}
 		}
-	else
-		can_move_left=false;
+
 	if(on_ground&&is_tile_passable(current_tile_X_left,current_tile_Y_up)&&is_tile_passable(current_tile_X_right,current_tile_Y_up)&&keyboard_input_specific(ALLEGRO_KEY_SPACE)&&can_jump&&keyboard_enabled)
 			{
 				VelY+=jump_height;
@@ -82,10 +92,6 @@ void Dynamic_Object::move()
 	//cout<<current_tile_X_left<<endl<<current_tile_Y<<endl;
 }
 
-void Dynamic_Object::draw()
-{
-	al_draw_filled_rectangle(PosX,PosY,PosX+32,PosY+32,al_map_rgb(2,65,89));
-}
 
 void Dynamic_Object::locate()
 {

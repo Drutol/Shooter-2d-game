@@ -208,7 +208,7 @@ void draw_objects()
 			if(doors[i].exists)
 				doors[i].draw_door();
 		}
-	for(int i=0;i<count_levers();i++)
+	for(int i=0;i<count_levers()-1;i++)
 		{
 			if(levers[i].exists)
 				levers[i].object_draw();

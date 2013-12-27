@@ -6,5 +6,6 @@ class NPC :public Dynamic_Object,public Artificial_Inteligence
 public:
 	NPC(void);
 	~NPC(void);
+	void draw();
 };
 

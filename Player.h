@@ -9,6 +9,7 @@ public:
 	float health;
 	ALLEGRO_BITMAP *player_bitmap;
 	void die();
+	void draw();
 	Player();
 	~Player();
 };

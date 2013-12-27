@@ -32,3 +32,7 @@ void Player::die()
 	PosX=70;
 	PosY=150;
 }
+void Player::draw()
+{
+	al_draw_filled_rectangle(PosX,PosY,PosX+32,PosY+32,al_map_rgb(2,65,89));
+}

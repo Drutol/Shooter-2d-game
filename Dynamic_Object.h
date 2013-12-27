@@ -29,7 +29,6 @@ public:
 	int current_tile_Y_below;
 	void apply_move(int key);
 	void move();
-	void draw();
 	void locate();
 	void set_direction(int ALLEGRO_KEY);
 	void fall();
