@@ -208,7 +208,7 @@ void draw_objects()
 			if(doors[i].exists)
 				doors[i].draw_door();
 		}
-	for(int i=0;i<count_levers()-1;i++)
+	for(int i=0;i<count_levers();i++)							//PROBABLY ASSERTION ERROR HERE
 		{
 			if(levers[i].exists)
 				levers[i].object_draw();
@@ -232,7 +232,7 @@ void check_affection_box_collision_NPC(int radius,NPC &npc)
 	bool passable=true;
 	
 	
-	
+
 	for(int i=0;i<count_boxes();i++)
 	{
 		int modifier=0;

@@ -4,6 +4,10 @@
 
 Dynamic_Object::Dynamic_Object(void)
 {
+	PosX_backup=0;
+	PosY_backup=0;
+	VelX=0;
+	VelY=0;
 }
 
 
@@ -13,8 +17,10 @@ Dynamic_Object::~Dynamic_Object(void)
 
 void Dynamic_Object::apply_move(int key)
 {
-
+	if(keyboard_enabled)
 	Dynamic_Object::set_direction(keyboard_input());
+	else
+	Dynamic_Object::set_direction(key);
 	if(!is_tile_passable(current_tile_X_right_next,current_tile_Y))
 			can_move_right=false;
 	if(!is_tile_passable(current_tile_X_left_next,current_tile_Y))

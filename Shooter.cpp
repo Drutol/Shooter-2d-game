@@ -113,52 +113,59 @@ void load_level(int level)
 	file.open("Levels/Level1/levers.dat");
 	getline(file,line);
 	int lever_number=atoi(line.c_str());
-	levers = new Lever[lever_number];
-	
-	for(int i=0;i<lever_number;i++)
+	if(lever_number>0)
 	{
-		
-		int x,y,conns=0;
-		getline(file,line);
-		x=atoi(line.c_str());
-		getline(file,line);
-		y=atoi(line.c_str());
-		getline(file,line);
-		conns=atoi(line.c_str());
-		levers[i].set_up(conns,x,y,i,ALLEGRO_KEY_E);
-		for(int j=0;j<conns;j++)
+			levers = new Lever[lever_number];
+	
+		for(int i=0;i<lever_number;i++)
 		{
-			int type,obj_ID;
-			getline(file,line);
-			type=atoi(line.c_str());
-			getline(file,line);
-			obj_ID=atoi(line.c_str());
-			levers[i].add_affected_objects(type,obj_ID);
-		}
 		
+			int x,y,conns=0;
+			getline(file,line);
+			x=atoi(line.c_str());
+			getline(file,line);
+			y=atoi(line.c_str());
+			getline(file,line);
+			conns=atoi(line.c_str());
+			levers[i].set_up(conns,x,y,i,ALLEGRO_KEY_E);
+			for(int j=0;j<conns;j++)
+			{
+				int type,obj_ID;
+				getline(file,line);
+				type=atoi(line.c_str());
+				getline(file,line);
+				obj_ID=atoi(line.c_str());
+				levers[i].add_affected_objects(type,obj_ID);
+			}
+		
+		}
 	}
 	file.close();
 	file.open("Levels/Level1/doors.dat");
 	getline(file,line);
 	int door_number=atoi(line.c_str());
-	doors = new Doors[door_number];
-
-	for(int i=0;i<door_number;i++)
+	if(door_number>0)
 	{
-		int x,y,speed,dir,state;
-		getline(file,line);
-		x=atoi(line.c_str());
-		getline(file,line);
-		y=atoi(line.c_str());
-		getline(file,line);
-		speed=atoi(line.c_str());
-		getline(file,line);
-		state=atoi(line.c_str());
-		getline(file,line);
-		dir=atoi(line.c_str());
+
+		doors = new Doors[door_number];
+
+		for(int i=0;i<door_number;i++)
+		{
+			int x,y,speed,dir,state;
+			getline(file,line);
+			x=atoi(line.c_str());
+			getline(file,line);
+			y=atoi(line.c_str());
+			getline(file,line);
+			speed=atoi(line.c_str());
+			getline(file,line);
+			state=atoi(line.c_str());
+			getline(file,line);
+			dir=atoi(line.c_str());
 		
 		
-		doors[i].set_up(x,y,i,speed,state,dir);
+			doors[i].set_up(x,y,i,speed,state,dir);
+		}
 	}
 	file.close();
 }
@@ -236,16 +243,16 @@ void main_game()
 	al_install_keyboard();
 	al_init_image_addon();
 	load_level(1);
-	//map[4][4].bitmap="dirt";
-	//map[4][4].passable=false;
-	//map[3][2].bitmap="dirt_back";
-	//map[3][2].passable=true;
-	//map[3][3].bitmap="dirt_back";
-	//map[3][3].passable=true;
-	//map[3][4].bitmap="dirt_back";
-	//map[3][4].passable=true;
-	//map[3][5].bitmap="dirt_back_down";
-	//map[3][5].passable=true;
+	/*map[3][5].bitmap="dirt";
+	map[3][5].passable=false;*/
+	//map[5][2].bitmap="dirt_back";
+	//map[5][2].passable=true;
+	//map[5][3].bitmap="dirt_back";
+	//map[5][3].passable=true;
+	//map[5][4].bitmap="dirt_back";
+	//map[5][4].passable=true;
+	//map[5][5].bitmap="dirt_back_down";
+	//map[5][5].passable=true;
 	affection_boxes=new Affection_box[2];
 	ALLEGRO_EVENT_QUEUE *game_events = al_create_event_queue();
 	al_register_event_source(game_events, al_get_keyboard_event_source());
@@ -254,7 +261,7 @@ void main_game()
 	test_NPC.PosY=200;
 
 
-	affection_boxes[0].set_up(100,300,50,32,NOTHING,NULL,0);
+	affection_boxes[0].set_up(100,100,50,32,NOTHING,NULL,0);
 	//affection_boxes[1].set_up(200,250,50,100,NOTHING,NULL,0);
 	affection_boxes[0].add_flags(1,FLAG_UNPASSABLE);
 	
@@ -277,6 +284,7 @@ void main_game()
 		check_affection_box_collision_NPC(3,test_NPC);
 
 		test_NPC.Gather_data();
+		//test_NPC.apply_move(ALLEGRO_KEY_SPACE);
 		test_NPC.move();
 		test_NPC.draw();
 		//----------------------//
@@ -284,11 +292,12 @@ void main_game()
 		
 		affection_boxes[0].debug_draw_frame();
 		affection_boxes[1].debug_draw_frame();
-		check_affection_box_collision_player(3);
+		
 
 		//----------------------//
 		
 		//PLAYER STUFF
+		check_affection_box_collision_player(3);
 		player.move();
 		player.apply_move(NULL);
 		player.draw();

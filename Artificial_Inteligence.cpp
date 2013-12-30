@@ -40,8 +40,12 @@ int Artificial_Inteligence::Estimate_distance(int to_box,int PosX,int PosY)
 
 void Artificial_Inteligence::Gather_data()
 	{
-		if(Estimate_distance()>5&&Estimate_distance()<100)
+		cout<<Estimate_distance()<<endl;
+		if(Estimate_distance()>5&&Estimate_distance()<110)
 		{
+			
+			cout<<path_done<<","<<path_failed<<endl;
+			
 			if(!path_created&&!path_done)
 				Artificial_Inteligence::Prepare_path();
 			else if(path_created&&!path_done)
@@ -64,6 +68,10 @@ void Artificial_Inteligence::Take_path()											/////////////////////////////
 		{
 			for(int j=0;j<=path[i].how_far/4;j++)
 			{
+				if(path[i].dir==UP)
+				{
+						test_NPC.apply_move(ALLEGRO_KEY_SPACE);
+				}
 				if(path[i].dir==LEFT&&j%(int)test_NPC.speed==0)
 				{
 						test_NPC.apply_move(ALLEGRO_KEY_LEFT);
@@ -97,8 +105,7 @@ void Artificial_Inteligence::Prepare_path()
 			NPC_coords.x=test_NPC.PosX;
 			NPC_coords.y=test_NPC.PosY;
 
-			dummy.PosX=NPC_coords.x;
-			dummy.PosY=NPC_coords.y;
+			dummy = test_NPC;
 
 			bool on_left;
 			bool on_right;
@@ -106,10 +113,10 @@ void Artificial_Inteligence::Prepare_path()
 			bool under;
 			bool falling;
 			
-			
+
+
 			while(!path_created&&!path_failed)
 			{
-
 				check_affection_box_collision_NPC(3,dummy);
 				if(!dummy.on_ground)
 					falling=true;
@@ -135,17 +142,26 @@ void Artificial_Inteligence::Prepare_path()
 					above=false;
 					under=true;
 				}
+				dummy.apply_move(NULL);		
+
+				if(on_right&&!dummy.can_move_right||on_left&&!dummy.can_move_left)
+				{
+					dummy.apply_move(ALLEGRO_KEY_SPACE);
+					path[path.size()-1].dir=UP;
+					path.push_back(direction());
+
+				}
 				if(on_right)
 				{
-					if(dummy.can_move_left)
+					if(dummy.can_move_right||falling)
 					{
 							int i;
 							bool moved=false;
 							for(i=0;i<TileSize&&dummy.PosX<player.PosX;i++)
 							{
-			
+								
 								check_affection_box_collision_NPC(3,dummy);
-								if(dummy.can_move_right)
+								if(dummy.can_move_right||falling)
 								{
 									dummy.PosX++;
 									moved=true;
@@ -171,7 +187,7 @@ void Artificial_Inteligence::Prepare_path()
 				}
 				else if(on_left)
 				{
-					if(dummy.can_move_left)
+					if(dummy.can_move_left||falling)
 					{
 							int i;
 							bool moved=false;
@@ -179,7 +195,7 @@ void Artificial_Inteligence::Prepare_path()
 							{
 			
 								check_affection_box_collision_NPC(3,dummy);
-								if(dummy.can_move_left)
+								if(dummy.can_move_left||falling)
 								{
 									dummy.PosX--;
 									moved=true;
@@ -203,6 +219,14 @@ void Artificial_Inteligence::Prepare_path()
 					}
 
 				}
+
+				
+				//if(!dummy.can_move_left)
+				//	{cout<<"LEFT"<<endl;
+				//_getch();}
+				//if(!dummy.can_move_right)
+				//	{cout<<"RIGHT"<<endl;
+				//_getch();}
 				if(above)
 				{
 
@@ -222,8 +246,8 @@ void Artificial_Inteligence::Prepare_path()
 			
 
 			}
-			//cout<<"player"<<player.PosX<<","<<player.PosY<<endl;
-			//cout<<"dummy"<<dummy.PosX<<","<<dummy.PosY<<endl;
+			cout<<"player"<<player.PosX<<","<<player.PosY<<endl;
+			cout<<"dummy"<<dummy.PosX<<","<<dummy.PosY<<endl;
 			
 				DestX=dummy.PosX;
 				DestY=dummy.PosY;
