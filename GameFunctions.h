@@ -53,3 +53,4 @@ extern ALLEGRO_FONT *game_font;
 extern float cameraX;
 extern float cameraY;
 extern Affection_box *affection_boxes;
+extern NPC dummy;

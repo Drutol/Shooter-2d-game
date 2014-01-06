@@ -8,6 +8,7 @@ Lever *levers;
 Affection_box *affection_boxes;
 ALLEGRO_FONT *game_font;
 NPC test_NPC;
+NPC dummy;
 float cameraX,cameraY;
 bool check_door_collison()
 {

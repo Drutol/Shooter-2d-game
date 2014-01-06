@@ -3,11 +3,14 @@
 #include "link.h"
 Artificial_Inteligence::Artificial_Inteligence(void)
 {
+	this->uncomfirmed_path.push_back(direction());
 	this->path.push_back(direction());
 	this->target_found=false;
 	this->path_created=false;
 	this->path_failed=false;
 	this->path_done=false;
+	this->stuck=false;
+	this->current_path_element=0;
 }
 
 
@@ -35,68 +38,185 @@ int Artificial_Inteligence::Estimate_distance(int to_box,int PosX,int PosY)
 	if(to_box==-1)	
 	return sqrt(pow((player.PosX-test_NPC.PosX),2)+pow((player.PosY-test_NPC.PosY),2));
 	else if(to_box!=-1)
-	return sqrt(pow((PosX-test_NPC.PosX),2)+pow((PosY-test_NPC.PosY),2));
+		return sqrt(pow((player.PosX-PosX),2)+pow((player.PosY-PosY),2));
 }
 
 void Artificial_Inteligence::Gather_data()
 	{
-		cout<<Estimate_distance()<<endl;
-		if(Estimate_distance()>5&&Estimate_distance()<110)
-		{
-			
-			cout<<path_done<<","<<path_failed<<endl;
-			
+		if(Estimate_distance()>20&&Estimate_distance()<110)
+		{	
 			if(!path_created&&!path_done)
 				Artificial_Inteligence::Prepare_path();
-			else if(path_created&&!path_done)
-			{
-				Artificial_Inteligence::Take_path();
-			}
-			else if(path_done)
-			{
-				path_created=false;
-				path_done=false;
-				path.clear();
-				path.push_back(direction());
-			}
 		}
+		if(path_created&&!path_done)
+		{
+				Artificial_Inteligence::Take_path();
+		}
+		else if(path_done)
+		{
+			path_created=false;
+			path_done=false;
+			path.clear();
+			path.push_back(direction());
+		}
+		//TODO Timer class for stuck
 
 	}
 void Artificial_Inteligence::Take_path()											///////////////////////////////////////////////////////////////////////
 	{
-		for(int i=0;i<path.size()&&Estimate_distance()>15;i++)
+		if(current_path_element<path.size())
 		{
-			for(int j=0;j<=path[i].how_far/4;j++)
+			if(path[current_path_element].dir==RIGHT)
 			{
-				if(path[i].dir==UP)
+				if(path[current_path_element].how_far>0)
 				{
-						test_NPC.apply_move(ALLEGRO_KEY_SPACE);
+					test_NPC.apply_move(ALLEGRO_KEY_RIGHT);
+					path[current_path_element].how_far--;
 				}
-				if(path[i].dir==LEFT&&j%(int)test_NPC.speed==0)
+				else
+					current_path_element++;
+			}
+			if(path[current_path_element].dir==LEFT)
+			{
+				if(path[current_path_element].how_far>0)
 				{
-						test_NPC.apply_move(ALLEGRO_KEY_LEFT);
-				}																							//WTF.WTF.WTF.WTF//			
-				if(path[i].dir==RIGHT&&j%(int)test_NPC.speed==0)													
+					test_NPC.apply_move(ALLEGRO_KEY_LEFT);
+					path[current_path_element].how_far--;
+				}
+				else
+					current_path_element++;
+			}
+			if(path[current_path_element].dir==UP)
+			{
+			if(path[current_path_element].how_far>0)
 				{
-						test_NPC.apply_move(ALLEGRO_KEY_RIGHT);
+					test_NPC.apply_move(ALLEGRO_KEY_SPACE);
+					path[current_path_element].how_far--;
+				}
+				else
+					current_path_element++;
+
+			}
+
+		}
+		else
+		{
+			path_done=true;
+			current_path_element=0;
+		}
+	}																				/////////////////////////////////////////////////////////////////////////
+bool Artificial_Inteligence::Make_step(int dir)
+{
+		check_affection_box_collision_NPC(3,dummy);
+		dummy.apply_move(NULL);	
+		bool done=false;
+		while(!done)
+			{
+			
+			dummy.move();
+			cout<<dummy.PosY<<endl;
+			cout<<dir<<endl;
+
+			if(dir==RIGHT)
+			{
+				if(dummy.can_move_right||!dummy.on_ground)
+				{
+					int counter=0;
+					while(dummy.can_move_right||!dummy.on_ground)
+					{
+						check_affection_box_collision_NPC(3,dummy);
+						
+						dummy.apply_move(ALLEGRO_KEY_RIGHT);
+						dummy.move();
+						
+						if(Estimate_distance(0,dummy.PosX,dummy.PosY)<15||!dummy.can_move_right)
+							break;
+						if(abs(player.PosX-dummy.PosX)<15)
+							break;
+						counter++;
+					}
+					if(counter>0)
+					{
+						uncomfirmed_path[uncomfirmed_path.size()-1].dir=RIGHT;
+						uncomfirmed_path[uncomfirmed_path.size()-1].how_far=counter;
+						uncomfirmed_path.push_back(direction());
+					}
 				}
 			}
-		}
-		path_done=true;
-	}																				/////////////////////////////////////////////////////////////////////////
-void Artificial_Inteligence::Make_step()
-	{
+			if(dir==LEFT)
+			{
+				if(dummy.can_move_left||!dummy.on_ground)
+				{
+					int counter=0;
+					while(dummy.can_move_left||!dummy.on_ground)
+					{
+						check_affection_box_collision_NPC(3,dummy);
+						
+						dummy.apply_move(ALLEGRO_KEY_LEFT);
+						dummy.move();
+						if(Estimate_distance(0,dummy.PosX,dummy.PosY)<15||!dummy.can_move_left)
+							break;
+						if(abs(player.PosX-dummy.PosX)<15)
+							break;
+						counter++;
+					}
+					if(counter>0)
+					{
+						uncomfirmed_path[uncomfirmed_path.size()-1].dir=LEFT;
+						uncomfirmed_path[uncomfirmed_path.size()-1].how_far=counter;
+						uncomfirmed_path.push_back(direction());
+					}
+				}
+			}
+			if(abs(player.PosY-dummy.PosY)>15&&dummy.on_ground||player.PosX>dummy.PosX&&!dummy.can_move_right||player.PosX<dummy.PosX&&!dummy.can_move_left)
+			{
+				bool above=false;
+				bool under=false;
+				bool on_right=false;
+				bool on_left=false;
+				
+				if(player.PosX>dummy.PosX)
+					on_right=true;
+				else
+					on_left=true;
+				if(player.PosY<dummy.PosY)
+					above=true;
+				else
+					under=true;
 
-	}
+				if(on_right&&!dummy.can_move_right||on_left&&!dummy.can_move_left)
+				{
+					
+						dummy.apply_move(ALLEGRO_KEY_SPACE);
+						dummy.move();
+						uncomfirmed_path[uncomfirmed_path.size()-1].dir=UP;
+						uncomfirmed_path[uncomfirmed_path.size()-1].how_far=1;
+						uncomfirmed_path.push_back(direction());
+				}
+				if(on_right)
+					dir=RIGHT;
+				if(on_left)
+					dir=LEFT;
+			}
+			if(Estimate_distance(0,dummy.PosX,dummy.PosY)<15||abs(player.PosX-dummy.PosX)<15)
+				done=true;
+
+		}
+		if(done)
+			return true;
+		else
+			return false;
+	
+}
 void Artificial_Inteligence::Fullfil_destiny()
 	{
 
 	}
+
 void Artificial_Inteligence::Prepare_path()
-	{
+{
 		if(!path_created&&!path_failed)
 		{
-			NPC dummy;
 			coords Player_coords;
 			coords NPC_coords;
 			Player_coords.x=player.get_posx();
@@ -113,11 +233,13 @@ void Artificial_Inteligence::Prepare_path()
 			bool under;
 			bool falling;
 			
+			int first_dir_to_check;
 
-
-			while(!path_created&&!path_failed)
+			while(!path_created&&!path_failed&&!stuck)
 			{
+				
 				check_affection_box_collision_NPC(3,dummy);
+				dummy.apply_move(NULL);	
 				if(!dummy.on_ground)
 					falling=true;
 				else
@@ -142,118 +264,73 @@ void Artificial_Inteligence::Prepare_path()
 					above=false;
 					under=true;
 				}
-				dummy.apply_move(NULL);		
-
-				if(on_right&&!dummy.can_move_right||on_left&&!dummy.can_move_left)
+				if(Player_coords.y==NPC_coords.y)
 				{
-					dummy.apply_move(ALLEGRO_KEY_SPACE);
-					path[path.size()-1].dir=UP;
-					path.push_back(direction());
-
+					above=false;
+					under=false;
 				}
-				if(on_right)
-				{
-					if(dummy.can_move_right||falling)
-					{
-							int i;
-							bool moved=false;
-							for(i=0;i<TileSize&&dummy.PosX<player.PosX;i++)
-							{
-								
-								check_affection_box_collision_NPC(3,dummy);
-								if(dummy.can_move_right||falling)
-								{
-									dummy.PosX++;
-									moved=true;
-								}
-								else
-								{
-									path[path.size()-1].dir=RIGHT;
-									path[path.size()-1].how_far=i;
-									path.push_back(direction());
-									moved=false;
-									break;
-								}
-							}
-					
-							if(moved)
-							{
-									path[path.size()-1].dir=RIGHT;
-									path[path.size()-1].how_far=i;
-									path.push_back(direction());
-							}
-					}
+				
+				
 
-				}
-				else if(on_left)
-				{
-					if(dummy.can_move_left||falling)
-					{
-							int i;
-							bool moved=false;
-							for(i=0;i<TileSize&&dummy.PosX>player.PosX;i++)
-							{
-			
-								check_affection_box_collision_NPC(3,dummy);
-								if(dummy.can_move_left||falling)
-								{
-									dummy.PosX--;
-									moved=true;
-								}
-								else
-								{
-									path[path.size()-1].dir=LEFT;
-									path[path.size()-1].how_far=i;
-									path.push_back(direction());
-									moved=false;
-									break;
-								}
-							}
-					
-							if(moved)
-							{
-									path[path.size()-1].dir=LEFT;
-									path[path.size()-1].how_far=i;
-									path.push_back(direction());
-							}
-					}
-
-				}
 
 				
-				//if(!dummy.can_move_left)
-				//	{cout<<"LEFT"<<endl;
-				//_getch();}
-				//if(!dummy.can_move_right)
-				//	{cout<<"RIGHT"<<endl;
-				//_getch();}
-				if(above)
-				{
+					if(on_right)
+					{
+						
+						bool succes=Make_step(RIGHT);
+						if(succes)
+							merge_paths();
+						else
+							succes=Make_step(LEFT);
+						if(succes)
+							merge_paths();
 
-				}
-				else if(under)
-				{
-
-				}
-
-				if(abs(player.PosX-dummy.PosX)<15)
-				{
-					path_created=true;
-				}
-				if(path.size()>20)
-					path_failed=true;
-
+					}
+					if(on_left)
+					{
+						
+						bool succes=Make_step(LEFT);
+						if(succes)
+							merge_paths();
+						else
+							succes=Make_step(RIGHT);
+						if(succes)
+							merge_paths();
+					}
+				
+				
+		
 			
-
-			}
-			cout<<"player"<<player.PosX<<","<<player.PosY<<endl;
-			cout<<"dummy"<<dummy.PosX<<","<<dummy.PosY<<endl;
 			
-				DestX=dummy.PosX;
-				DestY=dummy.PosY;
-		}
+			path_created=true;
+			
+			
+			
+			
+			
+			}//While
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		}//Main check
 
-	}
+
+
+
+
+}
+
 
 bool Artificial_Inteligence::check_logic(int action)
 {
@@ -270,4 +347,28 @@ bool Artificial_Inteligence::check_logic(int action)
 
 
 	return false;
+}
+
+void Artificial_Inteligence::merge_paths()
+{
+	try
+	{
+		if(uncomfirmed_path.size()>0)
+		{
+			for(int i=0;i<uncomfirmed_path.size();i++)
+			{
+				path.push_back(uncomfirmed_path[i]);
+			}
+		
+			uncomfirmed_path.clear();
+			uncomfirmed_path.push_back(direction());
+		
+		}
+		else throw -1;
+	}
+	catch(int ex)
+	{
+		cout<<ex<<endl;
+		_getch();
+	}
 }
