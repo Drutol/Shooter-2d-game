@@ -14,6 +14,7 @@
 #include <allegro5\allegro_ttf.h>
 #include <allegro5\allegro_native_dialog.h> 
 #include <allegro5\allegro_image.h>
+#include <allegro5\allegro_opengl.h>
 
 //Other libs
 #include <stdio.h>
@@ -28,6 +29,7 @@
 #include <stdio.h>
 #include <vector>
 #include <sstream>
+#include <Windows.h>
 
 //Functions
 void main_game();

@@ -61,11 +61,25 @@ void level_editor()
 	al_register_event_source(edit_event_queue,al_get_display_event_source(display));
 	al_register_event_source(edit_event_queue,al_get_keyboard_event_source());
 	al_init_image_addon();
-	
+	ALLEGRO_FILECHOOSER *test;
+	test=al_create_native_file_dialog("Levels/CustomMaps/","Load",NULL,ALLEGRO_FILECHOOSER_FOLDER);
 	int mouse_tile_X;
 	int mouse_tile_Y;
 	std::stringstream executable;
 	bool is_window_active=true;
+	bool reload_level=false;
+	std::string filePath;
+
+	levers.push_back(Lever());
+	levers[0].set_up(2,128,128,0,ALLEGRO_KEY_E);
+	levers[0].add_affected_objects(DOOR,0);
+	levers.push_back(Lever());
+	levers[1].set_up(0,400,400,1,NULL);
+
+	doors.push_back(Doors());
+	doors[0].set_up(4,4,0,1,OPEN,UP);
+
+
 	while(!edit_done)
 	{
 		ALLEGRO_EVENT edit_event;
@@ -82,12 +96,12 @@ void level_editor()
 		}
 		map_draw_back();
 		map_draw_front();
-		
+		draw_objects();
 		mouse_tile_X=edit_event.mouse.x/TileSize;
 		mouse_tile_Y=edit_event.mouse.y/TileSize;
 		
 		al_draw_bitmap(return_appropriate_bitmap("overlay"),mouse_tile_X*TileSize-3,mouse_tile_Y*TileSize-3,NULL);
-		if(edit_event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
+		if(get_mouse_state("LMB"))
 			{
 				prepare_command(executable,mouse_tile_X,mouse_tile_Y);
 				cout<<executable.str()<<endl;
@@ -99,6 +113,76 @@ void level_editor()
 			{
 				system("LevelEditor.exe Help");
 			}
+		if(keyboard_input_specific(ALLEGRO_KEY_J))
+			{
+				int succes = system("LevelEditor.exe Save");
+				cout<<succes<<endl;
+				if(succes==1)
+				{
+					std::ifstream in("Levels/LevelEditor/temp.dat");
+					std::string name;
+					getline(in,name);
+					remove("Levels/LevelEditor/temp.dat");
+					std::string path="Levels/";
+					path+=name;
+					_mkdir(path.c_str());
+					save_map(name);
+				}
+			}
+		if(keyboard_input_specific(ALLEGRO_KEY_K))
+		{
+			al_show_native_file_dialog(display,test);
+		    if( al_get_native_file_dialog_count(test) > 0 )
+			{
+     
+			 filePath.clear();
+			 filePath = al_get_native_file_dialog_path(test,0);
+
+			 reload_level=true;
+			}
+ 
+			cout<<filePath<<endl;
+		}
+		if(get_mouse_state("RMB"))
+		{
+			std::vector<int> lever_ID;
+			std::ofstream out("Levels/LevelEditor/temp.dat");
+			if(map[mouse_tile_X][mouse_tile_Y].held_object==DOOR)
+			{
+				for(int i=0;i<count_levers();i++)
+				{
+					for(int j=0;j<levers[i].connections;j++)
+					{
+						if(levers[i].affected_object[j].type==DOOR&&levers[i].affected_object[j].ID==map[mouse_tile_X][mouse_tile_Y].held_object_ID)
+							{
+								out<<LEVER<<std::endl<<i<<std::endl;
+								lever_ID.push_back(i);
+							}
+						
+					}
+				}
+				out.close();
+				out.open("Levels/LevelEditor/temp1.dat");
+				for(int i=0;i<count_levers();i++)
+				{
+					bool can_add=true;
+					for(int j=0;j<lever_ID.size();j++)
+					{
+						if(i==lever_ID[j])
+							can_add=false;
+					}
+					if(can_add)
+					{
+						out<<LEVER<<std::endl<<i<<std::endl;
+					}
+				}
+				bool succes = system("LevelEditor.exe Object Door 300 300 ");
+			
+			
+			
+			
+			}
+		}
 		if(keyboard_input_specific(ALLEGRO_KEY_ESCAPE))
 			edit_done=true;
 		if(edit_event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
@@ -109,6 +193,11 @@ void level_editor()
 		al_flip_display();
 		al_clear_to_color(al_map_rgb(0,0,0));
 		
+		if(reload_level)
+		{
+			load_level(filePath,true);
+			reload_level=false;
+		}
 	}
 
 

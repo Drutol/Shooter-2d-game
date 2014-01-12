@@ -14,8 +14,6 @@ void main_game()
 	al_rest(1.0);
 
 	al_clear_to_color(al_map_rgb(255,255,255));
-	levers = new Lever[20];
-	doors = new Doors[20];
 	game_font = al_load_font("Resources/leadcoat.ttf",40,NULL);
 	al_install_keyboard();
 	al_init_image_addon();

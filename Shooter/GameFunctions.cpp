@@ -5,8 +5,8 @@
 ALLEGRO_TRANSFORM camera;
 tile map[20][20];
 Player player;
-Doors *doors;
-Lever *levers;
+std::vector<Doors> doors;
+std::vector<Lever> levers;
 Affection_box *affection_boxes;
 ALLEGRO_FONT *game_font;
 NPC test_NPC;
@@ -86,18 +86,18 @@ int get_random_number(int min, int max)
 {
 	return rand()%(max-min+1)+min;
 }
-int get_mouse_state(char task)
+int get_mouse_state(std::string task)
 {
 	ALLEGRO_MOUSE_STATE mousestate;
 	al_get_mouse_state(&mousestate);
-	if(task == 'x')
+	if(task == "x")
 		return mousestate.x;
-	if(task == 'y')
+	if(task == "y")
 		return mousestate.y;
-	if(task == 'LMB')
-		return al_mouse_button_down(&mousestate,1);
-	if(task == 'RMB')
-		return al_mouse_button_down(&mousestate,2);
+	if(task == "LMB")
+		return mousestate.buttons & 1;
+	if(task == "RMB")
+		return mousestate.buttons & 2; 
 }
 ALLEGRO_BITMAP* return_appropriate_bitmap(std::string which)
 {
@@ -144,22 +144,28 @@ void init_bitmaps(int for_lvl)
 int count_doors()
 {
 	int counted_doors=0;
-	for(int i=0;i<20;i++)
-	{
-		if(doors[i].exists==1)
-			counted_doors++;
-		else break;
+	if(!doors.empty())
+		{
+		for(int i=0;i<20;i++)
+		{
+			if(doors[i].exists==1)
+				counted_doors++;
+			else break;
+		}
 	}
 	return counted_doors;
 }
 int count_levers()
 {
 	int counted_levers=0;
-	for(int i=0;i<20;i++)
+	if(!levers.empty())
 	{
-		if(levers[i].exists==1)
-			counted_levers++;
-		else break;
+		for(int i=0;i<20;i++)
+		{
+			if(levers[i].exists==1)
+				counted_levers++;
+			else break;
+		}
 	}
 	return counted_levers;
 }
@@ -413,34 +419,40 @@ void overwrite_tile(int x,int y,bool is_passable,std::string bitmap,int held_obj
 	if(held_object>-1)
 		map[x][y].held_object=DOOR;
 }
-void save_map()
+void save_map(std::string path)
 {
-	std::ofstream out("Levels/Level1/levers.dat");
-	out<<count_levers()<<endl;
-	for(int i=0;i<count_levers();i++)
+	if(count_levers()!=0)
 	{
-		out<<levers[i].PosX<<endl;
-		out<<levers[i].PosY<<endl;
-		out<<levers[i].connections<<endl;
-		for(int j=0;j<levers[i].connections;j++)
+		std::ofstream out("Levels/"+path+"/levers.dat");
+		out<<count_levers()<<endl;
+		for(int i=0;i<count_levers();i++)
 		{
-			out<<levers[i].affected_object[j].type<<endl;
-			out<<levers[i].affected_object[j].ID<<endl;
+			out<<levers[i].PosX<<endl;
+			out<<levers[i].PosY<<endl;
+			out<<levers[i].connections<<endl;
+			for(int j=0;j<levers[i].connections;j++)
+			{
+				out<<levers[i].affected_object[j].type<<endl;
+				out<<levers[i].affected_object[j].ID<<endl;
+			}
 		}
+		out.close();
 	}
-	out.close();
-	out.open("Levels/Level1/doors.dat");
-	out<<count_doors()<<endl;
-	for(int j=0;j<count_doors();j++)
+	if(count_doors()!=0)
 	{
-		out<<doors[j].tile_X<<endl;
-		out<<doors[j].tile_Y<<endl;
-		out<<doors[j].door_speed<<endl;
-		out<<doors[j].state<<endl;
-		out<<doors[j].direction<<endl;
+		std::ofstream out("Levels/"+path+"/doors.dat");
+		out<<count_doors()<<endl;
+		for(int j=0;j<count_doors();j++)
+		{
+			out<<doors[j].tile_X<<endl;
+			out<<doors[j].tile_Y<<endl;
+			out<<doors[j].door_speed<<endl;
+			out<<doors[j].state<<endl;
+			out<<doors[j].direction<<endl;
+		}
+		out.close();
 	}
-	out.close();
-	out.open("Levels/Level1/map.dat");
+	std::ofstream out("Levels/"+path+"/map.dat");
 	for(int i=0;i<20;i++)
 	{
 		for(int j=0;j<20;j++)
@@ -461,55 +473,66 @@ void save_map()
 	}
 	out.close();
 }
-void load_level(std::string level_path)
+void load_level(std::string level_path,bool full_path)
 {
 	string line;
-	
-	std::fstream file("Levels/"+level_path+"/map.dat");
+	std::fstream file;
+	if(full_path)
+		{
+			level_path+="/map.dat";
+			file.open(level_path);
+		}
+	else
+		file.open("Levels/"+level_path+"/map.dat");
 	
 	for(int i=0;i<20;i++)
 	{
 		for(int j=0;j<20;j++)
 		{
-			getline(file,line);
+			std::getline(file,line);
 			map[i][j].x=atoi(line.c_str());
-			getline(file,line);
+			std::getline(file,line);
 			map[i][j].y=atoi(line.c_str());
-			getline(file,line);
+			std::getline(file,line);
 			map[i][j].passable=atoi(line.c_str());
-			getline(file,line);
+			std::getline(file,line);
 			map[i][j].held_object=atoi(line.c_str());
-			getline(file,line);
+			std::getline(file,line);
 			map[i][j].held_object_ID=atoi(line.c_str());
-			getline(file,line);
+			std::getline(file,line);
 			map[i][j].bitmap=line;
 		}
 	}
 	file.close();
-	file.open("Levels/Level1/levers.dat");
-	getline(file,line);
+   if(full_path)
+		{
+			level_path+="/levers.dat";
+			file.open(level_path);
+		}
+	else
+		file.open("Levels/"+level_path+"/levers.dat");
+	std::getline(file,line);
 	int lever_number=atoi(line.c_str());
 	if(lever_number>0)
 	{
-			levers = new Lever[lever_number];
 	
 		for(int i=0;i<lever_number;i++)
 		{
-		
+			levers.push_back(Lever());
 			int x,y,conns=0;
-			getline(file,line);
+			std::getline(file,line);
 			x=atoi(line.c_str());
-			getline(file,line);
+			std::getline(file,line);
 			y=atoi(line.c_str());
-			getline(file,line);
+			std::getline(file,line);
 			conns=atoi(line.c_str());
 			levers[i].set_up(conns,x,y,i,ALLEGRO_KEY_E);
 			for(int j=0;j<conns;j++)
 			{
 				int type,obj_ID;
-				getline(file,line);
+				std::getline(file,line);
 				type=atoi(line.c_str());
-				getline(file,line);
+				std::getline(file,line);
 				obj_ID=atoi(line.c_str());
 				levers[i].add_affected_objects(type,obj_ID);
 			}
@@ -517,26 +540,31 @@ void load_level(std::string level_path)
 		}
 	}
 	file.close();
-	file.open("Levels/Level1/doors.dat");
-	getline(file,line);
+		if(full_path)
+		{
+			level_path+="/doors.dat";
+			file.open(level_path);
+		}
+	else
+		file.open("Levels/"+level_path+"/doors.dat");
+	std::getline(file,line);
 	int door_number=atoi(line.c_str());
 	if(door_number>0)
 	{
 
-		doors = new Doors[door_number];
-
 		for(int i=0;i<door_number;i++)
 		{
+			doors.push_back(Doors());
 			int x,y,speed,dir,state;
-			getline(file,line);
+			std::getline(file,line);
 			x=atoi(line.c_str());
-			getline(file,line);
+			std::getline(file,line);
 			y=atoi(line.c_str());
-			getline(file,line);
+			std::getline(file,line);
 			speed=atoi(line.c_str());
-			getline(file,line);
+			std::getline(file,line);
 			state=atoi(line.c_str());
-			getline(file,line);
+			std::getline(file,line);
 			dir=atoi(line.c_str());
 		
 		
