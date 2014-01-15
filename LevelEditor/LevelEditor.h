@@ -81,8 +81,8 @@ namespace LevelEditor {
 				
 				image_path="Resources/"+arg[6]+".png";
 				bitmap_ID=bitmap;
-				this->label_tile_x->Text=arg[0];
-				this->label_tile_y->Text=arg[1];
+				this->label_tile_x->Text=arg[1];
+				this->label_tile_y->Text=arg[2];
 				if(passable==1)
 					box_passable->Checked=true;
 				else

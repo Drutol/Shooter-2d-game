@@ -10,6 +10,7 @@ public:
 	int tile_X;
 	int tile_Y;
 	int state;
+	int initial_state;
 	int direction;
 	float door_speed;
 	bool exists;

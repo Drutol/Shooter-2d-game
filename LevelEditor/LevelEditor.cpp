@@ -20,7 +20,7 @@ void main(array<String^>^ arg)
 		LevelEditor::SaveForm form;
 		Application::Run(%form);
 	}
-	else if(arg[0]=="Tile")
+	else if(arg[0]=="Tile"||arg[0]=="Help")
 	{
 		LevelEditor::LevelEditor form(arg);	
 		Application::Run(%form);

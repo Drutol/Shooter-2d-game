@@ -38,16 +38,28 @@ void update_map()
 }
 
 
-void prepare_command(std::stringstream &stream,int x,int y)
+void prepare_command(std::stringstream &stream,int x,int y,std::string for_obj,int ID=0)
 {
-	cout<<map[x][y].passable<<endl;
-	stream<<"LevelEditor.exe "
-		  <<map[x][y].x<<" "
-		  <<map[x][y].y<<" "
-		  <<map[x][y].passable<<" "
-		  <<map[x][y].held_object<<" "
-		  <<map[x][y].held_object_ID<<" "
-		  <<map[x][y].bitmap<<" ";
+	if(for_obj=="tile")
+	{
+		stream<<"LevelEditor.exe Tile "
+			  <<map[x][y].x<<" "
+			  <<map[x][y].y<<" "
+			  <<map[x][y].passable<<" "
+			  <<map[x][y].held_object<<" "
+			  <<map[x][y].held_object_ID<<" "
+			  <<map[x][y].bitmap<<" ";
+	}
+	else if(for_obj=="door")
+	{
+		stream<<"LevelEditor.exe Object Door "
+			<<doors[ID].tile_X*TileSize<<" "
+			<<doors[ID].tile_Y*TileSize<<" "
+			<<doors[ID].door_speed<<" "
+			<<doors[ID].initial_state<<" "
+			<<doors[ID].direction;
+
+	}
 
 }
 
@@ -77,8 +89,7 @@ void level_editor()
 	levers[1].set_up(0,400,400,1,NULL);
 
 	doors.push_back(Doors());
-	doors[0].set_up(4,4,0,1,OPEN,UP);
-
+	doors[0].set_up(4,4,0,1,CLOSED,UP);
 
 	while(!edit_done)
 	{
@@ -103,7 +114,7 @@ void level_editor()
 		al_draw_bitmap(return_appropriate_bitmap("overlay"),mouse_tile_X*TileSize-3,mouse_tile_Y*TileSize-3,NULL);
 		if(get_mouse_state("LMB"))
 			{
-				prepare_command(executable,mouse_tile_X,mouse_tile_Y);
+				prepare_command(executable,mouse_tile_X,mouse_tile_Y,"tile");
 				cout<<executable.str()<<endl;
 				system(executable.str().c_str());
 				executable.str(string());
@@ -116,7 +127,6 @@ void level_editor()
 		if(keyboard_input_specific(ALLEGRO_KEY_J))
 			{
 				int succes = system("LevelEditor.exe Save");
-				cout<<succes<<endl;
 				if(succes==1)
 				{
 					std::ifstream in("Levels/LevelEditor/temp.dat");
@@ -143,12 +153,14 @@ void level_editor()
  
 			cout<<filePath<<endl;
 		}
+		///////////////////////////////////////////////////////////////////////////////
 		if(get_mouse_state("RMB"))
 		{
 			std::vector<int> lever_ID;
 			std::ofstream out("Levels/LevelEditor/temp.dat");
 			if(map[mouse_tile_X][mouse_tile_Y].held_object==DOOR)
 			{
+				int doorID=map[mouse_tile_X][mouse_tile_Y].held_object_ID;
 				for(int i=0;i<count_levers();i++)
 				{
 					for(int j=0;j<levers[i].connections;j++)
@@ -176,13 +188,111 @@ void level_editor()
 						out<<LEVER<<std::endl<<i<<std::endl;
 					}
 				}
-				bool succes = system("LevelEditor.exe Object Door 300 300 ");
-			
-			
-			
-			
+				out.close();
+				prepare_command(executable,mouse_tile_X,mouse_tile_Y,"door",doorID);
+				cout<<executable.str()<<endl;
+				bool succes = system(executable.str().c_str());
+				executable.str(std::string());
+				if(succes)
+				{
+					Doors temp_door;
+					temp_door=doors[doorID];
+					std::ifstream in ("Levels/LevelEditor/temp.dat");
+					if(in.is_open())
+						{
+							int x,y,speed,is_open,dir;
+							std::string reader;
+							getline(in,reader);
+							x=atoi(reader.c_str());
+							getline(in,reader);
+							y=atoi(reader.c_str());
+							getline(in,reader);
+							is_open=atoi(reader.c_str());
+							getline(in,reader);
+							speed=atoi(reader.c_str());
+							getline(in,reader);
+							dir=atoi(reader.c_str());
+							
+							temp_door.set_up(x,y,doorID,speed,is_open,dir);
+							doors[doorID].~Doors();
+							doors[doorID]=temp_door;
+							
+						}
+					in.close();
+					remove("Levels/LevelEditor/temp.dat");
+					in.open("Levels/LevelEditor/trigs_temp.dat");
+					if(in.is_open())
+					{
+						std::vector<int>IDs;
+						std::string reader;
+						while(!in.eof())
+						{
+							getline(in,reader);
+							int ID;
+							if(reader[0]=='L')
+							{
+								cout<<reader.length()<<endl;
+								if(reader.length()==7)
+								{
+									ID=reader[6]-'0';
+									IDs.push_back(ID);
+								}
+								else if(reader.length()==8)
+								{
+									int temp;
+									temp=(reader[6]-'0')*10;
+									ID=(reader[7]-'0')+temp;
+									IDs.push_back(ID);
+								}
+							}
+						}
+						for(int i=0;i<IDs.size();i++)
+						{
+							levers[IDs[i]].add_affected_objects(DOOR,doorID);
+
+						}
+					in.close();
+					in.open("Levels/LevelEditor/ava_trigs_temp.dat");
+					if(in.is_open())
+					{
+						std::vector<int>IDs;
+						std::string reader;
+						while(!in.eof())
+						{
+							getline(in,reader);
+							int ID;
+							if(reader[0]=='L')
+							{
+								cout<<reader.length()<<endl;
+								if(reader.length()==7)
+								{
+									ID=reader[6]-'0';
+									IDs.push_back(ID);
+								}
+								else if(reader.length()==8)
+								{
+									int temp;
+									temp=(reader[6]-'0')*10;
+									ID=(reader[7]-'0')+temp;
+									IDs.push_back(ID);
+								}
+							}
+						}
+						for(int i=0;i<IDs.size();i++)
+						{
+							levers[IDs[i]].add_affected_objects(DOOR,doorID);
+						}
+					
+					
+					
+					}
+				}
+
+
 			}
+			
 		}
+		/////////////////////////////////////////////////////////////
 		if(keyboard_input_specific(ALLEGRO_KEY_ESCAPE))
 			edit_done=true;
 		if(edit_event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
@@ -199,9 +309,4 @@ void level_editor()
 			reload_level=false;
 		}
 	}
-
-
-
-
-
 }

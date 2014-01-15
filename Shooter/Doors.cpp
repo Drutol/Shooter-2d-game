@@ -27,8 +27,11 @@ void Doors::set_up(int tile_X,int tile_Y,int ID,int speed,int initial_state,int 
 		crop_Y=124;
 	else if(initial_state==OPEN&&direction==DOWN)
 		crop_Y=0;
+	else if(initial_state==CLOSED)
+		crop_Y=64;
 	map[tile_X][tile_Y].held_object=DOOR;
 	map[tile_X][tile_Y].held_object_ID=ID;
+	this->initial_state=initial_state;
 	Doors::update_map();
 
 }
