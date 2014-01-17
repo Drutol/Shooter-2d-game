@@ -488,9 +488,13 @@ private: System::Void button_submit_door_Click(System::Object^  sender, System::
 					{
 						std::string temp;
 						msclr::interop::marshal_context context;
-						out.open("Levels/LevelEditor/trigs_temp.dat");
+						out.open("Levels/LevelEditor/curr_trigs_temp.dat");
 						for(int i=0;i<listBox2->Items->Count;i++)
 							out<<context.marshal_as<std::string>(listBox2->Items[i]->ToString())<<std::endl;
+						out.close();
+						out.open("Levels/LevelEditor/ava_trigs_temp.dat");
+						for(int i=0;i<listBox1->Items->Count;i++)
+							out<<context.marshal_as<std::string>(listBox1->Items[i]->ToString())<<std::endl;
 					}
 				}
 				std::exit(1);

@@ -196,7 +196,7 @@ void check_interactions(int tile_X,int tile_Y,int with_key)
 			}
 			else
 			{
-				for(int i=0;i<levers[ID].connections;i++)
+				for(int i=0;i<levers[ID].affected_object.size();i++)
 				{
 					if(levers[ID].affected_object[i].type==DOOR)
 					indicator.highlight_object(doors[levers[ID].affected_object[i].ID].tile_X,doors[levers[ID].affected_object[i].ID].tile_Y);
@@ -392,12 +392,15 @@ void check_affection_box_collision_player(int radius)
 }
 bool check_door_collision()
 {
-	if(map[player.get_tile_X()][player.get_tile_Y()].passable==false&&map[player.get_tile_X()][player.get_tile_Y()].held_object==DOOR)
+	if(!doors.empty())
 	{
-		if(doors[map[player.get_tile_X()][player.get_tile_Y()].held_object_ID].state==OPENING||doors[map[player.get_tile_X()][player.get_tile_Y()].held_object_ID].state==CLOSING)
-			return true;
+		if(map[player.get_tile_X()][player.get_tile_Y()].passable==false&&map[player.get_tile_X()][player.get_tile_Y()].held_object==DOOR)
+		{
+			if(doors[map[player.get_tile_X()][player.get_tile_Y()].held_object_ID].state==OPENING||doors[map[player.get_tile_X()][player.get_tile_Y()].held_object_ID].state==CLOSING)
+				return true;
+		}
+		return false;
 	}
-	return false;
 }
 void kill_player()
 {
@@ -429,8 +432,8 @@ void save_map(std::string path)
 		{
 			out<<levers[i].PosX<<endl;
 			out<<levers[i].PosY<<endl;
-			out<<levers[i].connections<<endl;
-			for(int j=0;j<levers[i].connections;j++)
+			out<<levers[i].affected_object.size()<<endl;
+			for(int j=0;j<levers[i].affected_object.size();j++)
 			{
 				out<<levers[i].affected_object[j].type<<endl;
 				out<<levers[i].affected_object[j].ID<<endl;
@@ -526,7 +529,7 @@ void load_level(std::string level_path,bool full_path)
 			y=atoi(line.c_str());
 			std::getline(file,line);
 			conns=atoi(line.c_str());
-			levers[i].set_up(conns,x,y,i,ALLEGRO_KEY_E);
+			levers[i].set_up(x,y,i,ALLEGRO_KEY_E);
 			for(int j=0;j<conns;j++)
 			{
 				int type,obj_ID;

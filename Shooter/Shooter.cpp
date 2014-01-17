@@ -53,8 +53,10 @@ void main_game()
 		map_draw_back();
 		if(check_door_collision())
 			kill_player();
+		
 		check_interactions(player.get_tile_X(),player.get_tile_Y(),keyboard_input());
 
+		cout<<doors[0].exists<<endl;
 
 		check_affection_box_collision_NPC(3,test_NPC);
 

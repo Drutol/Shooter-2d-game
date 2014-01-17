@@ -82,15 +82,6 @@ void level_editor()
 	bool reload_level=false;
 	std::string filePath;
 
-	levers.push_back(Lever());
-	levers[0].set_up(2,128,128,0,ALLEGRO_KEY_E);
-	levers[0].add_affected_objects(DOOR,0);
-	levers.push_back(Lever());
-	levers[1].set_up(0,400,400,1,NULL);
-
-	doors.push_back(Doors());
-	doors[0].set_up(4,4,0,1,CLOSED,UP);
-
 	while(!edit_done)
 	{
 		ALLEGRO_EVENT edit_event;
@@ -163,7 +154,7 @@ void level_editor()
 				int doorID=map[mouse_tile_X][mouse_tile_Y].held_object_ID;
 				for(int i=0;i<count_levers();i++)
 				{
-					for(int j=0;j<levers[i].connections;j++)
+					for(int j=0;j<levers[i].affected_object.size();j++)
 					{
 						if(levers[i].affected_object[j].type==DOOR&&levers[i].affected_object[j].ID==map[mouse_tile_X][mouse_tile_Y].held_object_ID)
 							{
@@ -220,7 +211,7 @@ void level_editor()
 						}
 					in.close();
 					remove("Levels/LevelEditor/temp.dat");
-					in.open("Levels/LevelEditor/trigs_temp.dat");
+					in.open("Levels/LevelEditor/curr_trigs_temp.dat");
 					if(in.is_open())
 					{
 						std::vector<int>IDs;
@@ -231,7 +222,6 @@ void level_editor()
 							int ID;
 							if(reader[0]=='L')
 							{
-								cout<<reader.length()<<endl;
 								if(reader.length()==7)
 								{
 									ID=reader[6]-'0';
@@ -246,12 +236,15 @@ void level_editor()
 								}
 							}
 						}
+						// Adding an object to specified ID
 						for(int i=0;i<IDs.size();i++)
 						{
 							levers[IDs[i]].add_affected_objects(DOOR,doorID);
-
+							cout<<"ADDED"<<doorID<<endl;
 						}
+						IDs.clear();
 					in.close();
+					remove("Levels/LevelEditor/curr_trigs_temp.dat");
 					in.open("Levels/LevelEditor/ava_trigs_temp.dat");
 					if(in.is_open())
 					{
@@ -263,7 +256,6 @@ void level_editor()
 							int ID;
 							if(reader[0]=='L')
 							{
-								cout<<reader.length()<<endl;
 								if(reader.length()==7)
 								{
 									ID=reader[6]-'0';
@@ -278,20 +270,29 @@ void level_editor()
 								}
 							}
 						}
+						//Checking if Lever object contains door's ID specified
 						for(int i=0;i<IDs.size();i++)
 						{
-							levers[IDs[i]].add_affected_objects(DOOR,doorID);
+							for(int j=0;j<levers[IDs[i]].affected_object.size();j++)
+							{
+								if(levers[IDs[i]].affected_object[j].ID==doorID&&levers[IDs[i]].affected_object[j].type==DOOR)
+								{
+									levers[IDs[i]].remove_connection(j);
+								}
+							}
+
 						}
-					
-					
-					
+
+
+
+						
 					}
+					in.close();
+					remove("Levels/LevelEditor/ava_trigs_temp.dat");
 				}
-
-
 			}
-			
-		}
+		}	
+	}
 		/////////////////////////////////////////////////////////////
 		if(keyboard_input_specific(ALLEGRO_KEY_ESCAPE))
 			edit_done=true;
