@@ -42,6 +42,15 @@ namespace LevelEditor {
 				numeric_tileX->Enabled=false;
 				numeric_tileY->Enabled=false;
 				triggers_changed=false;
+				label_listbox_info->Visible=false;
+			}
+			else if(arg[1]=="Create")
+			{
+				panel_door->Visible=false;
+				creation=true;
+				listBox1->Enabled=false;
+				listBox2->Enabled=false;
+				label_listbox_info->Visible=true;
 			}
 		}
 
@@ -85,6 +94,7 @@ namespace LevelEditor {
 	private: System::Windows::Forms::Button^  button_cancel;
 	private: System::Windows::Forms::NumericUpDown^  numeric_tileY;
 	private: System::Windows::Forms::NumericUpDown^  numeric_tileX;
+	private: System::Windows::Forms::Label^  label_listbox_info;
 
 	private:
 		/// <summary>
@@ -102,6 +112,7 @@ namespace LevelEditor {
 			this->combo_objects = (gcnew System::Windows::Forms::ComboBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->panel_door = (gcnew System::Windows::Forms::Panel());
+			this->label_listbox_info = (gcnew System::Windows::Forms::Label());
 			this->numeric_tileY = (gcnew System::Windows::Forms::NumericUpDown());
 			this->numeric_tileX = (gcnew System::Windows::Forms::NumericUpDown());
 			this->label9 = (gcnew System::Windows::Forms::Label());
@@ -137,6 +148,7 @@ namespace LevelEditor {
 			this->combo_objects->Name = L"combo_objects";
 			this->combo_objects->Size = System::Drawing::Size(121, 21);
 			this->combo_objects->TabIndex = 0;
+			this->combo_objects->SelectedIndexChanged += gcnew System::EventHandler(this, &LevelEditor_objects::combo_objects_SelectedIndexChanged);
 			// 
 			// label1
 			// 
@@ -149,6 +161,7 @@ namespace LevelEditor {
 			// 
 			// panel_door
 			// 
+			this->panel_door->Controls->Add(this->label_listbox_info);
 			this->panel_door->Controls->Add(this->numeric_tileY);
 			this->panel_door->Controls->Add(this->numeric_tileX);
 			this->panel_door->Controls->Add(this->label9);
@@ -170,6 +183,15 @@ namespace LevelEditor {
 			this->panel_door->Size = System::Drawing::Size(376, 163);
 			this->panel_door->TabIndex = 2;
 			this->panel_door->Visible = false;
+			// 
+			// label_listbox_info
+			// 
+			this->label_listbox_info->AutoSize = true;
+			this->label_listbox_info->Location = System::Drawing::Point(4, 73);
+			this->label_listbox_info->Name = L"label_listbox_info";
+			this->label_listbox_info->Size = System::Drawing::Size(161, 26);
+			this->label_listbox_info->TabIndex = 25;
+			this->label_listbox_info->Text = L"To set triggers complete creation\r\nprocess and then edit the door";
 			// 
 			// numeric_tileY
 			// 
@@ -389,6 +411,7 @@ namespace LevelEditor {
 
 		}
 #pragma endregion
+	public:bool creation;
 	public:bool triggers_changed;
 	public:array<String^>^ available_triggers;
 	public:array<String^>^ current_triggers;
@@ -484,7 +507,7 @@ private: System::Void button_submit_door_Click(System::Object^  sender, System::
 					out<<System::Convert::ToInt32(numeric_speed->Value)<<std::endl;
 					out<<comboBox1->SelectedIndex+1;
 					out.close();
-					if(triggers_changed)
+					if(triggers_changed&&!creation)
 					{
 						std::string temp;
 						msclr::interop::marshal_context context;
@@ -507,6 +530,18 @@ private: System::Void button_submit_door_Click(System::Object^  sender, System::
 private: System::Void button_cancel_Click(System::Object^  sender, System::EventArgs^  e)
 		 {
 			 std::exit(0);
+		 }
+private: System::Void combo_objects_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) 
+		 {
+			 if(combo_objects->SelectedItem->ToString()=="Door")
+			 {
+				 panel_door->Visible=true;
+			 }
+			 else
+			 {
+				 panel_door->Visible=false;
+			 }
+		 
 		 }
 };
 }

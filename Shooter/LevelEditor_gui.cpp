@@ -58,7 +58,10 @@ void prepare_command(std::stringstream &stream,int x,int y,std::string for_obj,i
 			<<doors[ID].door_speed<<" "
 			<<doors[ID].initial_state<<" "
 			<<doors[ID].direction;
-
+	}
+	else if(for_obj=="create")
+	{
+		stream<<"LevelEditor.exe Object Create";
 	}
 
 }
@@ -103,6 +106,7 @@ void level_editor()
 		mouse_tile_Y=edit_event.mouse.y/TileSize;
 		
 		al_draw_bitmap(return_appropriate_bitmap("overlay"),mouse_tile_X*TileSize-3,mouse_tile_Y*TileSize-3,NULL);
+		//--LMB--//
 		if(get_mouse_state("LMB"))
 			{
 				prepare_command(executable,mouse_tile_X,mouse_tile_Y,"tile");
@@ -111,10 +115,16 @@ void level_editor()
 				executable.str(string());
 				update_map();
 			}
+		//--LMB--//
+
+		//--Help--//
 		if(keyboard_input_specific(ALLEGRO_KEY_H))
 			{
 				system("LevelEditor.exe Help");
 			}
+		//--Help--//
+
+		//--Save--//
 		if(keyboard_input_specific(ALLEGRO_KEY_J))
 			{
 				int succes = system("LevelEditor.exe Save");
@@ -130,6 +140,9 @@ void level_editor()
 					save_map(name);
 				}
 			}
+		//--Save--//
+
+		//--Load--//
 		if(keyboard_input_specific(ALLEGRO_KEY_K))
 		{
 			al_show_native_file_dialog(display,test);
@@ -144,11 +157,15 @@ void level_editor()
  
 			cout<<filePath<<endl;
 		}
-		///////////////////////////////////////////////////////////////////////////////
+		//--Load--//
+
+		//--RMB--//
 		if(get_mouse_state("RMB"))
 		{
+			cout<<map[mouse_tile_X][mouse_tile_Y].held_object<<endl;
 			std::vector<int> lever_ID;
 			std::ofstream out("Levels/LevelEditor/temp.dat");
+			//--Door Edit--//
 			if(map[mouse_tile_X][mouse_tile_Y].held_object==DOOR)
 			{
 				int doorID=map[mouse_tile_X][mouse_tile_Y].held_object_ID;
@@ -161,7 +178,6 @@ void level_editor()
 								out<<LEVER<<std::endl<<i<<std::endl;
 								lever_ID.push_back(i);
 							}
-						
 					}
 				}
 				out.close();
@@ -292,8 +308,48 @@ void level_editor()
 				}
 			}
 		}	
+			//--Door Edit--//
+
+			//--Object Creation--//
+			if(map[mouse_tile_X][mouse_tile_Y].held_object==NOTHING)
+			{
+				cout<<"I'm here"<<endl;
+				prepare_command(executable,NULL,NULL,"Create");
+				bool succes = system("LevelEditor.exe Object Create");
+				executable.str(std::string());
+				if(succes)
+				{
+					std::ifstream in ("Levels/LevelEditor/temp.dat");
+					if(in.is_open())
+						{
+							int x,y,speed,is_open,dir;
+							std::string reader;
+							getline(in,reader);
+							x=atoi(reader.c_str());
+							getline(in,reader);
+							y=atoi(reader.c_str());
+							getline(in,reader);
+							is_open=atoi(reader.c_str());
+							getline(in,reader);
+							speed=atoi(reader.c_str());
+							getline(in,reader);
+							dir=atoi(reader.c_str());
+						
+							doors.push_back(Doors());
+							doors[doors.size()-1].set_up(x,y,doors.size()-1,speed,is_open,dir);
+							
+						}
+					in.close();
+					remove("Levels/LevelEditor/temp.dat");
+
+
+
+				}
+			}
+			//--Object Creation--//
 	}
-		/////////////////////////////////////////////////////////////
+		//--RMB--//
+
 		if(keyboard_input_specific(ALLEGRO_KEY_ESCAPE))
 			edit_done=true;
 		if(edit_event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
