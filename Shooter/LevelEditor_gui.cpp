@@ -109,6 +109,7 @@ void level_editor()
 		//--LMB--//
 		if(get_mouse_state("LMB"))
 			{
+				al_rest(0.1);
 				prepare_command(executable,mouse_tile_X,mouse_tile_Y,"tile");
 				cout<<executable.str()<<endl;
 				system(executable.str().c_str());
@@ -120,6 +121,7 @@ void level_editor()
 		//--Help--//
 		if(keyboard_input_specific(ALLEGRO_KEY_H))
 			{
+				al_rest(0.1);
 				system("LevelEditor.exe Help");
 			}
 		//--Help--//
@@ -127,6 +129,7 @@ void level_editor()
 		//--Save--//
 		if(keyboard_input_specific(ALLEGRO_KEY_J))
 			{
+				al_rest(0.1);
 				int succes = system("LevelEditor.exe Save");
 				if(succes==1)
 				{
@@ -145,6 +148,7 @@ void level_editor()
 		//--Load--//
 		if(keyboard_input_specific(ALLEGRO_KEY_K))
 		{
+			al_rest(0.1);
 			al_show_native_file_dialog(display,test);
 		    if( al_get_native_file_dialog_count(test) > 0 )
 			{
@@ -162,6 +166,8 @@ void level_editor()
 		//--RMB--//
 		if(get_mouse_state("RMB"))
 		{
+			bool removal=false;
+			al_rest(0.1);
 			cout<<map[mouse_tile_X][mouse_tile_Y].held_object<<endl;
 			std::vector<int> lever_ID;
 			std::ofstream out("Levels/LevelEditor/temp.dat");
@@ -200,118 +206,126 @@ void level_editor()
 				cout<<executable.str()<<endl;
 				bool succes = system(executable.str().c_str());
 				executable.str(std::string());
+				
 				if(succes)
 				{
 					Doors temp_door;
 					temp_door=doors[doorID];
 					std::ifstream in ("Levels/LevelEditor/temp.dat");
-					if(in.is_open())
-						{
-							int x,y,speed,is_open,dir;
-							std::string reader;
-							getline(in,reader);
-							x=atoi(reader.c_str());
-							getline(in,reader);
-							y=atoi(reader.c_str());
-							getline(in,reader);
-							is_open=atoi(reader.c_str());
-							getline(in,reader);
-							speed=atoi(reader.c_str());
-							getline(in,reader);
-							dir=atoi(reader.c_str());
-							
-							temp_door.set_up(x,y,doorID,speed,is_open,dir);
-							doors[doorID].~Doors();
-							doors[doorID]=temp_door;
-							
-						}
-					in.close();
-					remove("Levels/LevelEditor/temp.dat");
-					in.open("Levels/LevelEditor/curr_trigs_temp.dat");
-					if(in.is_open())
+					std::string reader;
+					getline(in,reader);
+					if(reader=="Remove")
 					{
-						std::vector<int>IDs;
-						std::string reader;
-						while(!in.eof())
-						{
-							getline(in,reader);
-							int ID;
-							if(reader[0]=='L')
-							{
-								if(reader.length()==7)
-								{
-									ID=reader[6]-'0';
-									IDs.push_back(ID);
-								}
-								else if(reader.length()==8)
-								{
-									int temp;
-									temp=(reader[6]-'0')*10;
-									ID=(reader[7]-'0')+temp;
-									IDs.push_back(ID);
-								}
-							}
-						}
-						// Adding an object to specified ID
-						for(int i=0;i<IDs.size();i++)
-						{
-							levers[IDs[i]].add_affected_objects(DOOR,doorID);
-							cout<<"ADDED"<<doorID<<endl;
-						}
-						IDs.clear();
-					in.close();
-					remove("Levels/LevelEditor/curr_trigs_temp.dat");
-					in.open("Levels/LevelEditor/ava_trigs_temp.dat");
-					if(in.is_open())
+						removal=true;
+						doors[doorID].remove();
+						remove_connections(DOOR,doorID,LEVER);
+					}
+					else
 					{
-						std::vector<int>IDs;
-						std::string reader;
-						while(!in.eof())
-						{
-							getline(in,reader);
-							int ID;
-							if(reader[0]=='L')
+						if(in.is_open())
 							{
-								if(reader.length()==7)
+								int x,y,speed,is_open,dir;
+								x=atoi(reader.c_str());
+								getline(in,reader);
+								y=atoi(reader.c_str());
+								getline(in,reader);
+								is_open=atoi(reader.c_str());
+								getline(in,reader);
+								speed=atoi(reader.c_str());
+								getline(in,reader);
+								dir=atoi(reader.c_str());
+							
+								temp_door.set_up(x,y,doorID,speed,is_open,dir);
+								doors[doorID].~Doors();
+								doors[doorID]=temp_door;
+							
+							}
+						in.close();
+						remove("Levels/LevelEditor/temp.dat");
+						in.open("Levels/LevelEditor/curr_trigs_temp.dat");
+						if(in.is_open())
+						{
+							std::vector<int>IDs;
+							while(!in.eof())
+							{
+								getline(in,reader);
+								int ID;
+								if(reader[0]=='L')
 								{
-									ID=reader[6]-'0';
-									IDs.push_back(ID);
-								}
-								else if(reader.length()==8)
-								{
-									int temp;
-									temp=(reader[6]-'0')*10;
-									ID=(reader[7]-'0')+temp;
-									IDs.push_back(ID);
+									if(reader.length()==7)
+									{
+										ID=reader[6]-'0';
+										IDs.push_back(ID);
+									}
+									else if(reader.length()==8)
+									{
+										int temp;
+										temp=(reader[6]-'0')*10;
+										ID=(reader[7]-'0')+temp;
+										IDs.push_back(ID);
+									}
 								}
 							}
-						}
-						//Checking if Lever object contains door's ID specified
-						for(int i=0;i<IDs.size();i++)
-						{
-							for(int j=0;j<levers[IDs[i]].affected_object.size();j++)
+							// Adding an object to specified ID
+							for(int i=0;i<IDs.size();i++)
 							{
-								if(levers[IDs[i]].affected_object[j].ID==doorID&&levers[IDs[i]].affected_object[j].type==DOOR)
+								levers[IDs[i]].add_affected_objects(DOOR,doorID);
+								cout<<"ADDED"<<doorID<<endl;
+							}
+							IDs.clear();
+						in.close();
+						remove("Levels/LevelEditor/curr_trigs_temp.dat");
+						in.open("Levels/LevelEditor/ava_trigs_temp.dat");
+						if(in.is_open())
+						{
+							std::vector<int>IDs;
+							while(!in.eof())
+							{
+								getline(in,reader);
+								int ID;
+								if(reader[0]=='L')
 								{
-									levers[IDs[i]].remove_connection(j);
+									if(reader.length()==7)
+									{
+										ID=reader[6]-'0';
+										IDs.push_back(ID);
+									}
+									else if(reader.length()==8)
+									{
+										int temp;
+										temp=(reader[6]-'0')*10;
+										ID=(reader[7]-'0')+temp;
+										IDs.push_back(ID);
+									}
 								}
 							}
+							//Checking if Lever object contains door's ID specified
+							for(int i=0;i<IDs.size();i++)
+							{
+								for(int j=0;j<levers[IDs[i]].affected_object.size();j++)
+								{
+									if(levers[IDs[i]].affected_object[j].ID==doorID&&levers[IDs[i]].affected_object[j].type==DOOR)
+									{
+										levers[IDs[i]].remove_connection(j);
+									}
+								}
 
-						}
+							}
 
 
 
 						
+						}
+						in.close();
+						remove("Levels/LevelEditor/ava_trigs_temp.dat");
 					}
-					in.close();
-					remove("Levels/LevelEditor/ava_trigs_temp.dat");
-				}
 			}
-		}	
+		}
+	}	
 			//--Door Edit--//
 
 			//--Object Creation--//
-			if(map[mouse_tile_X][mouse_tile_Y].held_object==NOTHING)
+			if(map[mouse_tile_X][mouse_tile_Y].held_object==NOTHING&&!removal)
 			{
 				cout<<"I'm here"<<endl;
 				prepare_command(executable,NULL,NULL,"Create");
@@ -334,9 +348,16 @@ void level_editor()
 							speed=atoi(reader.c_str());
 							getline(in,reader);
 							dir=atoi(reader.c_str());
-						
-							doors.push_back(Doors());
-							doors[doors.size()-1].set_up(x,y,doors.size()-1,speed,is_open,dir);
+							if(free_door_IDs.empty())
+							{
+								doors.push_back(Doors());
+							    doors[doors.size()-1].set_up(x,y,doors.size()-1,speed,is_open,dir);
+							}
+							else
+							{
+								doors[free_door_IDs[free_door_IDs.size()-1]].set_up(x,y,free_door_IDs.size()-1,speed,is_open,dir);
+								free_door_IDs.pop_back();
+							}
 							
 						}
 					in.close();
@@ -362,6 +383,8 @@ void level_editor()
 		
 		if(reload_level)
 		{
+			std::ifstream in(filePath+"/map.dat");
+			if(in.is_open())
 			load_level(filePath,true);
 			reload_level=false;
 		}

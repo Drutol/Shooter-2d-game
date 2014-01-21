@@ -1,7 +1,7 @@
 #include "Doors.h"
 #include "link.h"
 #include "GameFunctions.h"
-
+std::vector<int> free_door_IDs;
 Doors::Doors(void)
 {
 	this->exists=false;
@@ -13,11 +13,17 @@ Doors::Doors(void)
 
 Doors::~Doors(void)
 {
+	//if(exists)
+	//{
+	//	exists=false;
+	//	map[tile_X][tile_Y].held_object=NOTHING;
+	//	map[tile_X][tile_Y].held_object_ID=-1;
+	//	free_door_IDs.push_back(ID);
+	//}
 }
 void Doors::set_up(int tile_X,int tile_Y,int ID,int speed,int initial_state,int direction)
 {
 	exists=true;
-	
 	this->tile_X=tile_X;
 	this->tile_Y=tile_Y;
 	this->direction=direction;
@@ -123,4 +129,13 @@ void Doors::calculate_crop()
 		}
 		Doors::update_map();
 	}
+}
+
+void Doors::remove()
+{
+	free_door_IDs.push_back(map[tile_X][tile_Y].held_object_ID);
+	this->exists=false;
+	map[tile_X][tile_Y].held_object=NOTHING;
+	map[tile_X][tile_Y].held_object_ID=-1;
+	tile_X=tile_Y=-1;
 }

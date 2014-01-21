@@ -19,6 +19,7 @@ public:
 	void set_up(int tile_X,int tile_Y,int ID,int speed,int initial_state,int direction);
 	void change_state();
 	void calculate_crop();
+	void remove();
 	Doors(void);
 	~Doors(void);
 };

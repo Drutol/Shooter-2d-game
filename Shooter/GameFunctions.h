@@ -18,11 +18,13 @@ struct coords
 	int x;
 	int y;
 };
+ extern std::vector<int> free_door_IDs;
  enum tile_objects {NOTHING,DOOR,LEVER,BOX};
  enum directions {RIGHT,LEFT,UP,DOWN};
  enum states {OPEN,CLOSED,OPENING,CLOSING};
  enum flags {FLAG_PASSABLE,FLAG_UNPASSABLE,FLAG_DAMAGING,FLAG_PLAYER};
  enum bitmaps {DIRT,DIRT_BACK,DIRT_BACK_DOWN,DIRT_BACK_UP};
+ void remove_connections(int for_obj_type,int for_object_ID,int in_objects);
 int keyboard_input();
 bool keyboard_input_specific(int which_key);
 int camera_update(int pressed_key,float previous_camera_position,int camera);

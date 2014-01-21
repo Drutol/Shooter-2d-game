@@ -430,13 +430,27 @@ void save_map(std::string path)
 		out<<count_levers()<<endl;
 		for(int i=0;i<count_levers();i++)
 		{
+			int conn_count=0;
 			out<<levers[i].PosX<<endl;
 			out<<levers[i].PosY<<endl;
-			out<<levers[i].affected_object.size()<<endl;
+			for(int i=0;i<levers.size();i++)
+			{
+				for(int j=0;j<levers[i].affected_object.size();j++)
+				{
+					if(levers[i].affected_object[j].type!=NOTHING&&levers[i].affected_object[j].ID!=-1)
+					{
+						conn_count++;
+					}
+				}
+			}
+			out<<conn_count<<endl;
 			for(int j=0;j<levers[i].affected_object.size();j++)
 			{
-				out<<levers[i].affected_object[j].type<<endl;
-				out<<levers[i].affected_object[j].ID<<endl;
+				if(levers[i].affected_object[j].type!=NOTHING&&levers[i].affected_object[j].ID!=-1)
+				{
+					out<<levers[i].affected_object[j].type<<endl;
+					out<<levers[i].affected_object[j].ID<<endl;
+				}
 			}
 		}
 		out.close();
@@ -633,4 +647,27 @@ void map_draw_front()
 		
 		}
 	}
+}
+
+void remove_connections(int for_obj_type,int for_object_ID,int in_objects)
+{
+	if(in_objects==LEVER)
+	{
+		for(int i=0;i<levers.size();i++)
+		{
+			for(int j=0;j<levers[i].affected_object.size();j++)
+			{
+				if(levers[i].affected_object[j].ID==for_object_ID&&levers[i].affected_object[j].type==for_obj_type)
+				{
+					levers[i].affected_object[j].type=NOTHING;
+					levers[i].affected_object[j].ID=-1;
+				}
+			}
+		}
+	}
+
+
+
+
+
 }

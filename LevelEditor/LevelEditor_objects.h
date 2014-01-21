@@ -51,6 +51,7 @@ namespace LevelEditor {
 				listBox1->Enabled=false;
 				listBox2->Enabled=false;
 				label_listbox_info->Visible=true;
+				button_door_remove->Enabled=false;
 			}
 		}
 
@@ -95,6 +96,8 @@ namespace LevelEditor {
 	private: System::Windows::Forms::NumericUpDown^  numeric_tileY;
 	private: System::Windows::Forms::NumericUpDown^  numeric_tileX;
 	private: System::Windows::Forms::Label^  label_listbox_info;
+	private: System::Windows::Forms::Button^  button_door_remove;
+
 
 	private:
 		/// <summary>
@@ -112,6 +115,7 @@ namespace LevelEditor {
 			this->combo_objects = (gcnew System::Windows::Forms::ComboBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->panel_door = (gcnew System::Windows::Forms::Panel());
+			this->button_door_remove = (gcnew System::Windows::Forms::Button());
 			this->label_listbox_info = (gcnew System::Windows::Forms::Label());
 			this->numeric_tileY = (gcnew System::Windows::Forms::NumericUpDown());
 			this->numeric_tileX = (gcnew System::Windows::Forms::NumericUpDown());
@@ -161,6 +165,7 @@ namespace LevelEditor {
 			// 
 			// panel_door
 			// 
+			this->panel_door->Controls->Add(this->button_door_remove);
 			this->panel_door->Controls->Add(this->label_listbox_info);
 			this->panel_door->Controls->Add(this->numeric_tileY);
 			this->panel_door->Controls->Add(this->numeric_tileX);
@@ -183,6 +188,16 @@ namespace LevelEditor {
 			this->panel_door->Size = System::Drawing::Size(376, 163);
 			this->panel_door->TabIndex = 2;
 			this->panel_door->Visible = false;
+			// 
+			// button_door_remove
+			// 
+			this->button_door_remove->Location = System::Drawing::Point(203, 137);
+			this->button_door_remove->Name = L"button_door_remove";
+			this->button_door_remove->Size = System::Drawing::Size(75, 23);
+			this->button_door_remove->TabIndex = 26;
+			this->button_door_remove->Text = L"Remove";
+			this->button_door_remove->UseVisualStyleBackColor = true;
+			this->button_door_remove->Click += gcnew System::EventHandler(this, &LevelEditor_objects::button_door_remove_Click);
 			// 
 			// label_listbox_info
 			// 
@@ -542,6 +557,13 @@ private: System::Void combo_objects_SelectedIndexChanged(System::Object^  sender
 				 panel_door->Visible=false;
 			 }
 		 
+		 }
+private: System::Void button_door_remove_Click(System::Object^  sender, System::EventArgs^  e) 
+		 {
+			std::ofstream out("Levels/LevelEditor/temp.dat");
+			out<<"Remove"<<std::endl;
+			out.close();
+			std::exit(1);
 		 }
 };
 }
