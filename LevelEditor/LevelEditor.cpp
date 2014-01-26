@@ -10,6 +10,12 @@ void main(array<String^>^ arg)
 	
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
+		
+	//array<String^>^ args = gcnew array<String^>(2);
+	//args[1]="Create";
+	//LevelEditor::LevelEditor_objects form(args);
+	//Application::Run(%form);
+	
 	if(arg->Length==0)
 	{
 		MessageBox::Show("This program is not intended to run separatedly");
@@ -29,6 +35,5 @@ void main(array<String^>^ arg)
 	{
 		LevelEditor::LevelEditor_objects form(arg);
 		Application::Run(%form);
-
 	}
 }

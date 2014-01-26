@@ -19,6 +19,7 @@ struct coords
 	int y;
 };
  extern std::vector<int> free_door_IDs;
+ extern std::vector<int> free_lever_IDs;
  enum tile_objects {NOTHING,DOOR,LEVER,BOX};
  enum directions {RIGHT,LEFT,UP,DOWN};
  enum states {OPEN,CLOSED,OPENING,CLOSING};

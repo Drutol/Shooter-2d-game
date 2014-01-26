@@ -137,5 +137,5 @@ void Doors::remove()
 	this->exists=false;
 	map[tile_X][tile_Y].held_object=NOTHING;
 	map[tile_X][tile_Y].held_object_ID=-1;
-	tile_X=tile_Y=-1;
+	tile_X=tile_Y=0;
 }

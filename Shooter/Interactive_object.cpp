@@ -2,10 +2,12 @@
 #include "GameFunctions.h"
 #include "link.h"
 
+std::vector<int> free_lever_IDs;
 Interactive_object::Interactive_object(void)
 {
 	this->exists=false;
 	this->affected_object.push_back(object());
+	connections=0;
 }
 
 
@@ -35,10 +37,12 @@ void Interactive_object::add_affected_objects(int type,int ID)
 		}
 		else
 		{
+				affected_object.push_back(object());
 				affected_object[affected_object.size()-1].ID=ID;
 				affected_object[affected_object.size()-1].type=type;
 		}
-				affected_object.push_back(object());
+		connections++;
+
 	}
 }
 
@@ -48,14 +52,16 @@ void Interactive_object::object_draw()
 	al_draw_bitmap(return_appropriate_bitmap(bitmap),PosX,PosY,NULL);
 }
 
-void Interactive_object::set_up(int x,int y,int ID,int button)
+void Interactive_object::set_up(int x,int y,int ID,int object,int button)
 {
 	PosX=x;
 	PosY=y;
 	exists=true;
 	button_to_interact_with=button;
-	map[PosX/TileSize][PosY/TileSize].held_object=LEVER;
+	map[PosX/TileSize][PosY/TileSize].held_object=object;
 	map[PosX/TileSize][PosY/TileSize].held_object_ID=ID;
+	of_object=object;
+	of_ID=ID;
 }
 
 void Interactive_object::send_state()
@@ -70,9 +76,27 @@ void Interactive_object::send_state()
 
 void Interactive_object::remove_connection(int which)
 {
-	affected_object[which].ID=-1;
-	affected_object[which].type=NOTHING;
+	if(affected_object[which].type!=NOTHING)
+	{
+		affected_object[which].ID=-1;
+		affected_object[which].type=NOTHING;
 
-	IDs_of_nothing.push_back(which);
+		IDs_of_nothing.push_back(which);
+		connections--;
+	}
+
+}
+
+void Interactive_object::remove()
+{
+	exists=false;
+	
+	map[PosX/TileSize][PosY/TileSize].held_object=NOTHING;
+	map[PosX/TileSize][PosY/TileSize].held_object_ID=-1;
+
+	if(of_object==LEVER)
+	{
+		free_lever_IDs.push_back(of_ID);
+	}
 
 }

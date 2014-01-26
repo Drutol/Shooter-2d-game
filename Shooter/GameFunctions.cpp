@@ -221,12 +221,12 @@ int search_for_object_ID(int tile_X,int tile_Y,int type)
 
 void draw_objects()
 {
-	for(int i=0;i<count_doors();i++)
+	for(int i=0;i<doors.size();i++)
 		{
 			if(doors[i].exists)
 				doors[i].draw_door();
 		}
-	for(int i=0;i<count_levers();i++)							//PROBABLY ASSERTION ERROR HERE
+	for(int i=0;i<levers.size();i++)							//PROBABLY ASSERTION ERROR HERE
 		{
 			if(levers[i].exists)
 				levers[i].object_draw();
@@ -424,48 +424,44 @@ void overwrite_tile(int x,int y,bool is_passable,std::string bitmap,int held_obj
 }
 void save_map(std::string path)
 {
-	if(count_levers()!=0)
+	if(!levers.empty())
 	{
 		std::ofstream out("Levels/"+path+"/levers.dat");
-		out<<count_levers()<<endl;
-		for(int i=0;i<count_levers();i++)
+		out<<levers.size()-free_lever_IDs.size()<<endl;
+		for(int i=0;i<levers.size();i++)
 		{
-			int conn_count=0;
-			out<<levers[i].PosX<<endl;
-			out<<levers[i].PosY<<endl;
-			for(int i=0;i<levers.size();i++)
+			if(levers[i].exists)
 			{
+				int conn_count=0;
+				out<<levers[i].PosX<<endl;
+				out<<levers[i].PosY<<endl;
+				out<<levers[i].connections<<endl;
 				for(int j=0;j<levers[i].affected_object.size();j++)
 				{
 					if(levers[i].affected_object[j].type!=NOTHING&&levers[i].affected_object[j].ID!=-1)
 					{
-						conn_count++;
+						out<<levers[i].affected_object[j].type<<endl;
+						out<<levers[i].affected_object[j].ID<<endl;
 					}
-				}
-			}
-			out<<conn_count<<endl;
-			for(int j=0;j<levers[i].affected_object.size();j++)
-			{
-				if(levers[i].affected_object[j].type!=NOTHING&&levers[i].affected_object[j].ID!=-1)
-				{
-					out<<levers[i].affected_object[j].type<<endl;
-					out<<levers[i].affected_object[j].ID<<endl;
 				}
 			}
 		}
 		out.close();
 	}
-	if(count_doors()!=0)
+	if(!doors.empty())
 	{
 		std::ofstream out("Levels/"+path+"/doors.dat");
-		out<<count_doors()<<endl;
-		for(int j=0;j<count_doors();j++)
+		out<<doors.size()-free_door_IDs.size()<<endl;
+		for(int j=0;j<doors.size();j++)
 		{
+			if(doors[j].exists)
+			{
 			out<<doors[j].tile_X<<endl;
 			out<<doors[j].tile_Y<<endl;
 			out<<doors[j].door_speed<<endl;
 			out<<doors[j].state<<endl;
 			out<<doors[j].direction<<endl;
+			}
 		}
 		out.close();
 	}
@@ -480,10 +476,10 @@ void save_map(std::string path)
 			out<<std::endl;
 			out<<map[i][j].passable;
 			out<<std::endl;
-			out<<map[i][j].held_object;
-			out<<std::endl;
-			out<<map[i][j].held_object_ID;
-			out<<std::endl;
+			//out<<map[i][j].held_object;
+			//out<<std::endl;
+			//out<<map[i][j].held_object_ID;
+			//out<<std::endl;
 			out<<map[i][j].bitmap;
 			out<<std::endl;
 		}
@@ -494,10 +490,13 @@ void load_level(std::string level_path,bool full_path)
 {
 	string line;
 	std::fstream file;
+	std::string path_copy;
+	path_copy=level_path.c_str();
 	if(full_path)
 		{
-			level_path+="/map.dat";
-			file.open(level_path);
+			path_copy+="/map.dat";
+			cout<<"map - using path : "<<path_copy<<endl;
+			file.open(path_copy);
 		}
 	else
 		file.open("Levels/"+level_path+"/map.dat");
@@ -512,19 +511,20 @@ void load_level(std::string level_path,bool full_path)
 			map[i][j].y=atoi(line.c_str());
 			std::getline(file,line);
 			map[i][j].passable=atoi(line.c_str());
-			std::getline(file,line);
-			map[i][j].held_object=atoi(line.c_str());
-			std::getline(file,line);
-			map[i][j].held_object_ID=atoi(line.c_str());
+			//std::getline(file,line);
+			//map[i][j].held_object=atoi(line.c_str());
+			//std::getline(file,line);
+			//map[i][j].held_object_ID=atoi(line.c_str());
 			std::getline(file,line);
 			map[i][j].bitmap=line;
 		}
 	}
-	file.close();
+   file.close();
+   path_copy=level_path;
    if(full_path)
 		{
-			level_path+="/levers.dat";
-			file.open(level_path);
+			path_copy+="/levers.dat";
+			file.open(path_copy);
 		}
 	else
 		file.open("Levels/"+level_path+"/levers.dat");
@@ -543,7 +543,7 @@ void load_level(std::string level_path,bool full_path)
 			y=atoi(line.c_str());
 			std::getline(file,line);
 			conns=atoi(line.c_str());
-			levers[i].set_up(x,y,i,ALLEGRO_KEY_E);
+			levers[i].set_up(x,y,i,LEVER,ALLEGRO_KEY_E);
 			for(int j=0;j<conns;j++)
 			{
 				int type,obj_ID;
@@ -557,15 +557,18 @@ void load_level(std::string level_path,bool full_path)
 		}
 	}
 	file.close();
+	path_copy=level_path;
 		if(full_path)
 		{
-			level_path+="/doors.dat";
-			file.open(level_path);
+			path_copy+="/doors.dat";
+			file.open(path_copy);
 		}
 	else
 		file.open("Levels/"+level_path+"/doors.dat");
 	std::getline(file,line);
 	int door_number=atoi(line.c_str());
+	cout<<"door num"<<door_number<<endl;
+	cout<<"is open "<<file.is_open()<<endl;
 	if(door_number>0)
 	{
 
@@ -584,8 +587,8 @@ void load_level(std::string level_path,bool full_path)
 			std::getline(file,line);
 			dir=atoi(line.c_str());
 		
-		
 			doors[i].set_up(x,y,i,speed,state,dir);
+			cout<<"loaded door"<<endl;
 		}
 	}
 	file.close();

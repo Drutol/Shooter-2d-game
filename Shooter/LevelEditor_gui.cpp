@@ -59,9 +59,17 @@ void prepare_command(std::stringstream &stream,int x,int y,std::string for_obj,i
 			<<doors[ID].initial_state<<" "
 			<<doors[ID].direction;
 	}
+	else if(for_obj=="lever")
+	{
+		stream<<"LevelEditor.exe Object Lever "
+			  <<x<<" "
+			  <<y<<" ";
+	}
 	else if(for_obj=="create")
 	{
-		stream<<"LevelEditor.exe Object Create";
+		stream<<"LevelEditor.exe Object Create "
+			<<x<<" "
+			<<y<<" ";
 	}
 
 }
@@ -168,7 +176,7 @@ void level_editor()
 		{
 			bool removal=false;
 			al_rest(0.1);
-			cout<<map[mouse_tile_X][mouse_tile_Y].held_object<<endl;
+			cout<<" x "<<mouse_tile_X<<" y "<<mouse_tile_Y<<endl;
 			std::vector<int> lever_ID;
 			std::ofstream out("Levels/LevelEditor/temp.dat");
 			//--Door Edit--//
@@ -202,6 +210,7 @@ void level_editor()
 					}
 				}
 				out.close();
+				cout<<"door ID : "<<doorID<<endl;
 				prepare_command(executable,mouse_tile_X,mouse_tile_Y,"door",doorID);
 				cout<<executable.str()<<endl;
 				bool succes = system(executable.str().c_str());
@@ -211,7 +220,7 @@ void level_editor()
 				{
 					Doors temp_door;
 					temp_door=doors[doorID];
-					std::ifstream in ("Levels/LevelEditor/temp.dat");
+					std::ifstream in ("Levels/LevelEditor/temp_door.dat");
 					std::string reader;
 					getline(in,reader);
 					if(reader=="Remove")
@@ -235,9 +244,7 @@ void level_editor()
 								getline(in,reader);
 								dir=atoi(reader.c_str());
 							
-								temp_door.set_up(x,y,doorID,speed,is_open,dir);
-								doors[doorID].~Doors();
-								doors[doorID]=temp_door;
+								doors[doorID].set_up(x,y,doorID,speed,is_open,dir);
 							
 							}
 						in.close();
@@ -323,17 +330,50 @@ void level_editor()
 		}
 	}	
 			//--Door Edit--//
+			
+			//--Lever Edit--//
+			if(map[mouse_tile_X][mouse_tile_Y].held_object==LEVER)
+			{
+				
+				int leverID = map[mouse_tile_X][mouse_tile_Y].held_object_ID;
+				prepare_command(executable,mouse_tile_X,mouse_tile_Y,"lever");
+				bool succes=false;
+				succes=system(executable.str().c_str());
+
+				if(succes)
+				{
+					std::ifstream in("Levels/LevelEditor/temp_lever.dat");
+					if(in.is_open())
+					{
+						std::string reader;
+						getline(in,reader);
+						if(reader=="Succes")
+							levers[leverID].set_up(edit_event.mouse.x,edit_event.mouse.y,leverID,LEVER,ALLEGRO_KEY_E);
+						else if(reader=="Remove")
+							{
+								removal=true;
+								levers[leverID].remove();
+							}
+
+					}
+
+				}
+			}
+
+
+			//--Lever Edit--//
+
+
 
 			//--Object Creation--//
 			if(map[mouse_tile_X][mouse_tile_Y].held_object==NOTHING&&!removal)
 			{
-				cout<<"I'm here"<<endl;
-				prepare_command(executable,NULL,NULL,"Create");
+				prepare_command(executable,mouse_tile_X,mouse_tile_Y,"Create");
 				bool succes = system("LevelEditor.exe Object Create");
 				executable.str(std::string());
 				if(succes)
 				{
-					std::ifstream in ("Levels/LevelEditor/temp.dat");
+					std::ifstream in ("Levels/LevelEditor/temp_door.dat");
 					if(in.is_open())
 						{
 							int x,y,speed,is_open,dir;
@@ -360,12 +400,35 @@ void level_editor()
 							}
 							
 						}
+					else
+					{
+						in.close();
+						in.open("Levels/LevelEditor/temp_lever.dat");
+						if(in.is_open())
+						{
+							int x,y;
+							std::string reader;
+							getline(in,reader);
+							x=atoi(reader.c_str());
+							getline(in,reader);
+							y=atoi(reader.c_str());
+							if(free_lever_IDs.empty())
+							{
+								levers.push_back(Lever());
+								levers[levers.size()-1].set_up(edit_event.mouse.x,edit_event.mouse.y,levers.size()-1,LEVER,ALLEGRO_KEY_E);
+							}
+							else
+							{
+								levers[free_lever_IDs[free_lever_IDs.size()-1]].set_up(edit_event.mouse.x,edit_event.mouse.y,free_lever_IDs[free_lever_IDs.size()-1],LEVER,ALLEGRO_KEY_E);
+								free_lever_IDs.pop_back();
+							}
+						}
+
+					}
 					in.close();
-					remove("Levels/LevelEditor/temp.dat");
-
-
-
 				}
+					remove("Levels/LevelEditor/temp_door.dat");
+					remove("Levels/LevelEditor/temp_lever.dat");
 			}
 			//--Object Creation--//
 	}
@@ -385,7 +448,11 @@ void level_editor()
 		{
 			std::ifstream in(filePath+"/map.dat");
 			if(in.is_open())
-			load_level(filePath,true);
+			{
+				doors.clear();
+				levers.clear();
+				load_level(filePath,true);
+			}
 			reload_level=false;
 		}
 	}

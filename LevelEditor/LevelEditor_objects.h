@@ -52,6 +52,21 @@ namespace LevelEditor {
 				listBox2->Enabled=false;
 				label_listbox_info->Visible=true;
 				button_door_remove->Enabled=false;
+				button_lever_remove->Enabled=false;
+				if(arg->Length>2)
+				{
+					numeric_tileX->Value=System::Convert::ToInt32(arg[2]);
+					numeric_tileY->Value=System::Convert::ToInt32(arg[3]);
+				}
+			}
+			else if(arg[1]=="Lever")
+			{
+				combo_objects->SelectedIndex=2;
+				combo_objects->Enabled=false;
+				button_lever_remove->Visible=true;
+				button_lever_submit->Visible=true;
+				panel_door->Visible=false;
+
 			}
 		}
 
@@ -97,6 +112,8 @@ namespace LevelEditor {
 	private: System::Windows::Forms::NumericUpDown^  numeric_tileX;
 	private: System::Windows::Forms::Label^  label_listbox_info;
 	private: System::Windows::Forms::Button^  button_door_remove;
+	private: System::Windows::Forms::Button^  button_lever_submit;
+	private: System::Windows::Forms::Button^  button_lever_remove;
 
 
 	private:
@@ -138,6 +155,8 @@ namespace LevelEditor {
 			this->label_posx = (gcnew System::Windows::Forms::Label());
 			this->label_posy = (gcnew System::Windows::Forms::Label());
 			this->button_cancel = (gcnew System::Windows::Forms::Button());
+			this->button_lever_submit = (gcnew System::Windows::Forms::Button());
+			this->button_lever_remove = (gcnew System::Windows::Forms::Button());
 			this->panel_door->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numeric_tileY))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numeric_tileX))->BeginInit();
@@ -183,7 +202,7 @@ namespace LevelEditor {
 			this->panel_door->Controls->Add(this->listBox1);
 			this->panel_door->Controls->Add(this->label6);
 			this->panel_door->Controls->Add(this->label7);
-			this->panel_door->Location = System::Drawing::Point(12, 55);
+			this->panel_door->Location = System::Drawing::Point(15, 55);
 			this->panel_door->Name = L"panel_door";
 			this->panel_door->Size = System::Drawing::Size(376, 163);
 			this->panel_door->TabIndex = 2;
@@ -402,17 +421,39 @@ namespace LevelEditor {
 			this->button_cancel->UseVisualStyleBackColor = true;
 			this->button_cancel->Click += gcnew System::EventHandler(this, &LevelEditor_objects::button_cancel_Click);
 			// 
+			// button_lever_submit
+			// 
+			this->button_lever_submit->Location = System::Drawing::Point(232, 224);
+			this->button_lever_submit->Name = L"button_lever_submit";
+			this->button_lever_submit->Size = System::Drawing::Size(75, 23);
+			this->button_lever_submit->TabIndex = 19;
+			this->button_lever_submit->Text = L"OK";
+			this->button_lever_submit->UseVisualStyleBackColor = true;
+			this->button_lever_submit->Click += gcnew System::EventHandler(this, &LevelEditor_objects::button_lever_submit_Click);
+			// 
+			// button_lever_remove
+			// 
+			this->button_lever_remove->Location = System::Drawing::Point(151, 224);
+			this->button_lever_remove->Name = L"button_lever_remove";
+			this->button_lever_remove->Size = System::Drawing::Size(75, 23);
+			this->button_lever_remove->TabIndex = 20;
+			this->button_lever_remove->Text = L"Remove";
+			this->button_lever_remove->UseVisualStyleBackColor = true;
+			this->button_lever_remove->Click += gcnew System::EventHandler(this, &LevelEditor_objects::button_lever_remove_Click);
+			// 
 			// LevelEditor_objects
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(391, 248);
+			this->Controls->Add(this->button_lever_remove);
+			this->Controls->Add(this->button_lever_submit);
+			this->Controls->Add(this->panel_door);
 			this->Controls->Add(this->button_cancel);
 			this->Controls->Add(this->label_posy);
 			this->Controls->Add(this->label_posx);
 			this->Controls->Add(this->label3);
 			this->Controls->Add(this->label2);
-			this->Controls->Add(this->panel_door);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->combo_objects);
 			this->Name = L"LevelEditor_objects";
@@ -513,7 +554,7 @@ private: System::Void button_submit_door_Click(System::Object^  sender, System::
 		 {
 			 if(numeric_speed->Value > 0 && comboBox1->SelectedIndex > 0)
 				{
-				std::ofstream out("Levels/LevelEditor/temp.dat");
+				std::ofstream out("Levels/LevelEditor/temp_door.dat");
 				if(out.is_open())
 				{
 					out<<System::Convert::ToInt32(numeric_tileX->Value)<<std::endl;
@@ -551,16 +592,35 @@ private: System::Void combo_objects_SelectedIndexChanged(System::Object^  sender
 			 if(combo_objects->SelectedItem->ToString()=="Door")
 			 {
 				 panel_door->Visible=true;
+				 button_lever_remove->Visible=false;
+				 button_lever_submit->Visible=false;
 			 }
-			 else
+			 else if(combo_objects->SelectedItem->ToString()=="Lever")
 			 {
 				 panel_door->Visible=false;
+				 button_lever_remove->Visible=true;
+				 button_lever_submit->Visible=true;
 			 }
+
 		 
 		 }
 private: System::Void button_door_remove_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
-			std::ofstream out("Levels/LevelEditor/temp.dat");
+			std::ofstream out("Levels/LevelEditor/temp_door.dat");
+			out<<"Remove"<<std::endl;
+			out.close();
+			std::exit(1);
+		 }
+private: System::Void button_lever_submit_Click(System::Object^  sender, System::EventArgs^  e) 
+		 {
+			std::ofstream out("Levels/LevelEditor/temp_lever.dat");
+			out<<"Succes"<<std::endl;
+			out.close();
+			std::exit(1);
+		 }
+private: System::Void button_lever_remove_Click(System::Object^  sender, System::EventArgs^  e) 
+		 {
+			std::ofstream out("Levels/LevelEditor/temp_lever.dat");
 			out<<"Remove"<<std::endl;
 			out.close();
 			std::exit(1);
