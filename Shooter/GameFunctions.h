@@ -4,6 +4,7 @@
 #include "Interaction_Indicator.h"
 #include "Affection_box.h"
 #include "NPC.h"
+#include "Damage_manager.h"
 struct tile
 {
 	int x;

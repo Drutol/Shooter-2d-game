@@ -40,7 +40,10 @@ void main_game()
 	//affection_boxes[1].set_up(200,250,50,100,NOTHING,NULL,0);
 	affection_boxes[0].add_flags(1,FLAG_UNPASSABLE);
 	
-	
+	//--Creating Instance of Damage manager--//
+	Damage_manager damage_manager;
+	//--------------------------------------//
+
 	bool game_done=false;
 	while(!game_done)
 	{
@@ -56,12 +59,26 @@ void main_game()
 		
 		check_interactions(player.get_tile_X(),player.get_tile_Y(),keyboard_input());
 
-		cout<<doors[0].exists<<endl;
-
 		check_affection_box_collision_NPC(3,test_NPC);
-
+		
+		//-----Shooting test---//
+		if(get_mouse_state("LMB"))
+		{
+			int mouse_tile_x,mouse_tile_y;
+			mouse_tile_x=get_mouse_state("x")/TileSize;
+			mouse_tile_y=get_mouse_state("y")/TileSize;
+			if(map[mouse_tile_x][mouse_tile_y].passable)
+			{
+				damage_manager.register_projectile(player.PosX,player.PosY,get_mouse_state("x"),get_mouse_state("y"),5);
+			}
+		}
+		//-----Shooting Test----//
+		
+		
+		
+		
+		//----------------------//
 		test_NPC.Gather_data();
-		//test_NPC.apply_move(ALLEGRO_KEY_SPACE);
 		test_NPC.move();
 		test_NPC.draw();
 		//----------------------//
