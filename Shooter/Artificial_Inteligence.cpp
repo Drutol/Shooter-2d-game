@@ -21,14 +21,14 @@ Artificial_Inteligence::~Artificial_Inteligence(void)
 void Artificial_Inteligence::Find_enemy(int radius)
 	{
 		if(!target_found)
-		for(int i=0;i<count_boxes();i++)
-		{
-			if(affection_boxes[i].check_flag(FLAG_PLAYER,false))
+			for(int i=0;i<affection_boxes.size();i++)
 			{
-				if(Artificial_Inteligence::Estimate_distance()<radius)
-					target_found=true;
+				if(affection_boxes[i].check_flag(FLAG_PLAYER,false))
+				{
+					if(Artificial_Inteligence::Estimate_distance()<radius)
+						target_found=true;
+				}
 			}
-		}
 		else
 			Artificial_Inteligence::Estimate_distance();
 

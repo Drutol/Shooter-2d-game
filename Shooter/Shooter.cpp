@@ -28,18 +28,16 @@ void main_game()
 	//map[5][4].passable=true;
 	//map[5][5].bitmap="dirt_back_down";
 	//map[5][5].passable=true;
-	affection_boxes=new Affection_box[2];
 	ALLEGRO_EVENT_QUEUE *game_events = al_create_event_queue();
 	al_register_event_source(game_events, al_get_keyboard_event_source());
 	
-	test_NPC.PosX=200;
-	test_NPC.PosY=200;
+	test_NPC.PosX=300;
+	test_NPC.PosY=300;
 
 
-	affection_boxes[0].set_up(100,100,50,32,NOTHING,NULL,0);
-	//affection_boxes[1].set_up(200,250,50,100,NOTHING,NULL,0);
-	affection_boxes[0].add_flags(1,FLAG_UNPASSABLE);
-	
+	affection_boxes.push_back(Affection_box());
+	affection_boxes[0].set_up(1,1,10,10,NOTHING,NULL,0);
+	affection_boxes[0].add_flag(FLAG_UNPASSABLE);
 	//--Creating Instance of Damage manager--//
 	Damage_manager damage_manager;
 	//--------------------------------------//
@@ -64,6 +62,7 @@ void main_game()
 		//-----Shooting test---//
 		if(get_mouse_state("LMB"))
 		{
+			al_rest(0.01);
 			int mouse_tile_x,mouse_tile_y;
 			mouse_tile_x=get_mouse_state("x")/TileSize;
 			mouse_tile_y=get_mouse_state("y")/TileSize;
@@ -72,6 +71,7 @@ void main_game()
 				damage_manager.register_projectile(player.PosX,player.PosY,get_mouse_state("x"),get_mouse_state("y"),5);
 			}
 		}
+		damage_manager.process_projectiles();
 		//-----Shooting Test----//
 		
 		
@@ -83,9 +83,6 @@ void main_game()
 		test_NPC.draw();
 		//----------------------//
 		
-		
-		affection_boxes[0].debug_draw_frame();
-		affection_boxes[1].debug_draw_frame();
 		
 
 		//----------------------//

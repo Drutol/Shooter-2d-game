@@ -1,3 +1,4 @@
+#pragma once
 #include "Player.h"
 #include "Doors.h"
 #include "Lever.h"
@@ -21,11 +22,13 @@ struct coords
 };
  extern std::vector<int> free_door_IDs;
  extern std::vector<int> free_lever_IDs;
+ extern std::vector<int> free_box_IDs;
  enum tile_objects {NOTHING,DOOR,LEVER,BOX};
  enum directions {RIGHT,LEFT,UP,DOWN};
  enum states {OPEN,CLOSED,OPENING,CLOSING};
- enum flags {FLAG_PASSABLE,FLAG_UNPASSABLE,FLAG_DAMAGING,FLAG_PLAYER};
+ enum flags {FLAG_PASSABLE,FLAG_UNPASSABLE,FLAG_DAMAGING,FLAG_PLAYER,FLAG_PROJECTILE};
  enum bitmaps {DIRT,DIRT_BACK,DIRT_BACK_DOWN,DIRT_BACK_UP};
+ enum non_static_objects {NON_STATIC_PROJECTILE};
  void remove_connections(int for_obj_type,int for_object_ID,int in_objects);
 int keyboard_input();
 bool keyboard_input_specific(int which_key);
@@ -48,6 +51,7 @@ void check_interactions(int tile_X,int tile_Y,int with_key);
 void draw_objects();
 void check_affection_box_collision_NPC(int radius,NPC &npc);
 void check_affection_box_collision_player(int radius);
+void remove_affection_box(int ID);
 int search_for_object_ID(int tile_X,int tile_Y,int type);
 ALLEGRO_BITMAP* return_appropriate_bitmap(std::string which);
 
@@ -57,11 +61,11 @@ extern tile map[20][20];
 extern Player player;
 extern std::vector<Doors> doors;
 extern std::vector<Lever> levers;
+extern std::vector<Affection_box> affection_boxes;
 extern Interaction_Indicator indicator;
 extern NPC test_NPC;
 ///Not so important but still
 extern ALLEGRO_FONT *game_font;
 extern float cameraX;
 extern float cameraY;
-extern Affection_box *affection_boxes;
 extern NPC dummy;

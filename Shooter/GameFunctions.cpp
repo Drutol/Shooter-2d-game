@@ -7,7 +7,7 @@ tile map[20][20];
 Player player;
 std::vector<Doors> doors;
 std::vector<Lever> levers;
-Affection_box *affection_boxes;
+std::vector<Affection_box> affection_boxes;
 ALLEGRO_FONT *game_font;
 NPC test_NPC;
 NPC dummy;
@@ -226,7 +226,7 @@ void draw_objects()
 			if(doors[i].exists)
 				doors[i].draw_door();
 		}
-	for(int i=0;i<levers.size();i++)							//PROBABLY ASSERTION ERROR HERE
+	for(int i=0;i<levers.size();i++)
 		{
 			if(levers[i].exists)
 				levers[i].object_draw();
@@ -236,157 +236,170 @@ void draw_objects()
 
 void check_affection_box_collision_NPC(int radius,NPC &npc)
 {
-	int xr,xl,yt,yb;
-	xl=npc.get_posx()-radius;
-	xr=npc.get_posx()+32+radius;
-	yt=npc.get_posy()-radius;
-	yb=npc.get_posy()+32+radius;
-
-	bool inside=false;
-	bool approaching_left=false;
-	bool approaching_right=false;
-	bool approaching_top=false;
-	bool approaching_bottom=false;
-	bool passable=true;
-	
-	
-
-	for(int i=0;i<count_boxes();i++)
+	if(!affection_boxes.empty())
 	{
-		int modifier=0;
-		if(affection_boxes[i].shorter_than_player)
-			modifier=16;
-		if(affection_boxes[i].check_if_inside(xl,yt+modifier))
-			{
-					inside=true;
-					approaching_left=true;
-			}
-		else if(affection_boxes[i].check_if_inside(xl,yb-modifier))
-			{
-					inside=true;
-					approaching_left=true;
-			}
-		else if(affection_boxes[i].check_if_inside(xr,yt+modifier))
-			{
-					inside=true;
-					approaching_right=true;
-			}
-		else if(affection_boxes[i].check_if_inside(xr,yb-modifier))
-			{
-					inside=true;
-					approaching_right=true;
-			}
 
-		if(affection_boxes[i].check_if_inside(xl+2,yt)||affection_boxes[i].check_if_inside(xr-2,yt))
-			approaching_bottom=true;
-		if(affection_boxes[i].check_if_inside(xl,yb+3)||affection_boxes[i].check_if_inside(xr,yb+3))
-				approaching_top=true;
+		int xr,xl,yt,yb;
+		xl=npc.get_posx()-radius;
+		xr=npc.get_posx()+32+radius;
+		yt=npc.get_posy()-radius;
+		yb=npc.get_posy()+32+radius;
+
+		bool inside=false;
+		bool approaching_left=false;
+		bool approaching_right=false;
+		bool approaching_top=false;
+		bool approaching_bottom=false;
+		bool passable=true;
+	
+	
+
+		for(int i=0;i<affection_boxes.size();i++)
+		{
+			int modifier=0;
+			if(affection_boxes[i].shorter_than_player)
+				modifier=16;
+			if(affection_boxes[i].check_if_inside(xl,yt+modifier))
+				{
+						inside=true;
+						approaching_left=true;
+				}
+			else if(affection_boxes[i].check_if_inside(xl,yb-modifier))
+				{
+						inside=true;
+						approaching_left=true;
+				}
+			else if(affection_boxes[i].check_if_inside(xr,yt+modifier))
+				{
+						inside=true;
+						approaching_right=true;
+				}
+			else if(affection_boxes[i].check_if_inside(xr,yb-modifier))
+				{
+						inside=true;
+						approaching_right=true;
+				}
+
+			if(affection_boxes[i].check_if_inside(xl+2,yt)||affection_boxes[i].check_if_inside(xr-2,yt))
+				approaching_bottom=true;
+			if(affection_boxes[i].check_if_inside(xl,yb+3)||affection_boxes[i].check_if_inside(xr,yb+3))
+					approaching_top=true;
 
 		
-		if(affection_boxes[i].check_flag(FLAG_UNPASSABLE,false))
-			passable=false;
-	}
-	if(inside)
-	{
-		npc.PosY-=2;
-	}
-	if(!passable)
-	{
-		if(approaching_left&&!approaching_top)
-			npc.can_move_left=false;
-		else
-			npc.can_move_left=true;
-		if(approaching_right&&!approaching_top)
-			npc.can_move_right=false;
-		else
-			npc.can_move_right=true;
-		if(approaching_bottom)
-			{
-				npc.can_jump=false;
-				npc.remove_momentum(true);
-			}
-		else
-			npc.can_jump=true;
+			if(affection_boxes[i].check_flag(FLAG_UNPASSABLE,false))
+				passable=false;
+		}
+		if(inside)
+		{
+			npc.PosY-=2;
+		}
+		if(!passable)
+		{
+			if(approaching_left&&!approaching_top)
+				npc.can_move_left=false;
+			else
+				npc.can_move_left=true;
+			if(approaching_right&&!approaching_top)
+				npc.can_move_right=false;
+			else
+				npc.can_move_right=true;
+			if(approaching_bottom)
+				{
+					npc.can_jump=false;
+					npc.remove_momentum(true);
+				}
+			else
+				npc.can_jump=true;
+		}
 	}
 
 }
 void check_affection_box_collision_player(int radius)
 {
-	int xr,xl,yt,yb;
-	xl=player.get_posx()-radius;
-	xr=player.get_posx()+32+radius;
-	yt=player.get_posy()-radius;
-	yb=player.get_posy()+32+radius;
-
-	bool inside=false;
-	bool approaching_left=false;
-	bool approaching_right=false;
-	bool approaching_top=false;
-	bool approaching_bottom=false;
-	bool passable=true;
-	
-	
-	
-	for(int i=0;i<count_boxes();i++)
+	if(!affection_boxes.empty())
 	{
-		int modifier=0;
-		if(affection_boxes[i].shorter_than_player)
-			modifier=16;
-		if(affection_boxes[i].check_if_inside(xl,yt+modifier))
-			{
-					inside=true;
-					approaching_left=true;
-			}
-		else if(affection_boxes[i].check_if_inside(xl,yb-modifier))
-			{
-					inside=true;
-					approaching_left=true;
-			}
-		else if(affection_boxes[i].check_if_inside(xr,yt+modifier))
-			{
-					inside=true;
-					approaching_right=true;
-			}
-		else if(affection_boxes[i].check_if_inside(xr,yb-modifier))
-			{
-					inside=true;
-					approaching_right=true;
-			}
+		int xr,xl,yt,yb;
+		xl=player.get_posx()-radius;
+		xr=player.get_posx()+32+radius;
+		yt=player.get_posy()-radius;
+		yb=player.get_posy()+32+radius;
 
-		if(affection_boxes[i].check_if_inside(xl+2,yt)||affection_boxes[i].check_if_inside(xr-2,yt))
-			approaching_bottom=true;
-		if(affection_boxes[i].check_if_inside(xl,yb+3)||affection_boxes[i].check_if_inside(xr,yb+3))
-				approaching_top=true;
+		bool inside=false;
+		bool approaching_left=false;
+		bool approaching_right=false;
+		bool approaching_top=false;
+		bool approaching_bottom=false;
+		bool passable=true;
+	
+	
+	
+		for(int i=0;i<affection_boxes.size();i++)
+		{
+			int modifier=0;
+			if(affection_boxes[i].shorter_than_player)
+				modifier=16;
+			if(affection_boxes[i].check_if_inside(xl,yt+modifier))
+				{
+						inside=true;
+						approaching_left=true;
+				}
+			else if(affection_boxes[i].check_if_inside(xl,yb-modifier))
+				{
+						inside=true;
+						approaching_left=true;
+				}
+			else if(affection_boxes[i].check_if_inside(xr,yt+modifier))
+				{
+						inside=true;
+						approaching_right=true;
+				}
+			else if(affection_boxes[i].check_if_inside(xr,yb-modifier))
+				{
+						inside=true;
+						approaching_right=true;
+				}
+
+			if(affection_boxes[i].check_if_inside(xl+2,yt)||affection_boxes[i].check_if_inside(xr-2,yt))
+				approaching_bottom=true;
+			if(affection_boxes[i].check_if_inside(xl,yb+3)||affection_boxes[i].check_if_inside(xr,yb+3))
+					approaching_top=true;
 
 		
-		if(affection_boxes[i].check_flag(FLAG_UNPASSABLE,false))
-			passable=false;
-	}
-	if(inside)
-	{
-		player.PosY-=2;
-	}
-	if(!passable)
-	{
-		//if(approaching_top)
-		//	player.force_ground=true;
-		//else
-		//	player.force_ground=false;
-		if(approaching_left&&!approaching_top)
-			player.can_move_left=false;
-		else
-			player.can_move_left=true;
-		if(approaching_right&&!approaching_top)
-			player.can_move_right=false;
-		else
-			player.can_move_right=true;
-		if(approaching_bottom)
+			if(affection_boxes[i].check_flag(FLAG_UNPASSABLE,false))
+				passable=false;
+			else
 			{
-				player.can_jump=false;
-				player.remove_momentum(true);
+				player.can_move_left=true;
+				player.can_jump=true;
+				player.can_move_right=true;
 			}
-		else
-			player.can_jump=true;
+		}
+		if(inside)
+		{
+			player.PosY-=2;
+		}
+		if(!passable)
+		{
+			//if(approaching_top)
+			//	player.force_ground=true;
+			//else
+			//	player.force_ground=false;
+			if(approaching_left&&!approaching_top)
+				player.can_move_left=false;
+			else
+				player.can_move_left=true;
+			if(approaching_right&&!approaching_top)
+				player.can_move_right=false;
+			else
+				player.can_move_right=true;
+			if(approaching_bottom)
+				{
+					player.can_jump=false;
+					player.remove_momentum(true);
+				}
+			else
+				player.can_jump=true;
+		}
 	}
 
 }
@@ -511,11 +524,8 @@ void load_level(std::string level_path,bool full_path)
 			map[i][j].y=atoi(line.c_str());
 			std::getline(file,line);
 			map[i][j].passable=atoi(line.c_str());
-			//std::getline(file,line);
-			//map[i][j].held_object=atoi(line.c_str());
-			//std::getline(file,line);
-			//map[i][j].held_object_ID=atoi(line.c_str());
 			std::getline(file,line);
+			cout<<line<<endl;
 			map[i][j].bitmap=line;
 		}
 	}
@@ -647,6 +657,7 @@ void map_draw_front()
 		{
 			if(map[i][j].bitmap!="dirt")	
 				al_draw_bitmap(return_appropriate_bitmap(map[i][j].bitmap),map[i][j].x,map[i][j].y,NULL);
+			
 		
 		}
 	}
@@ -673,4 +684,10 @@ void remove_connections(int for_obj_type,int for_object_ID,int in_objects)
 
 
 
+}
+
+void remove_affection_box(int ID)
+{
+	affection_boxes[ID]=Affection_box();
+	free_box_IDs.push_back(ID);
 }

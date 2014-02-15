@@ -1,4 +1,5 @@
 #pragma once
+#include "link.h"
 struct object_box
 {
 	int type;
@@ -7,10 +8,9 @@ struct object_box
 class Affection_box
 {
 private:
-	int *flags;
+	std::vector<int> flags;
 	int all_flags;
 
-	void resize_array();
 public:
 	
 	float PosX_left;
@@ -26,7 +26,6 @@ public:
 	bool shorter_than_player;
 	/////////////////////////////////////////////		FLAG STUFF
 	int check_flag(int which,bool want_index);
-	int find_first_free_space();
 	void add_flags(int number_of_flags, ...);
 	void add_flag(int flag);
 	void remove_flag(int flag);
@@ -37,7 +36,8 @@ public:
 	void set_up(int x,int y,int width,int height,int object_type,int object_ID,int box_ID);
 	void debug_draw_frame();
 	bool check_if_inside(int x,int y);
-
+	bool check_if_colides_static();
+	void move_box(int x,int y);
 	/////////////////////////////////////////////		STUFF
 
 	Affection_box(void);

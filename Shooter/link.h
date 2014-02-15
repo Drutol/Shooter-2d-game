@@ -1,7 +1,7 @@
 #define ScreenWidth 900
 #define ScreenHeight 700
 #define TileSize 64
-
+#pragma warning( disable : 4018)
 
 
 

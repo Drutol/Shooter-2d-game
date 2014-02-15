@@ -159,7 +159,7 @@ void Dynamic_Object::remove_momentum(bool upwards)
 }
 bool Dynamic_Object::check_for_box_below()
 {
-	for(int i=0;i<count_boxes();i++)
+	for(int i=0;i<affection_boxes.size();i++)
 	{
 		if(affection_boxes[i].check_if_inside(PosX,PosY+36)||affection_boxes[i].check_if_inside(PosX+32,PosY+36)&&affection_boxes[i].check_flag(FLAG_UNPASSABLE,false))
 		{
