@@ -2,7 +2,8 @@
 #define ScreenHeight 700
 #define TileSize 64
 #pragma warning( disable : 4018)
-
+#pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "user32.lib")
 
 
 //All allegro libs
@@ -30,6 +31,9 @@
 #include <vector>
 #include <sstream>
 #include <Windows.h>
+#include <future>
+
+
 
 //Functions
 void main_game();
@@ -40,4 +44,3 @@ float return_player_Y();
 float return_player_X();
 extern ALLEGRO_DISPLAY *display;
 //Vars
-
