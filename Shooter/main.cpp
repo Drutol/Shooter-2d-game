@@ -41,20 +41,18 @@ int main()
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	//al_start_timer(timer);
 	
-	MultiPlayer::Multiplayer_Client client;
-	client.attempt_connection();
-	_getch();
+
 	
-	/*while(!menu.isDone)
+	while(!menu.isDone)
 		{
 			ALLEGRO_EVENT events; 
-			al_wait_for_event_timed(event_queue, &events,0.001);
+			al_wait_for_event_timed(event_queue, &events,0.006);
 				menu.get_mouse_input();
 				menu.redraw_text=true;
 				menu.can_change_font=true;
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0,0,0));
-		}*/
+		}
 
 
 

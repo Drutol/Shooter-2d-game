@@ -12,7 +12,7 @@ void main_game()
 	cameraX=0.5,
 	cameraY=0.5;
 	al_rest(1.0);
-
+	bool online = false;
 	al_clear_to_color(al_map_rgb(255,255,255));
 	game_font = al_load_font("Resources/leadcoat.ttf",40,NULL);
 	al_install_keyboard();
@@ -34,6 +34,7 @@ void main_game()
 	test_NPC.PosX=300;
 	test_NPC.PosY=300;
 
+	MultiPlayer::Multiplayer_Client client;
 
 	affection_boxes.push_back(Affection_box());
 	affection_boxes[0].set_up(1,1,10,10,NOTHING,NULL,0);
@@ -46,7 +47,7 @@ void main_game()
 	while(!game_done)
 	{
 		ALLEGRO_EVENT game_event;
-		al_wait_for_event_timed(game_events,&game_event,0.01);
+		al_wait_for_event_timed(game_events,&game_event,0.016);
 		cameraX=camera_update(keyboard_input(),cameraX,0);
 		cameraY=camera_update(keyboard_input(),cameraY,1);
 		map_draw_front();
@@ -74,7 +75,11 @@ void main_game()
 		damage_manager.process_projectiles();
 		//-----Shooting Test----//
 		
-		
+		if(keyboard_input_specific(ALLEGRO_KEY_M)&&!online)
+		{
+			if(client.attempt_connection())
+				online = true;
+		}
 		
 		
 		//----------------------//
@@ -82,8 +87,8 @@ void main_game()
 		test_NPC.move();
 		test_NPC.draw();
 		//----------------------//
-		
-		
+		if(online)
+			al_draw_filled_rectangle(online_player.x,online_player.y,online_player.x+20,online_player.y+20,al_map_rgb(100,255,0));
 
 		//----------------------//
 		

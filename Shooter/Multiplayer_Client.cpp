@@ -1,6 +1,6 @@
 #include "Multiplayer_Client.h"
-
-
+#include "GameFunctions.h"
+coords online_player;
 SOCKET MultiPlayer::sConnect;
 MultiPlayer::Multiplayer_Client::Multiplayer_Client(void)
 {
@@ -107,15 +107,15 @@ void MultiPlayer::receive_send_data()
 	DataPkg data_recv;
 	for(;;Sleep(0.016))
 	{
-		data.x=20;
-		data.y=25;
+		data.x=player.PosX;
+		data.y=player.PosY;
 		memcpy(string_to_send,&data,sizeof(DataPkg));
 		send(sConnect,string_to_send,sizeof(DataPkg),NULL);
 
 		if(recv(sConnect,msg,sizeof(data_recv),NULL))
 		{
 			memcpy(&data_recv,msg,sizeof(DataPkg));
-			cout<<"data -> "<<data_recv.x<<" :  "<<data_recv.y<<endl;
+			online_player=data_recv;
 		}
 	}
 

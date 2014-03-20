@@ -3,11 +3,6 @@
 #include "GameFunctions.h"
 namespace MultiPlayer
 {
-struct DataPkg
-{
-	int x;
-	int y;
-};
 struct HelloMsg
 {
 	int ID;
@@ -28,5 +23,4 @@ public:
 };
 
 void receive_send_data();
-
 }

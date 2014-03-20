@@ -63,7 +63,6 @@ int ServerThread(int ID1)
 			send(Connections[ID1],client_2_string_to_send,sizeof(DataPkg),NULL);
 			send(Connections[ID2],client_1_string_to_send,sizeof(DataPkg),NULL);
 			data_received_1=data_received_2=false;
-			cout<<"Data Processed"<<endl;
 		}
 
 	}
@@ -122,8 +121,8 @@ int main()
 			{
 					hello_msg.wait = 0;
 					memcpy(hello_string,&hello_msg,sizeof(HelloMsg));
-					send(Connections[0],hello_string,sizeof(HelloMsg),NULL);
-					send(Connections[1],hello_string,sizeof(HelloMsg),NULL);
+					send(Connections[ConCounter],hello_string,sizeof(HelloMsg),NULL);
+					send(Connections[ConCounter-1],hello_string,sizeof(HelloMsg),NULL);
 					cout<<"Single Client info sent -> "<<hello_msg.ID<<" : "<<hello_msg.wait<<endl;
 					cout<<"Pair info Sent"<<endl;
 			}

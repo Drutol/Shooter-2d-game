@@ -6,6 +6,12 @@
 #include "Affection_box.h"
 #include "NPC.h"
 #include "Damage_manager.h"
+#include "Multiplayer_Client.h"
+struct DataPkg
+{
+	int x;
+	int y;
+};
 struct tile
 {
 	int x;
@@ -19,6 +25,12 @@ struct coords
 {
 	int x;
 	int y;
+
+	void operator = (DataPkg _x)
+	{
+		x=_x.x;
+		y=_x.y;
+	}
 };
  extern std::vector<int> free_door_IDs;
  extern std::vector<int> free_lever_IDs;
@@ -69,3 +81,4 @@ extern ALLEGRO_FONT *game_font;
 extern float cameraX;
 extern float cameraY;
 extern NPC dummy;
+extern coords online_player;
