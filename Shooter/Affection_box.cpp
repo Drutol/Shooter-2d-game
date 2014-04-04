@@ -1,3 +1,4 @@
+#pragma once
 #include "Affection_box.h"
 #include "link.h"
 #include "GameFunctions.h"

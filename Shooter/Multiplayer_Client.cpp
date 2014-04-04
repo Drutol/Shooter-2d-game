@@ -1,17 +1,24 @@
+#pragma once
 #include "Multiplayer_Client.h"
 #include "GameFunctions.h"
-coords online_player;
-SOCKET MultiPlayer::sConnect;
-MultiPlayer::Multiplayer_Client::Multiplayer_Client(void)
+SOCKET sConnect;
+
+
+
+online_player o_player;
+ev_data dat;
+bool ev_recv = false;
+
+Multiplayer_Client::Multiplayer_Client(void)
 {
 }
 
 
-MultiPlayer::Multiplayer_Client::~Multiplayer_Client(void)
+Multiplayer_Client::~Multiplayer_Client(void)
 {
 }
 
-bool MultiPlayer::Multiplayer_Client::attempt_connection(std::string host)
+bool Multiplayer_Client::attempt_connection(std::string host)
 {
 	if(set_up_sockets(host))
 	{
@@ -28,7 +35,7 @@ bool MultiPlayer::Multiplayer_Client::attempt_connection(std::string host)
 }
 
 
-bool MultiPlayer::Multiplayer_Client::set_up_sockets(std::string host)
+bool Multiplayer_Client::set_up_sockets(std::string host)
 {
 	int RetVal = 0;
 
@@ -51,7 +58,7 @@ bool MultiPlayer::Multiplayer_Client::set_up_sockets(std::string host)
 	}
 }
 
-bool MultiPlayer::Multiplayer_Client::connect_to_server()
+bool Multiplayer_Client::connect_to_server()
 {
 	int RetVal = connect(sConnect, (SOCKADDR*)&addr, sizeof(addr));
 
@@ -64,7 +71,7 @@ bool MultiPlayer::Multiplayer_Client::connect_to_server()
 		return true;
 }
 
-int MultiPlayer::Multiplayer_Client::wait_for_hello_message()
+int Multiplayer_Client::wait_for_hello_message()
 {
 	HelloMsg hello_msg;
 	char* msg = new char [sizeof(hello_msg)];
@@ -97,7 +104,7 @@ int MultiPlayer::Multiplayer_Client::wait_for_hello_message()
 
 }
 
-void MultiPlayer::receive_send_data()
+void receive_send_data()
 {
 	char * string_to_send = new char [sizeof(DataPkg)];
 	char * msg = new char [sizeof(DataPkg)];
@@ -109,14 +116,58 @@ void MultiPlayer::receive_send_data()
 	{
 		data.x=player.PosX;
 		data.y=player.PosY;
+		if (!fetch_data(data))
+		{
+			data.ev_type = game_actions::NOTHING_A;
+			data.ev_x = -1;
+			data.ev_y = -1;
+			data.add_nfo = -1;
+		}
 		memcpy(string_to_send,&data,sizeof(DataPkg));
 		send(sConnect,string_to_send,sizeof(DataPkg),NULL);
 
 		if(recv(sConnect,msg,sizeof(data_recv),NULL))
 		{
 			memcpy(&data_recv,msg,sizeof(DataPkg));
-			online_player=data_recv;
+			o_player = data_recv; // <- this thingy here calls emulation (in struct(online_player ;d))
 		}
 	}
+}
 
+
+void emulate_click(int x,int y)
+{
+
+
+
+}
+void emulate_key_press(int which, int x, int y)
+{
+
+
+
+
+}
+
+//Ev
+
+
+
+
+void register_data(int of_type, int where_x, int where_y, int add_nfo)
+{
+	dat.ev_type = of_type;
+	dat.ev_x = where_x;
+	dat.ev_y = where_y;
+	dat.add_nfo = add_nfo;
+	ev_recv = true;
+}
+bool fetch_data(DataPkg &data)
+{
+	if (ev_recv)
+	{
+		dat > data;
+		return true;
+	}
+	else return false;
 }

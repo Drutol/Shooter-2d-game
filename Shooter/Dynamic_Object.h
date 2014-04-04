@@ -45,6 +45,10 @@ public:
 	int get_posy();
 	int get_tile_X();
 	int get_tile_Y();
+	//MALTIPLAJER
+	void sync_velocity();
+	void send_velocity();
+	
 
 	Dynamic_Object();
 	~Dynamic_Object();

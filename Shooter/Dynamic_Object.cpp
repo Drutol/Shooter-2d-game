@@ -189,3 +189,10 @@ int Dynamic_Object::get_tile_Y()
 {
 	return current_tile_Y;
 }
+
+void Dynamic_Object::send_velocity()
+{
+
+
+
+}

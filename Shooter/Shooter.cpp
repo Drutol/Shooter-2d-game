@@ -34,7 +34,7 @@ void main_game()
 	test_NPC.PosX=300;
 	test_NPC.PosY=300;
 
-	MultiPlayer::Multiplayer_Client client;
+	Multiplayer_Client client;
 
 	affection_boxes.push_back(Affection_box());
 	affection_boxes[0].set_up(1,1,10,10,NOTHING,NULL,0);
@@ -57,6 +57,8 @@ void main_game()
 			kill_player();
 		
 		check_interactions(player.get_tile_X(),player.get_tile_Y(),keyboard_input());
+		if (keyboard_input() > 0)
+			register_data(KEY_PRESS, player.PosX, player.PosY);
 
 		check_affection_box_collision_NPC(3,test_NPC);
 		
@@ -70,17 +72,23 @@ void main_game()
 			if(map[mouse_tile_x][mouse_tile_y].passable)
 			{
 				damage_manager.register_projectile(player.PosX,player.PosY,get_mouse_state("x"),get_mouse_state("y"),5);
+				register_data(CLICK, get_mouse_state("x"), get_mouse_state("y"));
 			}
 		}
 		damage_manager.process_projectiles();
 		//-----Shooting Test----//
 		
+		
+		//-----Multiplayer-----//
 		if(keyboard_input_specific(ALLEGRO_KEY_M)&&!online)
 		{
 			if(client.attempt_connection())
 				online = true;
 		}
-		
+		//-----Multiplayer-----//
+
+
+
 		
 		//----------------------//
 		test_NPC.Gather_data();
@@ -88,7 +96,7 @@ void main_game()
 		test_NPC.draw();
 		//----------------------//
 		if(online)
-			al_draw_filled_rectangle(online_player.x,online_player.y,online_player.x+20,online_player.y+20,al_map_rgb(100,255,0));
+			al_draw_filled_rectangle(o_player.x,o_player.y,o_player.x+20,o_player.y+20,al_map_rgb(100,255,0));
 
 		//----------------------//
 		

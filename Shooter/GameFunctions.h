@@ -7,11 +7,6 @@
 #include "NPC.h"
 #include "Damage_manager.h"
 #include "Multiplayer_Client.h"
-struct DataPkg
-{
-	int x;
-	int y;
-};
 struct tile
 {
 	int x;
@@ -25,23 +20,27 @@ struct coords
 {
 	int x;
 	int y;
-
-	void operator = (DataPkg _x)
-	{
-		x=_x.x;
-		y=_x.y;
-	}
 };
- extern std::vector<int> free_door_IDs;
- extern std::vector<int> free_lever_IDs;
- extern std::vector<int> free_box_IDs;
- enum tile_objects {NOTHING,DOOR,LEVER,BOX};
- enum directions {RIGHT,LEFT,UP,DOWN};
- enum states {OPEN,CLOSED,OPENING,CLOSING};
- enum flags {FLAG_PASSABLE,FLAG_UNPASSABLE,FLAG_DAMAGING,FLAG_PLAYER,FLAG_PROJECTILE};
- enum bitmaps {DIRT,DIRT_BACK,DIRT_BACK_DOWN,DIRT_BACK_UP};
- enum non_static_objects {NON_STATIC_PROJECTILE};
- void remove_connections(int for_obj_type,int for_object_ID,int in_objects);
+struct game_event
+{
+	int Obj_type;
+	int Action_type;
+	int pressed_key;
+	int of_ID;
+};
+
+
+extern std::vector<int> free_door_IDs;
+extern std::vector<int> free_lever_IDs;
+extern std::vector<int> free_box_IDs;
+enum tile_objects {NOTHING,DOOR,LEVER,BOX};
+enum directions {RIGHT,LEFT,UP,DOWN};
+enum states {OPEN,CLOSED,OPENING,CLOSING};
+enum flags {FLAG_PASSABLE,FLAG_UNPASSABLE,FLAG_DAMAGING,FLAG_PLAYER,FLAG_PROJECTILE};
+enum bitmaps {DIRT,DIRT_BACK,DIRT_BACK_DOWN,DIRT_BACK_UP};
+enum non_static_objects {NON_STATIC_PROJECTILE};
+enum game_actions {NOTHING_A,CLICK,KEY_PRESS};
+void remove_connections(int for_obj_type,int for_object_ID,int in_objects);
 int keyboard_input();
 bool keyboard_input_specific(int which_key);
 int camera_update(int pressed_key,float previous_camera_position,int camera);
@@ -67,6 +66,9 @@ void remove_affection_box(int ID);
 int search_for_object_ID(int tile_X,int tile_Y,int type);
 ALLEGRO_BITMAP* return_appropriate_bitmap(std::string which);
 
+
+
+
 ///Incredibely importatnt arrays and vars
 extern ALLEGRO_TRANSFORM camera;
 extern tile map[20][20];
@@ -81,4 +83,3 @@ extern ALLEGRO_FONT *game_font;
 extern float cameraX;
 extern float cameraY;
 extern NPC dummy;
-extern coords online_player;

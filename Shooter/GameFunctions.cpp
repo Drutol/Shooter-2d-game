@@ -24,6 +24,11 @@ ALLEGRO_BITMAP *dark_test;
 bool bitmaps_initialized=false;
 Interaction_Indicator indicator;
 using namespace std;
+
+
+
+
+
 bool keyboard_input_specific(int which_key)
 {
 	ALLEGRO_KEYBOARD_STATE keystate;

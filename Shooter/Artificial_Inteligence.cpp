@@ -233,7 +233,7 @@ void Artificial_Inteligence::Prepare_path()
 			bool under;
 			bool falling;
 			
-			int first_dir_to_check;
+			//int first_dir_to_check;
 
 			while(!path_created&&!path_failed&&!stuck)
 			{
