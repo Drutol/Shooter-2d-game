@@ -46,6 +46,7 @@ bool keyboard_input_specific(int which_key);
 int camera_update(int pressed_key,float previous_camera_position,int camera);
 int get_random_number(int min , int max);
 int get_mouse_state(std::string task);
+void shoot(int x=0, int y=0);
 void init_bitmaps(int for_lvl);
 void kill_player();
 int count_doors();
@@ -68,7 +69,6 @@ ALLEGRO_BITMAP* return_appropriate_bitmap(std::string which);
 
 
 
-
 ///Incredibely importatnt arrays and vars
 extern ALLEGRO_TRANSFORM camera;
 extern tile map[20][20];
@@ -83,3 +83,4 @@ extern ALLEGRO_FONT *game_font;
 extern float cameraX;
 extern float cameraY;
 extern NPC dummy;
+

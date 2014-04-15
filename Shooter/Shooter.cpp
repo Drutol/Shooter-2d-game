@@ -1,6 +1,31 @@
 #include "link.h"
 #include "GameFunctions.h"
 
+Damage_manager damage_manager;
+
+void shoot(int x, int y)
+{
+
+	if (x == 0 && y == 0)
+	{
+		al_rest(0.01);
+		int mouse_tile_x, mouse_tile_y;
+		mouse_tile_x = get_mouse_state("x") / TileSize;
+		mouse_tile_y = get_mouse_state("y") / TileSize;
+		if (map[mouse_tile_x][mouse_tile_y].passable)
+		{
+			damage_manager.register_projectile(player.PosX, player.PosY, get_mouse_state("x"), get_mouse_state("y"), 5);
+			register_data(CLICK, get_mouse_state("x"), get_mouse_state("y"));
+		}
+	}
+	else
+	{
+		cout << "I have registered dat #%#$#$" << endl;
+		damage_manager.register_projectile(o_player.x, o_player.y, x, y, 5); // <- Crash just because have to look inside							!!!!TODO!!!!
+	}
+}
+
+
 
 //////////////////////////////////////////////////////////////// Drawing
 void main_game()
@@ -40,7 +65,6 @@ void main_game()
 	affection_boxes[0].set_up(1,1,10,10,NOTHING,NULL,0);
 	affection_boxes[0].add_flag(FLAG_UNPASSABLE);
 	//--Creating Instance of Damage manager--//
-	Damage_manager damage_manager;
 	//--------------------------------------//
 
 	bool game_done=false;
@@ -58,22 +82,14 @@ void main_game()
 		
 		check_interactions(player.get_tile_X(),player.get_tile_Y(),keyboard_input());
 		if (keyboard_input() > 0)
-			register_data(KEY_PRESS, player.PosX, player.PosY);
+			register_data(KEY_PRESS, player.PosX, player.PosY,keyboard_input());
 
 		check_affection_box_collision_NPC(3,test_NPC);
 		
 		//-----Shooting test---//
 		if(get_mouse_state("LMB"))
 		{
-			al_rest(0.01);
-			int mouse_tile_x,mouse_tile_y;
-			mouse_tile_x=get_mouse_state("x")/TileSize;
-			mouse_tile_y=get_mouse_state("y")/TileSize;
-			if(map[mouse_tile_x][mouse_tile_y].passable)
-			{
-				damage_manager.register_projectile(player.PosX,player.PosY,get_mouse_state("x"),get_mouse_state("y"),5);
-				register_data(CLICK, get_mouse_state("x"), get_mouse_state("y"));
-			}
+			shoot();
 		}
 		damage_manager.process_projectiles();
 		//-----Shooting Test----//

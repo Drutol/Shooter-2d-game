@@ -129,7 +129,12 @@ void receive_send_data()
 		if(recv(sConnect,msg,sizeof(data_recv),NULL))
 		{
 			memcpy(&data_recv,msg,sizeof(DataPkg));
-			o_player = data_recv; // <- this thingy here calls emulation (in struct(online_player ;d))
+			o_player = data_recv; // <- this thingy here calls emulation (in struct(online_player))
+
+			//--DEBUG
+			//system("Cls");
+			//cout << "Rec Data" << endl << "evt " << data_recv.ev_type << "evx " << data_recv.ev_x << "evy " << data_recv.ev_y << "evadd " << data_recv.add_nfo << endl;
+			//system("Cls");
 		}
 	}
 }
@@ -137,16 +142,12 @@ void receive_send_data()
 
 void emulate_click(int x,int y)
 {
-
-
-
+	shoot(x, y);
 }
 void emulate_key_press(int which, int x, int y)
 {
-
-
-
-
+	if (x!=-1&&y!=-1)
+		check_interactions(x / TileSize, y / TileSize, which);
 }
 
 //Ev
@@ -166,7 +167,12 @@ bool fetch_data(DataPkg &data)
 {
 	if (ev_recv)
 	{
-		dat > data;
+		cout << "Recv Event --- Processing" << endl;
+		data.ev_type = dat.ev_type;
+		data.ev_x = dat.ev_x;
+		data.ev_y = dat.ev_y;
+		data.add_nfo = dat.add_nfo;
+		ev_recv = false;
 		return true;
 	}
 	else return false;
