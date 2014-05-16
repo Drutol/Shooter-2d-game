@@ -16,6 +16,18 @@
     <Filter Include="Multiplayer">
       <UniqueIdentifier>{3c5c18e8-b506-4475-9e06-e4aa4555b38e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{5143ed7a-cd3b-4a57-a20f-8714d29dedc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI\Components">
+      <UniqueIdentifier>{282494b8-dadb-41c0-8b81-69d99686116e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI\Components\Parts">
+      <UniqueIdentifier>{3f4ead83-3990-401c-b9ea-8c6d0160e7f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI\Forms">
+      <UniqueIdentifier>{eb29e839-8633-4603-913e-bc88c6794ce3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main_menu.h">
@@ -60,6 +72,15 @@
     <ClInclude Include="Multiplayer_Client.h">
       <Filter>Multiplayer</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentButton.h">
+      <Filter>GUI\Components\Parts</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiMainComponent.h">
+      <Filter>GUI\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="FormsManager.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_menu.cpp">
@@ -89,9 +110,6 @@
     <ClCompile Include="Affection_box.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Artificial_Inteligence.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Dynamic_Object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -110,5 +128,22 @@
     <ClCompile Include="Multiplayer_Client.cpp">
       <Filter>Multiplayer</Filter>
     </ClCompile>
+    <ClCompile Include="Artificial_Inteligence.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentButton.cpp">
+      <Filter>GUI\Components\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiMainComponent.cpp">
+      <Filter>GUI\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="FormsManager.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="MainMenu.txt">
+      <Filter>GUI\Forms</Filter>
+    </Text>
   </ItemGroup>
 </Project>
