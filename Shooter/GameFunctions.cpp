@@ -23,7 +23,7 @@ ALLEGRO_BITMAP *overlay;
 ALLEGRO_BITMAP *dark_test;
 bool bitmaps_initialized=false;
 Interaction_Indicator indicator;
-using namespace std;
+FormsManager forms_manager;
 
 
 

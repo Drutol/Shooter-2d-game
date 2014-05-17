@@ -64,9 +64,10 @@ void main_game()
 	affection_boxes.push_back(Affection_box());
 	affection_boxes[0].set_up(1,1,10,10,NOTHING,NULL,0);
 	affection_boxes[0].add_flag(FLAG_UNPASSABLE);
-	//--Creating Instance of Damage manager--//
-	//--------------------------------------//
-
+	//--Loading Forms--//
+	forms_manager.LoadForms();
+	//-----------------//
+	
 	bool game_done=false;
 	while(!game_done)
 	{
@@ -80,6 +81,8 @@ void main_game()
 		if(check_door_collision())
 			kill_player();
 		
+		
+
 		check_interactions(player.get_tile_X(),player.get_tile_Y(),keyboard_input());
 		if (keyboard_input() > 0)
 			register_data(KEY_PRESS, player.PosX, player.PosY,keyboard_input());

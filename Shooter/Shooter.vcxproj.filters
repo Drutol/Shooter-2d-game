@@ -25,7 +25,7 @@
     <Filter Include="GUI\Components\Parts">
       <UniqueIdentifier>{3f4ead83-3990-401c-b9ea-8c6d0160e7f4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GUI\Forms">
+    <Filter Include="GUI\Components\Forms">
       <UniqueIdentifier>{eb29e839-8633-4603-913e-bc88c6794ce3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -142,8 +142,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="MainMenu.txt">
-      <Filter>GUI\Forms</Filter>
+    <Text Include="PauseMenu.txt">
+      <Filter>GUI\Components\Forms</Filter>
     </Text>
   </ItemGroup>
 </Project>

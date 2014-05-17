@@ -1,7 +1,6 @@
 #pragma once
 #include "link.h"
 #include "Dynamic_Object.h"
-using namespace std;
 class Player: public Dynamic_Object
 {
 

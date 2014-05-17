@@ -33,7 +33,7 @@
 #include <Windows.h>
 #include <future>
 
-
+using namespace std;
 
 //Functions
 void main_game();

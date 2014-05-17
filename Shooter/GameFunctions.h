@@ -7,6 +7,7 @@
 #include "NPC.h"
 #include "Damage_manager.h"
 #include "Multiplayer_Client.h"
+#include "FormsManager.h"
 struct tile
 {
 	int x;
@@ -28,7 +29,7 @@ struct game_event
 	int pressed_key;
 	int of_ID;
 };
-
+class FormsManager;
 
 extern std::vector<int> free_door_IDs;
 extern std::vector<int> free_lever_IDs;
@@ -77,6 +78,7 @@ extern std::vector<Doors> doors;
 extern std::vector<Lever> levers;
 extern std::vector<Affection_box> affection_boxes;
 extern Interaction_Indicator indicator;
+extern FormsManager forms_manager;
 extern NPC test_NPC;
 ///Not so important but still
 extern ALLEGRO_FONT *game_font;

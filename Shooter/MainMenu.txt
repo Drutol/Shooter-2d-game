@@ -1,7 +1,0 @@
-Form=MainMenu
-
-Buttons:
-button1 = 200 = 200 = RESUME = 100 = 100 = 100
-button2 = 200 = 300 = EXIT= 200 = 100 = 100
-Triggers:
-key = ESC

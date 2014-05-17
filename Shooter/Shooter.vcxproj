@@ -51,7 +51,7 @@
     <ClCompile Include="Shooter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="MainMenu.txt" />
+    <Text Include="PauseMenu.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4EE97995-2737-4ED9-8A05-D98A54BD2B45}</ProjectGuid>
