@@ -14,6 +14,7 @@
     <ClInclude Include="Affection_box.h" />
     <ClInclude Include="Artificial_Inteligence.h" />
     <ClInclude Include="ComponentButton.h" />
+    <ClInclude Include="ComponentTextBox.h" />
     <ClInclude Include="Damage_manager.h" />
     <ClInclude Include="Doors.h" />
     <ClInclude Include="Dynamic_Object.h" />
@@ -33,6 +34,7 @@
     <ClCompile Include="Affection_box.cpp" />
     <ClCompile Include="Artificial_Inteligence.cpp" />
     <ClCompile Include="ComponentButton.cpp" />
+    <ClCompile Include="ComponentTextBox.cpp" />
     <ClCompile Include="Damage_manager.cpp" />
     <ClCompile Include="Doors.cpp" />
     <ClCompile Include="Dynamic_Object.cpp" />
@@ -51,7 +53,7 @@
     <ClCompile Include="Shooter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="PauseMenu.txt" />
+    <Text Include="Forma-PauseMenu.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4EE97995-2737-4ED9-8A05-D98A54BD2B45}</ProjectGuid>

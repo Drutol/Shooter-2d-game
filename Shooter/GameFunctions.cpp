@@ -696,3 +696,13 @@ void remove_affection_box(int ID)
 	affection_boxes[ID]=Affection_box();
 	free_box_IDs.push_back(ID);
 }
+
+bool vector_contains(std::vector<int> vec,int searched)
+{
+	for (size_t i = 0; i < vec.size(); i++)
+	{
+		if (vec[i] == searched)
+			return true;
+	}
+	return false;
+}

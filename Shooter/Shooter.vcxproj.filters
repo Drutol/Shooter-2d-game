@@ -81,6 +81,9 @@
     <ClInclude Include="FormsManager.h">
       <Filter>GUI</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentTextBox.h">
+      <Filter>GUI\Components\Parts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_menu.cpp">
@@ -140,9 +143,12 @@
     <ClCompile Include="FormsManager.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="ComponentTextBox.cpp">
+      <Filter>GUI\Components\Parts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="PauseMenu.txt">
+    <Text Include="Forma-PauseMenu.txt">
       <Filter>GUI\Components\Forms</Filter>
     </Text>
   </ItemGroup>

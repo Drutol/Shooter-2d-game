@@ -107,7 +107,6 @@ void main_game()
 		//-----Multiplayer-----//
 
 
-
 		
 		//----------------------//
 		test_NPC.Gather_data();

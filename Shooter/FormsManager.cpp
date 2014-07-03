@@ -3,6 +3,10 @@
 
 FormsManager::FormsManager()
 {
+	initialize_collection();
+	this->prevMousePosX = 0; 
+	this->prevMousePosY = 0;
+	this->is_form_enabled = false;
 }
 
 
@@ -20,7 +24,6 @@ vector<form> FormsManager::LoadForms()
 	for (int i = 0; i < forms_found.size(); i++)
 	{
 		cout << forms_found[i] << endl;
-		_getch();
 		std::ifstream in (forms_found[i].c_str());
 		if (in.is_open())
 		{
@@ -162,7 +165,84 @@ void FormsManager::RegisterFormTriggerConditions(vector<string> attributes, form
 	}
 }
 
+void FormsManager::RegisterComponentTextBox(vector<string> attributes, form &created_form)
+{
+	int x, y;
+	string text;
+	x = atoi(attributes[1].c_str());
+	y = atoi(attributes[2].c_str());
+	text = attributes[3];
+	created_form.text_boxes.push_back(ComponentTextBox(x, y, text));
+}
+
+std::vector<int>  FormsManager::evaluate_input(gui_event event_pkg)
+{
+	
+
+	if (is_form_enabled)
+	{
+
+	}
+	else
+	{
+		for (int i = 0; i < forms.size(); i++)
+		{
+			if (forms[i].trigger == TRIGGER_KEYPRESS && vector_contains(forms[i].trigger_conditions, event_pkg.key))
+			{
+				enable_form(forms[i].ID);
+			}
+		}
+	}
+
+
+}
+void SendEventInfoToForm(std::vector<int> info)
+{
+
+}
+
+void FormsManager::initialize_collection()
+{
+	CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)collect_events, &collected_data, NULL, NULL);
+}
+
+void collect_events(gui_event &container)
+{
+	for (;keyboard_input(); Sleep(100))
+	{
+		gui_event *ev;
+		ev = new gui_event;
+		ev->MouseX = get_mouse_state("x");
+		ev->MouseY = get_mouse_state("y");
+		if (keyboard_input())
+		{
+			ev->key = keyboard_input();
+		}
+		container = *ev;
+		delete ev;
+	}
+}
+
+
+
+void enable_form(int of_ID)
+{
+
+}
+
 
 void disable_form(int of_ID)
 {
+}
+
+int FormsManager::search_for_main_form()
+{
+	for (int i = 0; i < forms.size(); i++)
+	{
+		if (forms[i].is_main)
+		{
+			startup_form = &forms[i];
+			break;
+		}
+	}
 }

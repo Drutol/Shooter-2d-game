@@ -66,8 +66,11 @@ void check_affection_box_collision_NPC(int radius,NPC &npc);
 void check_affection_box_collision_player(int radius);
 void remove_affection_box(int ID);
 int search_for_object_ID(int tile_X,int tile_Y,int type);
+
 ALLEGRO_BITMAP* return_appropriate_bitmap(std::string which);
 
+//Utilities
+bool vector_contains(std::vector<int> vec,int searched);
 
 
 ///Incredibely importatnt arrays and vars
