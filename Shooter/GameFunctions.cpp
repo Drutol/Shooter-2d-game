@@ -65,6 +65,8 @@ int keyboard_input()
 		return ALLEGRO_KEY_E;
 	if(al_key_down(&keystate,ALLEGRO_KEY_K))
 		return ALLEGRO_KEY_K;
+	if (al_key_down(&keystate, ALLEGRO_KEY_P))
+		return ALLEGRO_KEY_P;
 	
 	return NULL;
 }
@@ -207,11 +209,22 @@ void check_interactions(int tile_X,int tile_Y,int with_key)
 					indicator.highlight_object(doors[levers[ID].affected_object[i].ID].tile_X,doors[levers[ID].affected_object[i].ID].tile_Y);
 				}
 			}
-			indicator.display_keys(LEVER,ID);
-			}
-		
-		
+				indicator.display_keys(LEVER,ID);
 		}
+
+
+		//For forms
+		gui_event current_event;
+		current_event.key = with_key;
+		current_event.MouseX = get_mouse_state("x");
+		current_event.MouseY = get_mouse_state("y");
+		forms_manager.evaluate_input(current_event);
+		//
+
+}
+
+
+
 
 int search_for_object_ID(int tile_X,int tile_Y,int type)
 {

@@ -1,9 +1,9 @@
 #include "FormsManager.h"
 
+gui_event container;
 
 FormsManager::FormsManager()
 {
-	initialize_collection();
 	this->prevMousePosX = 0; 
 	this->prevMousePosY = 0;
 	this->is_form_enabled = false;
@@ -14,7 +14,7 @@ FormsManager::~FormsManager()
 {
 }
 
-vector<form> FormsManager::LoadForms()
+void FormsManager::LoadForms()
 {
 	std::vector<std::string> forms_found;
 	forms_found = get_all_files_names_within_folder("Forma");
@@ -23,7 +23,6 @@ vector<form> FormsManager::LoadForms()
 
 	for (int i = 0; i < forms_found.size(); i++)
 	{
-		cout << forms_found[i] << endl;
 		std::ifstream in (forms_found[i].c_str());
 		if (in.is_open())
 		{
@@ -36,34 +35,46 @@ vector<form> FormsManager::LoadForms()
 				tokenize(line,read_attributes);
 
 				//Beware almighty switch ...it's on its way
+				cout << read_attributes[0];
 
-				switch (read_attributes[0][0])
+				if (read_attributes[0]=="button")
 				{
-					case 'b':		//button
-						RegisterComponentButton(read_attributes, created_form);
-					case 't':		//trigkey
-						RegisterFormTrigger(read_attributes, created_form);
-					case 'f':		//Form
-						created_form.name = read_attributes[1];
-					case 'X':		//posx
-						created_form.PosX = atoi(read_attributes[1].c_str());
-					case 'Y':		//posy
-						created_form.PosY = atoi(read_attributes[1].c_str());
-					case 'W':		//width
-						created_form.width = atoi(read_attributes[1].c_str());
-					case 'H':		//height
-						created_form.height = atoi(read_attributes[1].c_str());
-					case 'c':		//condition
-						RegisterFormTriggerConditions(read_attributes, created_form);
-					default:
-						break;
+					RegisterComponentButton(read_attributes, created_form);
 				}
-			}	
-			output.push_back(created_form);
+				else if (read_attributes[0] == "trigkey")
+				{
+					RegisterFormTrigger(read_attributes, created_form);
+				}
+				else if (read_attributes[0] == "Form")
+				{
+					created_form.name = read_attributes[1];
+				}
+				else if (read_attributes[0] == "Xpos")
+				{
+					created_form.PosX = atoi(read_attributes[1].c_str());
+				}
+				else if (read_attributes[0] == "Ypos")
+				{
+					created_form.PosY = atoi(read_attributes[1].c_str());
+				}
+				else if (read_attributes[0] == "Width")
+				{
+					created_form.width = atoi(read_attributes[1].c_str());
+				}
+				else if (read_attributes[0] == "Height")
+				{
+					created_form.height = atoi(read_attributes[1].c_str());
+				}
+				else if (read_attributes[0] == "conditon")
+				{
+					RegisterFormTriggerConditions(read_attributes, created_form);
+				}
+				read_attributes.clear();
+			}
+			
+			forms.push_back(created_form);
 		}
 	}
-
-	return output;
 }
 
 std::vector<string> FormsManager::get_all_files_names_within_folder(string folder)
@@ -95,7 +106,6 @@ void FormsManager::tokenize(string string_to_tokenize,std::vector<string> &attri
 	std::string s;
 	while (std::getline(f, s, '='))
 	{
-		std::cout << s << std::endl;
 		attributes.push_back(s);
 	}
 
@@ -151,8 +161,12 @@ void FormsManager::RegisterFormTrigger(vector<string> attributes, form &created_
 	{
 		trigger_value = ALLEGRO_KEY_ESCAPE;
 	}
+	else if (attributes[1] == "P")
+	{
+		trigger_value = ALLEGRO_KEY_P;
+	}
 
-	created_form.trigger = TRIGGER_KEYPRESS;
+	created_form.trigger = trigger;
 	created_form.trigger_conditions.push_back(trigger_value);
 
 }
@@ -175,21 +189,22 @@ void FormsManager::RegisterComponentTextBox(vector<string> attributes, form &cre
 	created_form.text_boxes.push_back(ComponentTextBox(x, y, text));
 }
 
-std::vector<int>  FormsManager::evaluate_input(gui_event event_pkg)
+void FormsManager::evaluate_input(gui_event event_pkg)
 {
-	
-
 	if (is_form_enabled)
 	{
 
 	}
 	else
 	{
+		
 		for (int i = 0; i < forms.size(); i++)
 		{
+			//cout << forms[i].trigger << " : " ;// forms[i].trigger_conditions[0] << endl;
 			if (forms[i].trigger == TRIGGER_KEYPRESS && vector_contains(forms[i].trigger_conditions, event_pkg.key))
 			{
-				enable_form(forms[i].ID);
+				cout << "Enabling Form" << endl;
+				enable_form(i);
 			}
 		}
 	}
@@ -201,38 +216,41 @@ void SendEventInfoToForm(std::vector<int> info)
 
 }
 
-void FormsManager::initialize_collection()
+void FormsManager::draw_forms()
 {
-	CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)collect_events, &collected_data, NULL, NULL);
-}
-
-void collect_events(gui_event &container)
-{
-	for (;keyboard_input(); Sleep(100))
+	for (int i = 0; i < currently_enabled_forms.size(); i++)
 	{
-		gui_event *ev;
-		ev = new gui_event;
-		ev->MouseX = get_mouse_state("x");
-		ev->MouseY = get_mouse_state("y");
-		if (keyboard_input())
-		{
-			ev->key = keyboard_input();
-		}
-		container = *ev;
-		delete ev;
+		al_draw_filled_rectangle(currently_enabled_forms[i]->PosX + cameraX,
+			currently_enabled_forms[i]->PosY + cameraY,
+			currently_enabled_forms[i]->PosX + cameraX + currently_enabled_forms[i]->width,
+			currently_enabled_forms[i]->PosY + cameraY + currently_enabled_forms[i]->height,
+			al_map_rgba(200,200,200,.5));cout << currently_enabled_forms[i]->height << endl;
+
 	}
 }
 
 
-
 void enable_form(int of_ID)
 {
+	bool already_enabled = false;
+	for (size_t i = 0; i < forms_manager.currently_enabled_forms.size(); i++)
+	{
+		if (&forms_manager.forms[of_ID] == forms_manager.currently_enabled_forms[i])
+		{
+			already_enabled = true;
+			cout << "already enabled" << endl;
+			break;
+		}
+	}
 
+	if (!already_enabled)
+		forms_manager.currently_enabled_forms.push_back(&forms_manager.forms[of_ID]); //memory leak
 }
 
 
 void disable_form(int of_ID)
 {
+
 }
 
 int FormsManager::search_for_main_form()

@@ -40,7 +40,6 @@ void main_game()
 	bool online = false;
 	al_clear_to_color(al_map_rgb(255,255,255));
 	game_font = al_load_font("Resources/leadcoat.ttf",40,NULL);
-	al_install_keyboard();
 	al_init_image_addon();
 	load_level();
 	/*map[3][5].bitmap="dirt";
@@ -64,6 +63,7 @@ void main_game()
 	affection_boxes.push_back(Affection_box());
 	affection_boxes[0].set_up(1,1,10,10,NOTHING,NULL,0);
 	affection_boxes[0].add_flag(FLAG_UNPASSABLE);
+	
 	//--Loading Forms--//
 	forms_manager.LoadForms();
 	//-----------------//
@@ -88,6 +88,11 @@ void main_game()
 			register_data(KEY_PRESS, player.PosX, player.PosY,keyboard_input());
 
 		check_affection_box_collision_NPC(3,test_NPC);
+		//-----Forms----//
+		forms_manager.draw_forms();
+		//-----Forms----//
+		
+		
 		
 		//-----Shooting test---//
 		if(get_mouse_state("LMB"))

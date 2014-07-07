@@ -29,6 +29,7 @@ struct game_event
 	int pressed_key;
 	int of_ID;
 };
+
 class FormsManager;
 
 extern std::vector<int> free_door_IDs;

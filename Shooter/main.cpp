@@ -8,6 +8,7 @@ ALLEGRO_DISPLAY *display;
 void init()
 {
 	al_init_primitives_addon();
+	
 	srand(time(NULL));
 
 
@@ -27,6 +28,8 @@ void init()
    }
 
    al_clear_to_color(al_map_rgb(0,0,0));
+
+   al_install_keyboard();
  
 }
 int main()

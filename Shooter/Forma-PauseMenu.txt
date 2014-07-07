@@ -1,21 +1,21 @@
 Form=PauseMenu
 
 +Position:
-Xpos = 300
-Ypos = 300
-Width = 200
-Height = 350
+Xpos=300
+Ypos=300
+Width=200
+Height=350
 
 
 +Buttons:
-button1 = 10 = 10 = RESUME = 100 = 100 = 100
-button2 = 10 = 110 = EXIT= 200 = 100 = 100
+button=10=10=RESUME=100=100=100
+button=10=110=EXIT=200=100=100
 +Triggers:
-trigkey = ESC
+trigkey=P
 +Conditions:
-condition = game_running
+condition=game_running
 +TextBox:
-Textbox1 = 30 = 30 = Pause Menu
+Textbox1=30=30=Pause Menu
 
 +Misc
 MAIN_FORM
