@@ -33,6 +33,7 @@ private:
 	int prevMousePosX, prevMousePosY;
 	bool is_form_enabled;
 	
+	
 
 public:
 	FormsManager();
@@ -50,6 +51,7 @@ public:
 	vector<form*> currently_enabled_forms;
 	void draw_forms(); 
 	void LoadForms();
+	vector<int> free_form_IDs;
 };
 
 void disable_form(int form_to_be_disabled_ID);

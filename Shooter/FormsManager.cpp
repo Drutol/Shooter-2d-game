@@ -193,20 +193,31 @@ void FormsManager::evaluate_input(gui_event event_pkg)
 {
 	if (is_form_enabled)
 	{
-
+		for (int i = 0; i < forms.size(); i++)
+		{
+			if (forms[i].trigger == TRIGGER_KEYPRESS && vector_contains(forms[i].trigger_conditions, event_pkg.key))
+			{
+				cout << "Disabling Form" << endl;
+				is_form_enabled = false;
+				disable_form(i);
+				al_rest(.05);
+			}
+		}
 	}
 	else
 	{
 		
 		for (int i = 0; i < forms.size(); i++)
 		{
-			//cout << forms[i].trigger << " : " ;// forms[i].trigger_conditions[0] << endl;
 			if (forms[i].trigger == TRIGGER_KEYPRESS && vector_contains(forms[i].trigger_conditions, event_pkg.key))
 			{
 				cout << "Enabling Form" << endl;
+				is_form_enabled = true;
 				enable_form(i);
+				al_rest(.05);
 			}
 		}
+		
 	}
 
 
@@ -218,13 +229,23 @@ void SendEventInfoToForm(std::vector<int> info)
 
 void FormsManager::draw_forms()
 {
-	for (int i = 0; i < currently_enabled_forms.size(); i++)
+	for (int i = 0; i < currently_enabled_forms.size()&&currently_enabled_forms[i]!=NULL; i++)
 	{
 		al_draw_filled_rectangle(currently_enabled_forms[i]->PosX + cameraX,
 			currently_enabled_forms[i]->PosY + cameraY,
 			currently_enabled_forms[i]->PosX + cameraX + currently_enabled_forms[i]->width,
 			currently_enabled_forms[i]->PosY + cameraY + currently_enabled_forms[i]->height,
-			al_map_rgba(200,200,200,.5));cout << currently_enabled_forms[i]->height << endl;
+			al_map_rgba(200, 200, 200, .5));
+		for (size_t j = 0; j < currently_enabled_forms[i]->buttons.size(); j++)
+		{
+			currently_enabled_forms[i]->buttons[j].Render();
+			cout << "RENDERUJE GUZIK" << endl;
+		}
+		for (size_t j = 0; j < currently_enabled_forms[i]->text_boxes.size(); j++)
+		{
+			currently_enabled_forms[i]->text_boxes[j].draw_text();
+		}
+		cout << currently_enabled_forms[i]->buttons.size() << endl;
 
 	}
 }
@@ -233,24 +254,39 @@ void FormsManager::draw_forms()
 void enable_form(int of_ID)
 {
 	bool already_enabled = false;
-	for (size_t i = 0; i < forms_manager.currently_enabled_forms.size(); i++)
+	if (forms_manager.free_form_IDs.empty())
 	{
-		if (&forms_manager.forms[of_ID] == forms_manager.currently_enabled_forms[i])
+		for (size_t i = 0; i < forms_manager.currently_enabled_forms.size(); i++)
 		{
-			already_enabled = true;
-			cout << "already enabled" << endl;
-			break;
+			if (&forms_manager.forms[of_ID] == forms_manager.currently_enabled_forms[i])
+			{
+				already_enabled = true;
+				break;
+			}
 		}
+
+		if (!already_enabled)
+			forms_manager.currently_enabled_forms.push_back(&forms_manager.forms[of_ID]);
+	}
+	else
+	{
+		forms_manager.currently_enabled_forms[forms_manager.free_form_IDs[forms_manager.free_form_IDs.size()-1]] = &forms_manager.forms[of_ID];
+		forms_manager.free_form_IDs.pop_back();
 	}
 
-	if (!already_enabled)
-		forms_manager.currently_enabled_forms.push_back(&forms_manager.forms[of_ID]); //memory leak
 }
 
 
 void disable_form(int of_ID)
 {
-
+	for (size_t i = 0; i < forms_manager.currently_enabled_forms.size(); i++)
+	{
+		if (&forms_manager.forms[of_ID] == forms_manager.currently_enabled_forms[i])
+		{
+			forms_manager.currently_enabled_forms[i] = NULL;
+			forms_manager.free_form_IDs.push_back(i);
+		}
+	}
 }
 
 int FormsManager::search_for_main_form()

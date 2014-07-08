@@ -8,8 +8,8 @@ Height=350
 
 
 +Buttons:
-button=10=10=RESUME=100=100=100
-button=10=110=EXIT=200=100=100
+button=10=10=RESUME=255=255=255
+button=10=110=EXIT=255=255=255
 +Triggers:
 trigkey=P
 +Conditions:
