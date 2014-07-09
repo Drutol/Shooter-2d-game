@@ -1,12 +1,14 @@
 #pragma once
 class GuiMainComponent
 {
-protected:
-	int posX, posY;
+	
 public:
 	int connected_to_form;
+	int posX, posY;
 	
-	
+	void recv_event(int ev);
+	int last_event;
+
 	GuiMainComponent();
 	~GuiMainComponent();
 };

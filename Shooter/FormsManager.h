@@ -31,7 +31,7 @@ private:
 	form *startup_form;
 	gui_event collected_data;
 	int prevMousePosX, prevMousePosY;
-	bool is_form_enabled;
+	
 	
 	
 
@@ -52,7 +52,12 @@ public:
 	void draw_forms(); 
 	void LoadForms();
 	vector<int> free_form_IDs;
+	bool previously_overlapping;
+	vector<int> forms_to_be_disabled;
+	bool is_form_enabled;
+
 };
 
 void disable_form(int form_to_be_disabled_ID);
+void slaughter_forms();
 void enable_form(int form_to_be_enabled_ID);

@@ -12,4 +12,7 @@ GuiMainComponent::~GuiMainComponent()
 }
 
 
-
+void GuiMainComponent::recv_event(int ev)
+{
+	last_event = ev;
+}
