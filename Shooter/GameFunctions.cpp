@@ -1,6 +1,6 @@
 #include "link.h"
 #include "GameFunctions.h"
-
+#include "Multiplayer_Client.h"
 //VARS DEFINITIONS
 ALLEGRO_TRANSFORM camera;
 tile map[20][20];
@@ -8,6 +8,7 @@ Player player;
 std::vector<Doors> doors;
 std::vector<Lever> levers;
 std::vector<Affection_box> affection_boxes;
+std::vector<int>  player_boxes_IDs;
 ALLEGRO_FONT *game_font;
 NPC test_NPC;
 NPC dummy;

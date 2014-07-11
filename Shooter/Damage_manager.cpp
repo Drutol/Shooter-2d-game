@@ -1,4 +1,5 @@
 #include "Damage_manager.h"
+#include "Multiplayer_Client.h"
 
 
 Damage_manager::Damage_manager(void)
@@ -65,7 +66,33 @@ void Damage_manager::process_projectiles()
 			affection_boxes[active_projectiles[i].box_ID].move_box(active_projectiles[i].x,active_projectiles[i].y);
 			if(affection_boxes[active_projectiles[i].box_ID].check_if_colides_static())
 				remove_projectile(i);
+
 		}
 	}
 
+}
+
+bool Damage_manager::check_player_collison()
+{
+	for (size_t i = 0; i < player_boxes_IDs.size(); i++)
+	{
+		for (size_t j = 0; j < active_projectiles.size(); j++)
+		{
+			if (affection_boxes[player_boxes_IDs[i]].check_if_inside(active_projectiles[j].x, active_projectiles[j].y))
+			{
+				if (player.box_ID == i)
+				{
+					player.health -= 5;
+				}
+				else if (o_player.box_ID == i)
+				{
+					player.health -= 5;
+				}
+				remove_projectile(j);
+			}
+		}
+
+
+
+	}
 }

@@ -1,6 +1,8 @@
+
 #pragma once
 #include "link.h"
 #include "GameFunctions.h"
+
 void emulate_click(int x, int y);
 void emulate_key_press(int which, int x, int y);
 
@@ -32,14 +34,16 @@ struct ev_data
 };
 struct online_player
 {
-
+	float health;
 	int x;
 	int y;
-
+	int box_ID;
 	void operator=(DataPkg _x)
 	{
 		x = _x.x;
 		y = _x.y;
+		
+		affection_boxes[box_ID].move_box(x, y);
 
 		if (_x.ev_type != -1)
 		{
@@ -51,6 +55,15 @@ struct online_player
 			else
 				emulate_key_press(_x.add_nfo, _x.ev_x, _x.ev_y);
 		}
+	}
+	online_player()
+	{
+		x = y = 0;
+		affection_boxes.push_back(Affection_box());
+		affection_boxes[affection_boxes.size() - 1].set_up(x, y, 32, 32, OBJECT_PLAYER, NULL, affection_boxes.size() - 1);
+		player_boxes_IDs.push_back(affection_boxes.size() - 1);
+		box_ID = affection_boxes.size() - 1;
+		health = 100;
 	}
 };
 struct HelloMsg

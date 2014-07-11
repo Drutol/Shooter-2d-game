@@ -70,6 +70,7 @@ public:
 	void process_projectiles();
 	void remove_projectile(int ID);
 	void update_boxes();
+	bool check_player_collison();
 	//--Shotting--//
 	
 	

@@ -6,7 +6,6 @@
 #include "Affection_box.h"
 #include "NPC.h"
 #include "Damage_manager.h"
-#include "Multiplayer_Client.h"
 #include "FormsManager.h"
 struct tile
 {
@@ -35,7 +34,7 @@ class FormsManager;
 extern std::vector<int> free_door_IDs;
 extern std::vector<int> free_lever_IDs;
 extern std::vector<int> free_box_IDs;
-enum tile_objects {NOTHING,DOOR,LEVER,BOX};
+enum tile_objects {NOTHING,DOOR,LEVER,BOX,OBJECT_PLAYER};
 enum directions {RIGHT,LEFT,UP,DOWN};
 enum states {OPEN,CLOSED,OPENING,CLOSING};
 enum flags {FLAG_PASSABLE,FLAG_UNPASSABLE,FLAG_DAMAGING,FLAG_PLAYER,FLAG_PROJECTILE};
@@ -84,6 +83,7 @@ extern std::vector<Affection_box> affection_boxes;
 extern Interaction_Indicator indicator;
 extern FormsManager forms_manager;
 extern NPC test_NPC;
+extern std::vector<int> player_boxes_IDs;
 ///Not so important but still
 extern ALLEGRO_FONT *game_font;
 extern float cameraX;

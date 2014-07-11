@@ -1,5 +1,6 @@
 #include "link.h"
 #include "GameFunctions.h"
+#include"Multiplayer_Client.h"
 
 Damage_manager damage_manager;
 
@@ -42,16 +43,6 @@ void main_game()
 	game_font = al_load_font("Resources/leadcoat.ttf",40,NULL);
 	al_init_image_addon();
 	load_level();
-	/*map[3][5].bitmap="dirt";
-	map[3][5].passable=false;*/
-	//map[5][2].bitmap="dirt_back";
-	//map[5][2].passable=true;
-	//map[5][3].bitmap="dirt_back";
-	//map[5][3].passable=true;
-	//map[5][4].bitmap="dirt_back";
-	//map[5][4].passable=true;
-	//map[5][5].bitmap="dirt_back_down";
-	//map[5][5].passable=true;
 	ALLEGRO_EVENT_QUEUE *game_events = al_create_event_queue();
 	al_register_event_source(game_events, al_get_keyboard_event_source());
 	
@@ -62,7 +53,7 @@ void main_game()
 
 	affection_boxes.push_back(Affection_box());
 	affection_boxes[0].set_up(1,1,10,10,NOTHING,NULL,0);
-	affection_boxes[0].add_flag(FLAG_UNPASSABLE);
+	affection_boxes[0].add_flag(FLAG_PLAYER);
 	
 	//--Loading Forms--//
 	forms_manager.LoadForms();
@@ -109,6 +100,9 @@ void main_game()
 			if(client.attempt_connection())
 				online = true;
 		}
+
+		if (online)
+			al_draw_filled_rectangle(o_player.x, o_player.y, o_player.x + 20, o_player.y + 20, al_map_rgb(100, 255, 0));
 		//-----Multiplayer-----//
 
 
@@ -118,8 +112,7 @@ void main_game()
 		test_NPC.move();
 		test_NPC.draw();
 		//----------------------//
-		if(online)
-			al_draw_filled_rectangle(o_player.x,o_player.y,o_player.x+20,o_player.y+20,al_map_rgb(100,255,0));
+		
 
 		//----------------------//
 		
@@ -128,6 +121,8 @@ void main_game()
 		player.move();
 		player.apply_move(NULL);
 		player.draw();
+		affection_boxes[player.box_ID].move_box(player.PosX, player.PosY);
+		cout << player.health << endl;
 		//END Player STUFF
 		
 		//----------------------//
@@ -153,5 +148,4 @@ void main_game()
 	al_flip_display();
 	game_done=true;
 	al_rest(1.0);
-	//save_map();
 }

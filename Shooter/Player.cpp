@@ -19,6 +19,11 @@ Player::Player(void)
 	this->force_ground=false;
 	this->on_affection_box=false;
 	this->keyboard_enabled=true;
+	affection_boxes.push_back(Affection_box());
+	affection_boxes[affection_boxes.size() - 1].set_up(PosX, PosY, 32, 32, OBJECT_PLAYER, NULL, affection_boxes.size() - 1);
+	player_boxes_IDs.push_back(affection_boxes.size() - 1);
+	box_ID = affection_boxes.size() - 1;
+	health = 100;
 }
 
 
