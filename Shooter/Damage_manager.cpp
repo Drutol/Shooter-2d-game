@@ -11,10 +11,10 @@ Damage_manager::~Damage_manager(void)
 {
 }
 
-void Damage_manager::register_projectile(int at_x,int at_y,int to_x,int to_y,int speed)
+void Damage_manager::register_projectile(int at_x,int at_y,int to_x,int to_y,int speed,bool friendly)
 {
 	
-	projectile temp_proj(to_x,to_y,at_x,at_y,speed);
+	projectile temp_proj(to_x,to_y,at_x,at_y,speed,friendly);
 	if(free_projectile_ID.empty())
 	{
 		temp_proj.ID=active_projectiles.size()-1;	
@@ -62,37 +62,24 @@ void Damage_manager::process_projectiles()
 		if(active_projectiles[i].exists)
 		{
 			active_projectiles[i].move();
-			
+			check_player_collison();
 			affection_boxes[active_projectiles[i].box_ID].move_box(active_projectiles[i].x,active_projectiles[i].y);
 			if(affection_boxes[active_projectiles[i].box_ID].check_if_colides_static())
 				remove_projectile(i);
+			
 
 		}
 	}
 
 }
 
-bool Damage_manager::check_player_collison()
+void Damage_manager::check_player_collison()
 {
-	for (size_t i = 0; i < player_boxes_IDs.size(); i++)
+	for (size_t i = 0; i < active_projectiles.size(); i++)
 	{
-		for (size_t j = 0; j < active_projectiles.size(); j++)
+		if (player.player_box.check_if_inside(active_projectiles[i].x,active_projectiles[i].y) && !active_projectiles[i].friendly)
 		{
-			if (affection_boxes[player_boxes_IDs[i]].check_if_inside(active_projectiles[j].x, active_projectiles[j].y))
-			{
-				if (player.box_ID == i)
-				{
-					player.health -= 5;
-				}
-				else if (o_player.box_ID == i)
-				{
-					player.health -= 5;
-				}
-				remove_projectile(j);
-			}
+			player.health -= 5;
 		}
-
-
-
 	}
 }

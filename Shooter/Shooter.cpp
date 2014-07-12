@@ -15,14 +15,14 @@ void shoot(int x, int y)
 		mouse_tile_y = get_mouse_state("y") / TileSize;
 		if (map[mouse_tile_x][mouse_tile_y].passable)
 		{
-			damage_manager.register_projectile(player.PosX, player.PosY, get_mouse_state("x"), get_mouse_state("y"), 5);
+			damage_manager.register_projectile(player.PosX, player.PosY, get_mouse_state("x"), get_mouse_state("y"), 5, true);
 			register_data(CLICK, get_mouse_state("x"), get_mouse_state("y"));
 		}
 	}
 	else
 	{
 		cout << "I have registered dat #%#$#$" << endl;
-		damage_manager.register_projectile(o_player.x, o_player.y, x, y, 5); // <- Crash just because have to look inside							!!!!TODO!!!!
+		damage_manager.register_projectile(o_player.x, o_player.y, x, y, 5, false); // <- Crash just because have to look inside							!!!!TODO!!!!
 	}
 }
 
@@ -72,7 +72,6 @@ void main_game()
 		if(check_door_collision())
 			kill_player();
 		
-		
 
 		check_interactions(player.get_tile_X(),player.get_tile_Y(),keyboard_input());
 		if (keyboard_input() > 0)
@@ -105,7 +104,10 @@ void main_game()
 			al_draw_filled_rectangle(o_player.x, o_player.y, o_player.x + 20, o_player.y + 20, al_map_rgb(100, 255, 0));
 		//-----Multiplayer-----//
 
-
+		for (size_t i = 0; i < affection_boxes.size(); i++)
+		{
+			affection_boxes[i].debug_draw_frame();
+		}
 		
 		//----------------------//
 		test_NPC.Gather_data();
@@ -121,8 +123,11 @@ void main_game()
 		player.move();
 		player.apply_move(NULL);
 		player.draw();
-		affection_boxes[player.box_ID].move_box(player.PosX, player.PosY);
+		player.player_box.move_box(player.PosX, player.PosY);
 		cout << player.health << endl;
+
+		player.player_box.debug_draw_frame();
+		cout << player.PosX << ":" << player.player_box.PosX_left;
 		//END Player STUFF
 		
 		//----------------------//

@@ -56,8 +56,8 @@ void Affection_box::set_up(int x,int y,int width,int height,int object_type,int 
 	PosX_right=x+width;
 	PosY_top=y;
 	PosY_bottom=y+height;
-	//map[(int)PosX_left*TileSize][(int)PosY_top*TileSize].held_object=BOX;
-	//map[(int)PosX_left*TileSize][(int)PosY_top*TileSize].held_object_ID=box_ID;
+	this->width = width;
+	this->height = height;
 	if (object_type != NOTHING)
 	{
 		held_object.type=object_type;
@@ -72,7 +72,8 @@ void Affection_box::set_up(int x,int y,int width,int height,int object_type,int 
 void Affection_box::debug_draw_frame()
 {
 	if(exists)	
-	al_draw_rectangle(PosX_left,PosY_top,PosX_right,PosY_bottom,al_map_rgb(68,23,99),30);
+	al_draw_filled_rectangle(PosX_left,PosY_top,PosX_left+width,PosY_top+height,al_map_rgb(68,23,99));
+	
 
 }
 bool Affection_box::check_if_inside(int x,int y)
@@ -108,5 +109,5 @@ void Affection_box::move_box(int x,int y)
 	PosX_left=x;
 	PosX_right=PosX_left+width;
 	PosY_top=y;
-	PosY_bottom=PosY_top-height;
+	PosY_bottom=PosY_top+height;
 }

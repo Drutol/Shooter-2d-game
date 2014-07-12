@@ -352,72 +352,75 @@ void check_affection_box_collision_player(int radius)
 	
 	
 	
-		for(int i=0;i<affection_boxes.size();i++)
+		for (int i = 0; i < affection_boxes.size(); i++)
 		{
-			int modifier=0;
-			if(affection_boxes[i].shorter_than_player)
-				modifier=16;
-			if(affection_boxes[i].check_if_inside(xl,yt+modifier))
-				{
-						inside=true;
-						approaching_left=true;
-				}
-			else if(affection_boxes[i].check_if_inside(xl,yb-modifier))
-				{
-						inside=true;
-						approaching_left=true;
-				}
-			else if(affection_boxes[i].check_if_inside(xr,yt+modifier))
-				{
-						inside=true;
-						approaching_right=true;
-				}
-			else if(affection_boxes[i].check_if_inside(xr,yb-modifier))
-				{
-						inside=true;
-						approaching_right=true;
-				}
-
-			if(affection_boxes[i].check_if_inside(xl+2,yt)||affection_boxes[i].check_if_inside(xr-2,yt))
-				approaching_bottom=true;
-			if(affection_boxes[i].check_if_inside(xl,yb+3)||affection_boxes[i].check_if_inside(xr,yb+3))
-					approaching_top=true;
-
-		
-			if(affection_boxes[i].check_flag(FLAG_UNPASSABLE,false))
-				passable=false;
-			else
+			if (affection_boxes[i].check_flag(FLAG_UNPASSABLE, false))
 			{
-				player.can_move_left=true;
-				player.can_jump=true;
-				player.can_move_right=true;
-			}
-		}
-		if(inside)
-		{
-			player.PosY-=2;
-		}
-		if(!passable)
-		{
-			//if(approaching_top)
-			//	player.force_ground=true;
-			//else
-			//	player.force_ground=false;
-			if(approaching_left&&!approaching_top)
-				player.can_move_left=false;
-			else
-				player.can_move_left=true;
-			if(approaching_right&&!approaching_top)
-				player.can_move_right=false;
-			else
-				player.can_move_right=true;
-			if(approaching_bottom)
+				int modifier = 0;
+				if (affection_boxes[i].shorter_than_player)
+					modifier = 16;
+				if (affection_boxes[i].check_if_inside(xl, yt + modifier))
 				{
-					player.can_jump=false;
+					inside = true;
+					approaching_left = true;
+				}
+				else if (affection_boxes[i].check_if_inside(xl, yb - modifier))
+				{
+					inside = true;
+					approaching_left = true;
+				}
+				else if (affection_boxes[i].check_if_inside(xr, yt + modifier))
+				{
+					inside = true;
+					approaching_right = true;
+				}
+				else if (affection_boxes[i].check_if_inside(xr, yb - modifier))
+				{
+					inside = true;
+					approaching_right = true;
+				}
+
+				if (affection_boxes[i].check_if_inside(xl + 2, yt) || affection_boxes[i].check_if_inside(xr - 2, yt))
+					approaching_bottom = true;
+				if (affection_boxes[i].check_if_inside(xl, yb + 3) || affection_boxes[i].check_if_inside(xr, yb + 3))
+					approaching_top = true;
+
+
+				if (affection_boxes[i].check_flag(FLAG_UNPASSABLE, false))
+					passable = false;
+				else
+				{
+					player.can_move_left = true;
+					player.can_jump = true;
+					player.can_move_right = true;
+				}
+			}
+			if (inside)
+			{
+				player.PosY -= 2;
+			}
+			if (!passable)
+			{
+				//if(approaching_top)
+				//	player.force_ground=true;
+				//else
+				//	player.force_ground=false;
+				if (approaching_left&&!approaching_top)
+					player.can_move_left = false;
+				else
+					player.can_move_left = true;
+				if (approaching_right&&!approaching_top)
+					player.can_move_right = false;
+				else
+					player.can_move_right = true;
+				if (approaching_bottom)
+				{
+					player.can_jump = false;
 					player.remove_momentum(true);
 				}
-			else
-				player.can_jump=true;
+				else
+					player.can_jump = true;
+			}
 		}
 	}
 
