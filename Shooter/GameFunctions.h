@@ -89,4 +89,5 @@ extern ALLEGRO_FONT *game_font;
 extern float cameraX;
 extern float cameraY;
 extern NPC dummy;
+extern bool is_game_running;
 

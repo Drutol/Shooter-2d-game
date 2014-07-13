@@ -19,7 +19,7 @@ public:
 	ALLEGRO_FONT *text_font;
 	ComponentButton();
 	ComponentButton::ComponentButton(void(*function_to_be_called)(void), int PosX, int PosY, int of_form_ID, string Text, ALLEGRO_COLOR rgb);
-	ComponentButton::ComponentButton(void(*function_to_be_called)(int), int PosX, int PosY, int of_form_ID, string Text, ALLEGRO_COLOR rgb, int arg=NULL);
+	ComponentButton::ComponentButton(void(*function_to_be_called)(int), int PosX, int PosY, int of_form_ID, string Text, ALLEGRO_COLOR rgb, int arg);
 	void check_for_events();  //any mails yet?
 	void call_function();
 	~ComponentButton();

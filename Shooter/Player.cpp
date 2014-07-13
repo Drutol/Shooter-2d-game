@@ -19,6 +19,7 @@ Player::Player(void)
 	this->force_ground=false;
 	this->on_affection_box=false;
 	this->keyboard_enabled=true;
+	this->shoot_CD = 0;
 	player_box.set_up(PosX, PosY, 32, 32, OBJECT_PLAYER, NULL, affection_boxes.size() - 1);
 	health = 100;
 }

@@ -6,6 +6,7 @@ std::vector<int> free_box_IDs;
 Affection_box::Affection_box(void)
 {
 	exists=false;
+	PosY_top = 0;
 }
 
 
@@ -94,14 +95,21 @@ bool Affection_box::check_if_colides_static()
 	int tile_y;
 
 	tile_left=PosX_left/TileSize;
-	tile_right=PosX_right/TileSize;
+	tile_right=(PosX_left+width)/TileSize;
 	tile_y=PosY_top/TileSize;
 
-	if(!map[tile_left][tile_y].passable)
-		return true;
-	else if(!map[tile_right][tile_y].passable)
-		return true;
-	else return false;
+	cout << tile_left << " : " << tile_right << " : " << tile_y << "<-bo" << PosY_top << endl;
+	if (PosY_top >= 0)
+	{
+
+		if (!map[tile_left][tile_y].passable)
+			return true;
+		else if (!map[tile_right][tile_y].passable)
+			return true;
+		else return false;
+
+	}
+	
 }
 
 void Affection_box::move_box(int x,int y)

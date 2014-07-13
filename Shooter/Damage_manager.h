@@ -6,7 +6,7 @@ class Damage_manager
 private:
 		struct projectile
 		{
-			float x,y,a,b,t;
+			float x,y,a,b,t,x0,y0;
 			int x_to,y_to;
 			int speed;
 			int ID,box_ID;
@@ -40,8 +40,11 @@ private:
 			}
 			projectile(int x_to,int y_to,int x,int y,int speed,bool friendly)
 			{
+				
 				this->x=x;
 				this->y=y;
+				x0 = x;
+				y0 = y;
 				this->x_to=x_to;
 				this->y_to=y_to;
 				this->t=0;
@@ -73,6 +76,8 @@ public:
 	void remove_projectile(int ID);
 	void update_boxes();
 	void check_player_collison();
+	vector<int> projectiles_to_bo_removed;
+	void slaughter_projectiles();
 	//--Shotting--//
 	
 	

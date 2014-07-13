@@ -17,6 +17,7 @@ void shoot(int x, int y)
 		{
 			damage_manager.register_projectile(player.PosX, player.PosY, get_mouse_state("x"), get_mouse_state("y"), 5, true);
 			register_data(CLICK, get_mouse_state("x"), get_mouse_state("y"));
+			player.shoot_CD = 60;
 		}
 	}
 	else
@@ -31,17 +32,15 @@ void shoot(int x, int y)
 //////////////////////////////////////////////////////////////// Drawing
 void main_game()
 {
-	
+	is_game_running = true;
 	//ARG PASSING ORDER: 
-	system("LevelEditor.exe 200 300 1 1 5 dirt");
+	//system("LevelEditor.exe 200 300 1 1 5 dirt");
 	// Cam vars
 	cameraX=0.5,
 	cameraY=0.5;
 	al_rest(1.0);
 	bool online = false;
 	al_clear_to_color(al_map_rgb(255,255,255));
-	game_font = al_load_font("Resources/leadcoat.ttf",40,NULL);
-	al_init_image_addon();
 	load_level();
 	ALLEGRO_EVENT_QUEUE *game_events = al_create_event_queue();
 	al_register_event_source(game_events, al_get_keyboard_event_source());
@@ -53,10 +52,9 @@ void main_game()
 
 	affection_boxes.push_back(Affection_box());
 	affection_boxes[0].set_up(1,1,10,10,NOTHING,NULL,0);
-	affection_boxes[0].add_flag(FLAG_PLAYER);
+	affection_boxes[0].add_flag(FLAG_UNPASSABLE);
 	
 	//--Loading Forms--//
-	forms_manager.LoadForms();
 	//-----------------//
 	
 	bool game_done=false;
@@ -85,7 +83,7 @@ void main_game()
 		
 		
 		//-----Shooting test---//
-		if(get_mouse_state("LMB"))
+		if (get_mouse_state("LMB") && player.shoot_CD == 0)
 		{
 			shoot();
 		}
@@ -124,10 +122,9 @@ void main_game()
 		player.apply_move(NULL);
 		player.draw();
 		player.player_box.move_box(player.PosX, player.PosY);
-		cout << player.health << endl;
-
-		player.player_box.debug_draw_frame();
-		cout << player.PosX << ":" << player.player_box.PosX_left;
+		if (player.shoot_CD != 0)
+			player.shoot_CD-=2;
+		
 		//END Player STUFF
 		
 		//----------------------//
@@ -153,4 +150,5 @@ void main_game()
 	al_flip_display();
 	game_done=true;
 	al_rest(1.0);
+	is_game_running = false;
 }

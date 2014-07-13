@@ -10,9 +10,9 @@ ComponentButton::ComponentButton(void(*function_to_be_called)(int), int PosX, in
 	this->text = Text;
 	this->text_color = rgb;
 	this->text_color_base = rgb;
-	this->text_font = al_load_font("Resources/leadcoat.ttf", 20, NULL);
+	this->text_font = game_font;
 	this->last_event = -1;
-	this->arg = arg;
+    this->arg = arg;
 	int_function = true;
 }
 ComponentButton::ComponentButton(void(*function_to_be_called)(void), int PosX, int PosY, int of_form_ID, string Text, ALLEGRO_COLOR rgb)
@@ -24,7 +24,7 @@ ComponentButton::ComponentButton(void(*function_to_be_called)(void), int PosX, i
 	this->text = Text;
 	this->text_color = rgb;
 	this->text_color_base = rgb;
-	this->text_font = al_load_font("Resources/leadcoat.ttf", 20, NULL);
+	this->text_font = game_font;
 	this->last_event = -1;
 	int_function = false;
 }
@@ -43,7 +43,8 @@ ComponentButton::~ComponentButton()
 
 void ComponentButton::Render()
 {
-	al_draw_filled_rectangle(posX, posY, posX + 150, posY + 50, al_map_rgb(0, 0, 0));
+	//cout << posX << posY << endl;
+	al_draw_filled_rectangle(posX, posY, posX + 150, posY + 50, al_map_rgb(255, 255, 255));
 	al_draw_text(text_font, text_color, posX + 40, posY + 20, ALLEGRO_ALIGN_CENTRE, text.c_str());
 	check_for_events();
 }

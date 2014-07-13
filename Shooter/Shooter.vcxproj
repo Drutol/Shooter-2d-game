@@ -25,7 +25,6 @@
     <ClInclude Include="Interactive_object.h" />
     <ClInclude Include="Lever.h" />
     <ClInclude Include="link.h" />
-    <ClInclude Include="main_menu.h" />
     <ClInclude Include="Multiplayer_Client.h" />
     <ClInclude Include="NPC.h" />
     <ClInclude Include="Player.h" />
@@ -46,14 +45,16 @@
     <ClCompile Include="LevelEditor_gui.cpp" />
     <ClCompile Include="Lever.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="main_menu.cpp" />
     <ClCompile Include="Multiplayer_Client.cpp" />
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Shooter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Forma-PauseMenu.txt" />
+    <Text Include="Forma-MainMenu.txt" />
+    <Text Include="Forma-PauseMenu.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4EE97995-2737-4ED9-8A05-D98A54BD2B45}</ProjectGuid>

@@ -1,5 +1,6 @@
 #include "ComponentTextBox.h"
 #include "link.h"
+#include "GameFunctions.h"
 
 
 ComponentTextBox::ComponentTextBox(int x, int y, string text)
@@ -7,7 +8,6 @@ ComponentTextBox::ComponentTextBox(int x, int y, string text)
 	posX = x;
 	posY = y;
 	string_to_display = text;
-	this->text_font = al_load_font("Resources/leadcoat.ttf", 10, NULL);
 }
 ComponentTextBox::ComponentTextBox()
 {
@@ -16,7 +16,8 @@ ComponentTextBox::ComponentTextBox()
 
 void ComponentTextBox::draw_text()
 {
-	al_draw_text(text_font, al_map_rgb(100, 100, 0), posX, posY, ALLEGRO_ALIGN_CENTRE, string_to_display.c_str());
+	cout << string_to_display << endl;
+	al_draw_text(game_font, al_map_rgb(100, 100, 0), posX, posY, ALLEGRO_ALIGN_CENTRE, string_to_display.c_str());
 }
 
 

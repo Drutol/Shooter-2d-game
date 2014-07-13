@@ -7,7 +7,6 @@ public:
 	string string_to_display;
 	ComponentTextBox(int x, int y, string text);
 	void draw_text();
-	ALLEGRO_FONT *text_font;
 	
 	ComponentTextBox();
 	~ComponentTextBox();

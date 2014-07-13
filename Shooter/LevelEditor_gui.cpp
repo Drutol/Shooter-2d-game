@@ -83,7 +83,6 @@ void level_editor()
 	al_register_event_source(edit_event_queue,al_get_mouse_event_source());
 	al_register_event_source(edit_event_queue,al_get_display_event_source(display));
 	al_register_event_source(edit_event_queue,al_get_keyboard_event_source());
-	al_init_image_addon();
 	ALLEGRO_FILECHOOSER *test;
 	test=al_create_native_file_dialog("Levels/CustomMaps/","Load",NULL,ALLEGRO_FILECHOOSER_FOLDER);
 	int mouse_tile_X;

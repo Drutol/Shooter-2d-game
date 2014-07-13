@@ -5,7 +5,7 @@
 class ComponentButton;
 class ComponentTextBox;
 enum FORM_TRIGGERS{TRIGGER_KEYPRESS};
-enum FORM_TRIGGERS_CONDITIONS{CONDITION_GAME_RUNNING};
+enum FORM_TRIGGERS_CONDITIONS{CONDITION_GAME_RUNNING=300};
 enum FORM_EVENTS{EVENT_CURSOR_START_OVERLAPING,EVENT_CURSOR_STOP_OVERLAPING,GUI_KEY_PRESS};
 
 
@@ -28,9 +28,9 @@ struct gui_event
 class FormsManager
 {
 private:
-	form *startup_form;
 	gui_event collected_data;
 	int prevMousePosX, prevMousePosY;
+	int main_form;
 	
 	
 	
@@ -47,7 +47,7 @@ public:
 	void RegisterComponentTextBox(vector<string> attributes, form &created_form);
 	void evaluate_input(gui_event event_pkg);
 	void SendEventInfoToForm(std::vector<int> info);
-	int search_for_main_form();
+	void search_for_main_form();
 	vector<form*> currently_enabled_forms;
 	void draw_forms(); 
 	void LoadForms();
@@ -55,6 +55,7 @@ public:
 	bool previously_overlapping;
 	vector<int> forms_to_be_disabled;
 	bool is_form_enabled;
+	void init_startup_form();
 
 };
 

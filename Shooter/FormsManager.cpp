@@ -4,10 +4,35 @@ gui_event container;
 
 FormsManager::FormsManager()
 {
-	this->prevMousePosX = 0; 
+	
+	
+	this->prevMousePosX = 0;
 	this->prevMousePosY = 0;
 	this->is_form_enabled = false;
 	this->previously_overlapping = false;
+	main_form = -1;
+	LoadForms();
+	search_for_main_form();
+	
+	if (!al_init()) {
+		fprintf(stderr, "failed to initialize allegro!\n");
+	}	
+	if (!al_init_primitives_addon()){
+		fprintf(stderr, "Couldn't initialize primitives addon!\n");
+	}
+	al_set_new_display_flags(ALLEGRO_RESIZABLE);
+	
+	display = al_create_display(ScreenWidth, ScreenHeight);
+	
+	if (!display) {
+		fprintf(stderr, "failed to create display!\n");
+	}
+	al_install_keyboard();
+	al_install_mouse();
+	al_init_font_addon();
+	al_init_ttf_addon();
+	al_init_image_addon();
+	game_font = al_load_font("Resources/leadcoat.ttf", 40, NULL);
 }
 
 
@@ -68,6 +93,10 @@ void FormsManager::LoadForms()
 				else if (read_attributes[0] == "conditon")
 				{
 					RegisterFormTriggerConditions(read_attributes, created_form);
+				}
+				else if (read_attributes[0] == "MAIN_FORM")
+				{
+					created_form.is_main = true;
 				}
 				read_attributes.clear();
 			}
@@ -142,9 +171,24 @@ void FormsManager::RegisterComponentButton(vector<string> attributes, form &crea
 			created_form.buttons.push_back(ComponentButton(function_to_pass_int, PosX, PosY, this->forms.size() - 1, attributes[3], al_map_rgb(r, g, b),this->forms.size()-1));
 
 	}
-	else if (attributes[3] == "EXIT")
+	else if (attributes[3] == "EXIT"&&!created_form.is_main)
 	{
 		function_to_pass_void = exit_function;
+		created_form.buttons.push_back(ComponentButton(function_to_pass_void, PosX, PosY, this->forms.size() - 1, attributes[3], al_map_rgb(r, g, b)));
+	}
+	else if (attributes[3] == "Exit"&&created_form.is_main)
+	{
+		function_to_pass_int = &std::exit;
+		created_form.buttons.push_back(ComponentButton(function_to_pass_int, PosX, PosY, this->forms.size() - 1, attributes[3], al_map_rgb(r, g, b),125));
+	}
+	else if (attributes[3] == "Start")
+	{
+		function_to_pass_void = &main_game;
+		created_form.buttons.push_back(ComponentButton(function_to_pass_void, PosX, PosY, this->forms.size() - 1, attributes[3], al_map_rgb(r, g, b)));
+	}
+	else if (attributes[3] == "Level Editor")
+	{
+		function_to_pass_void = &level_editor;
 		created_form.buttons.push_back(ComponentButton(function_to_pass_void, PosX, PosY, this->forms.size() - 1, attributes[3], al_map_rgb(r, g, b)));
 	}
 
@@ -232,10 +276,21 @@ void FormsManager::evaluate_input(gui_event event_pkg)
 			
 			if(forms[i].trigger == TRIGGER_KEYPRESS && vector_contains(forms[i].trigger_conditions, event_pkg.key))
 			{
-				cout << "Disabling Form" << endl;
-				is_form_enabled = false;
-				disable_form(i);
-				al_rest(.05);
+				if (vector_contains(forms[i].trigger_conditions, CONDITION_GAME_RUNNING))
+				{
+					if (is_game_running)
+					{
+						is_form_enabled = false;
+						disable_form(i);
+						al_rest(.05);
+					}
+				}
+				else
+				{
+					is_form_enabled = false;
+					disable_form(i);
+					al_rest(.05);
+				}
 			}
 		}
 	}
@@ -246,10 +301,21 @@ void FormsManager::evaluate_input(gui_event event_pkg)
 		{
 			if (forms[i].trigger == TRIGGER_KEYPRESS && vector_contains(forms[i].trigger_conditions, event_pkg.key))
 			{
-				cout << "Enabling Form" << endl;
-				is_form_enabled = true;
-				enable_form(i);
-				al_rest(.05);
+				if (vector_contains(forms[i].trigger_conditions, CONDITION_GAME_RUNNING))
+				{
+					if (is_game_running)
+					{
+						is_form_enabled = false;
+						disable_form(i);
+						al_rest(.05);
+					}
+				}
+				else
+				{
+					is_form_enabled = false;
+					disable_form(i);
+					al_rest(.05);
+				}
 			}
 		}
 		
@@ -257,20 +323,13 @@ void FormsManager::evaluate_input(gui_event event_pkg)
 
 
 }
-void SendEventInfoToForm(std::vector<int> info)
-{
-
-}
 
 void FormsManager::draw_forms()
 {
 	for (int i = 0; i < currently_enabled_forms.size()&&currently_enabled_forms[i]!=NULL; i++)
 	{
-		al_draw_filled_rectangle(currently_enabled_forms[i]->PosX + cameraX,
-			currently_enabled_forms[i]->PosY + cameraY,
-			currently_enabled_forms[i]->PosX + cameraX + currently_enabled_forms[i]->width,
-			currently_enabled_forms[i]->PosY + cameraY + currently_enabled_forms[i]->height,
-			al_map_rgba(200, 200, 200, .5));
+		cout << currently_enabled_forms[i]->buttons.size();
+		al_draw_filled_rectangle(currently_enabled_forms[i]->PosX + cameraX,currently_enabled_forms[i]->PosY + cameraY,	currently_enabled_forms[i]->PosX + cameraX + currently_enabled_forms[i]->width,			currently_enabled_forms[i]->PosY + cameraY + currently_enabled_forms[i]->height,			al_map_rgba(200, 200, 200, .5));
 		for (size_t j = 0; j < currently_enabled_forms[i]->buttons.size(); j++)
 		{
 			currently_enabled_forms[i]->buttons[j].Render();
@@ -330,13 +389,19 @@ void slaughter_forms()
 	forms_manager.forms_to_be_disabled.clear();
 }
 
-int FormsManager::search_for_main_form()
+void FormsManager::search_for_main_form()
 {
 	for (int i = 0; i < forms.size(); i++)
 	{
 		if (forms[i].is_main)
 		{
-			startup_form = &forms[i];
+			forms[i].PosX = 0;
+			forms[i].PosY = 0;
+			forms[i].width = ScreenWidth;
+			forms[i].height = ScreenHeight;
+			main_form = i;
+			
+
 			break;
 		}
 	}
@@ -345,4 +410,26 @@ int FormsManager::search_for_main_form()
 void disable_form(int of_ID)
 {
 	forms_manager.forms_to_be_disabled.push_back(of_ID);
+}
+
+void FormsManager::init_startup_form()
+{
+	if (main_form == -1)
+	{
+		fprintf(stderr, "Failed to load startup form, you should't have messed around...!\n");
+	}
+	else
+	{
+		
+		enable_form(main_form);
+		bool done = false;
+		while (!done)
+		{
+
+			forms_manager.draw_forms();
+			check_interactions(-1, -1, keyboard_input());
+			al_flip_display();
+			al_clear_to_color(al_map_rgb(0, 0, 0));
+		}
+	}
 }

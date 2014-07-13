@@ -11,6 +11,7 @@ public:
 	ALLEGRO_BITMAP *player_bitmap;
 	void die();
 	void draw();
+	int shoot_CD;
 	Player();
 	~Player();
 };

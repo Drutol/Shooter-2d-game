@@ -25,6 +25,7 @@ ALLEGRO_BITMAP *dark_test;
 bool bitmaps_initialized=false;
 Interaction_Indicator indicator;
 FormsManager forms_manager;
+bool is_game_running;
 
 
 
@@ -191,27 +192,29 @@ int count_boxes()
 //////////////////////////////////////////////////////////////// End Counting
 void check_interactions(int tile_X,int tile_Y,int with_key)
 {
-
-		if(map[tile_X][tile_Y].held_object==LEVER)
+	if (tile_X > 0 && tile_Y > 0) // startup form
+	{
+		if (map[tile_X][tile_Y].held_object == LEVER)
 		{
-			int ID=search_for_object_ID(tile_X,tile_Y,LEVER);
-			if(with_key!=NULL&&with_key!=ALLEGRO_KEY_SPACE&&with_key!=ALLEGRO_KEY_LEFT&&with_key!=ALLEGRO_KEY_RIGHT)
+			int ID = search_for_object_ID(tile_X, tile_Y, LEVER);
+			if (with_key != NULL&&with_key != ALLEGRO_KEY_SPACE&&with_key != ALLEGRO_KEY_LEFT&&with_key != ALLEGRO_KEY_RIGHT)
 			{
-				if(ID!=-1)
+				if (ID != -1)
 				{
 					levers[ID].apply_new_state(with_key);
 				}
 			}
 			else
 			{
-				for(int i=0;i<levers[ID].affected_object.size();i++)
+				for (int i = 0; i < levers[ID].affected_object.size(); i++)
 				{
-					if(levers[ID].affected_object[i].type==DOOR)
-					indicator.highlight_object(doors[levers[ID].affected_object[i].ID].tile_X,doors[levers[ID].affected_object[i].ID].tile_Y);
+					if (levers[ID].affected_object[i].type == DOOR)
+						indicator.highlight_object(doors[levers[ID].affected_object[i].ID].tile_X, doors[levers[ID].affected_object[i].ID].tile_Y);
 				}
 			}
-				indicator.display_keys(LEVER,ID);
+			indicator.display_keys(LEVER, ID);
 		}
+	}
 
 
 		//For forms
@@ -710,7 +713,7 @@ void remove_connections(int for_obj_type,int for_object_ID,int in_objects)
 
 void remove_affection_box(int ID)
 {
-	affection_boxes[ID]=Affection_box();
+	affection_boxes[ID].exists = false;
 	free_box_IDs.push_back(ID);
 }
 

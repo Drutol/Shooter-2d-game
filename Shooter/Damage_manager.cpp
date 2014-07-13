@@ -4,6 +4,7 @@
 
 Damage_manager::Damage_manager(void)
 {
+	active_projectiles.clear();
 }
 
 
@@ -48,11 +49,21 @@ void Damage_manager::register_affection_box(projectile &proj)
 
 }
 
+void Damage_manager::slaughter_projectiles()
+{
+	for (size_t i = 0;i< projectiles_to_bo_removed.size(); i++)
+	{
+		active_projectiles[projectiles_to_bo_removed[i]].exists = false;
+
+		free_projectile_ID.push_back(projectiles_to_bo_removed[i]);
+		remove_affection_box(active_projectiles[projectiles_to_bo_removed[i]].box_ID);
+	}
+	projectiles_to_bo_removed.clear();
+}
+
 void Damage_manager::remove_projectile(int ID)
 {
-	remove_affection_box(active_projectiles[ID].box_ID);
-	active_projectiles[ID]=projectile();
-	free_projectile_ID.push_back(ID);
+	projectiles_to_bo_removed.push_back(ID);
 }
 
 void Damage_manager::process_projectiles()
@@ -66,10 +77,9 @@ void Damage_manager::process_projectiles()
 			affection_boxes[active_projectiles[i].box_ID].move_box(active_projectiles[i].x,active_projectiles[i].y);
 			if(affection_boxes[active_projectiles[i].box_ID].check_if_colides_static())
 				remove_projectile(i);
-			
-
 		}
 	}
+	slaughter_projectiles();
 
 }
 
