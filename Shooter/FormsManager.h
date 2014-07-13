@@ -30,7 +30,7 @@ class FormsManager
 private:
 	gui_event collected_data;
 	int prevMousePosX, prevMousePosY;
-	int main_form;
+	
 	
 	
 	
@@ -56,7 +56,8 @@ public:
 	vector<int> forms_to_be_disabled;
 	bool is_form_enabled;
 	void init_startup_form();
-
+	int main_form;
+	bool done;
 };
 
 void disable_form(int form_to_be_disabled_ID);

@@ -8,8 +8,9 @@ FormsManager::FormsManager()
 	
 	this->prevMousePosX = 0;
 	this->prevMousePosY = 0;
-	this->is_form_enabled = false;
+	this->is_form_enabled = true;
 	this->previously_overlapping = false;
+	this->done = false;
 	main_form = -1;
 	LoadForms();
 	search_for_main_form();
@@ -21,7 +22,9 @@ FormsManager::FormsManager()
 		fprintf(stderr, "Couldn't initialize primitives addon!\n");
 	}
 	al_set_new_display_flags(ALLEGRO_RESIZABLE);
-	
+	al_init_font_addon();
+	al_init_ttf_addon();
+	game_font = al_load_font("Resources/leadcoat.ttf", 40, NULL);
 	display = al_create_display(ScreenWidth, ScreenHeight);
 	
 	if (!display) {
@@ -29,10 +32,9 @@ FormsManager::FormsManager()
 	}
 	al_install_keyboard();
 	al_install_mouse();
-	al_init_font_addon();
-	al_init_ttf_addon();
+
 	al_init_image_addon();
-	game_font = al_load_font("Resources/leadcoat.ttf", 40, NULL);
+	
 }
 
 
@@ -153,8 +155,16 @@ void FormsManager::RegisterComponentButton(vector<string> attributes, form &crea
 
 	int PosX, PosY, key;
 	short r, g, b;
-	PosX = atoi(attributes[1].c_str()) + created_form.PosX;
-	PosY = atoi(attributes[2].c_str()) + created_form.PosY;
+	if (!created_form.is_main)
+	{
+		PosX = atoi(attributes[1].c_str()) + created_form.PosX;
+		PosY = atoi(attributes[2].c_str()) + created_form.PosY;
+	}
+	else
+	{
+		PosX = atoi(attributes[1].c_str());
+		PosY = atoi(attributes[2].c_str());
+	}
 
 
 	r = atoi(attributes[4].c_str());
@@ -249,25 +259,19 @@ void FormsManager::evaluate_input(gui_event event_pkg)
 				{
 					if (event_pkg.MouseY >= forms[i].buttons[j].posY+cameraY &&event_pkg.MouseY <= forms[i].buttons[j].posY + cameraY + 50)
 					{
-						if (!previously_overlapping)
-						{
-							previously_overlapping = true;
-							forms[i].buttons[j].recv_event(EVENT_CURSOR_START_OVERLAPING);
-						}
+						cout << "I'm inside" << endl;
+						forms[i].buttons[j].mouse_hovering = true;
 						if (get_mouse_state("LMB"))
 						{
+							al_rest(0.1);
 							forms[i].buttons[j].recv_event(GUI_KEY_PRESS);
 						}
 					}
 					else
-					{
-						if (previously_overlapping)
-						{
-							previously_overlapping = false;
-							forms[i].buttons[j].recv_event(EVENT_CURSOR_STOP_OVERLAPING);
-						}
-					}
+					forms[i].buttons[j].mouse_hovering = false;
 				}
+				else
+					forms[i].buttons[j].mouse_hovering = false;
 			}
 
 			
@@ -328,7 +332,6 @@ void FormsManager::draw_forms()
 {
 	for (int i = 0; i < currently_enabled_forms.size()&&currently_enabled_forms[i]!=NULL; i++)
 	{
-		cout << currently_enabled_forms[i]->buttons.size();
 		al_draw_filled_rectangle(currently_enabled_forms[i]->PosX + cameraX,currently_enabled_forms[i]->PosY + cameraY,	currently_enabled_forms[i]->PosX + cameraX + currently_enabled_forms[i]->width,			currently_enabled_forms[i]->PosY + cameraY + currently_enabled_forms[i]->height,			al_map_rgba(200, 200, 200, .5));
 		for (size_t j = 0; j < currently_enabled_forms[i]->buttons.size(); j++)
 		{
@@ -410,6 +413,7 @@ void FormsManager::search_for_main_form()
 void disable_form(int of_ID)
 {
 	forms_manager.forms_to_be_disabled.push_back(of_ID);
+	forms_manager.is_form_enabled = false;
 }
 
 void FormsManager::init_startup_form()
@@ -422,14 +426,14 @@ void FormsManager::init_startup_form()
 	{
 		
 		enable_form(main_form);
-		bool done = false;
 		while (!done)
 		{
-
 			forms_manager.draw_forms();
 			check_interactions(-1, -1, keyboard_input());
+			cout << " I'm spinning" << endl;
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
+			al_rest(0.016);
 		}
 	}
 }

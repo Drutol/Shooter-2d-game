@@ -32,6 +32,9 @@ void shoot(int x, int y)
 //////////////////////////////////////////////////////////////// Drawing
 void main_game()
 {
+	disable_form(forms_manager.main_form);
+	cout << "Form enabled " << forms_manager.is_form_enabled << endl;
+	cout << "While working " << forms_manager.done <<endl;
 	is_game_running = true;
 	//ARG PASSING ORDER: 
 	//system("LevelEditor.exe 200 300 1 1 5 dirt");
@@ -57,9 +60,10 @@ void main_game()
 	//--Loading Forms--//
 	//-----------------//
 	
-	bool game_done=false;
+	bool game_done = false;
 	while(!game_done)
-	{
+	{	
+		cout << "IN MAIN GAME LOOP" << endl;
 		ALLEGRO_EVENT game_event;
 		al_wait_for_event_timed(game_events,&game_event,0.016);
 		cameraX=camera_update(keyboard_input(),cameraX,0);
@@ -138,17 +142,16 @@ void main_game()
 		//----------------------//
 		
 		//LOOP ENDING//
-		if(keyboard_input()==ALLEGRO_KEY_ESCAPE)
-			game_done=true;
+		//if (keyboard_input() == ALLEGRO_KEY_ESCAPE)
+		//{
+		//	break;
+		//}
+		//	
 		//END//
 		
 		//----------------------//
 
 	}
-	al_clear_to_color(al_map_rgb(0,0,0));
-	al_draw_text(game_font,al_map_rgb(180,123,90),350,350,ALLEGRO_ALIGN_CENTRE,"Loading...");
-	al_flip_display();
-	game_done=true;
-	al_rest(1.0);
-	is_game_running = false;
+	enable_form(forms_manager.main_form);
+	forms_manager.done = false;
 }

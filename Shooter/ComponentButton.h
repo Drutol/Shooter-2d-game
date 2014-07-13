@@ -22,6 +22,7 @@ public:
 	ComponentButton::ComponentButton(void(*function_to_be_called)(int), int PosX, int PosY, int of_form_ID, string Text, ALLEGRO_COLOR rgb, int arg);
 	void check_for_events();  //any mails yet?
 	void call_function();
+	bool mouse_hovering;
 	~ComponentButton();
 };
 

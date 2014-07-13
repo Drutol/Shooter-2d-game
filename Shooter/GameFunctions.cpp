@@ -222,6 +222,7 @@ void check_interactions(int tile_X,int tile_Y,int with_key)
 		current_event.key = with_key;
 		current_event.MouseX = get_mouse_state("x");
 		current_event.MouseY = get_mouse_state("y");
+
 		forms_manager.evaluate_input(current_event);
 		//
 
@@ -550,7 +551,6 @@ void load_level(std::string level_path,bool full_path)
 			std::getline(file,line);
 			map[i][j].passable=atoi(line.c_str());
 			std::getline(file,line);
-			cout<<line<<endl;
 			map[i][j].bitmap=line;
 		}
 	}
@@ -602,8 +602,6 @@ void load_level(std::string level_path,bool full_path)
 		file.open("Levels/"+level_path+"/doors.dat");
 	std::getline(file,line);
 	int door_number=atoi(line.c_str());
-	cout<<"door num"<<door_number<<endl;
-	cout<<"is open "<<file.is_open()<<endl;
 	if(door_number>0)
 	{
 
@@ -623,7 +621,6 @@ void load_level(std::string level_path,bool full_path)
 			dir=atoi(line.c_str());
 		
 			doors[i].set_up(x,y,i,speed,state,dir);
-			cout<<"loaded door"<<endl;
 		}
 	}
 	file.close();
