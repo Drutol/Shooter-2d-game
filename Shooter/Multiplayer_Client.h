@@ -50,7 +50,6 @@ struct online_player
 			if (_x.ev_type == 1)
 			{
 				emulate_click(_x.ev_x, _x.ev_y);
-				cout << "Emulated Click" << endl;
 			}
 			else
 				emulate_key_press(_x.add_nfo, _x.ev_x, _x.ev_y);

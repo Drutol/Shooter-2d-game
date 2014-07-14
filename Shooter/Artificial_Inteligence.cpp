@@ -114,8 +114,6 @@ bool Artificial_Inteligence::Make_step(int dir)
 			{
 			
 			dummy.move();
-			cout<<dummy.PosY<<endl;
-			cout<<dir<<endl;
 
 			if(dir==RIGHT)
 			{

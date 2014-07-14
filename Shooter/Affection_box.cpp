@@ -98,7 +98,7 @@ bool Affection_box::check_if_colides_static()
 	tile_right=(PosX_left+width)/TileSize;
 	tile_y=PosY_top/TileSize;
 
-	cout << tile_left << " : " << tile_right << " : " << tile_y << "<-bo" << PosY_top << endl;
+
 	if (PosY_top >= 0)
 	{
 

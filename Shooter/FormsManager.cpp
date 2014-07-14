@@ -259,7 +259,6 @@ void FormsManager::evaluate_input(gui_event event_pkg)
 				{
 					if (event_pkg.MouseY >= forms[i].buttons[j].posY+cameraY &&event_pkg.MouseY <= forms[i].buttons[j].posY + cameraY + 50)
 					{
-						cout << "I'm inside" << endl;
 						forms[i].buttons[j].mouse_hovering = true;
 						if (get_mouse_state("LMB"))
 						{
@@ -430,7 +429,6 @@ void FormsManager::init_startup_form()
 		{
 			forms_manager.draw_forms();
 			check_interactions(-1, -1, keyboard_input());
-			cout << " I'm spinning" << endl;
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 			al_rest(0.016);

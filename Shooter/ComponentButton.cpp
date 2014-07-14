@@ -66,7 +66,6 @@ void ComponentButton::call_function()
 	}
 	else
 	{
-		cout << "calling dat %^$^$ function" << endl;
 		main_game();
 		
 	}
