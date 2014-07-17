@@ -12,8 +12,7 @@ FormsManager::FormsManager()
 	this->previously_overlapping = false;
 	this->done = false;
 	main_form = -1;
-	LoadForms();
-	search_for_main_form();
+
 	
 	if (!al_init()) {
 		fprintf(stderr, "failed to initialize allegro!\n");
@@ -34,7 +33,9 @@ FormsManager::FormsManager()
 	al_install_mouse();
 
 	al_init_image_addon();
-	
+	shjds = al_load_font("Resources/leadcoat.ttf", 20, NULL);
+	LoadForms();
+	search_for_main_form();
 }
 
 
@@ -155,6 +156,7 @@ void FormsManager::RegisterComponentButton(vector<string> attributes, form &crea
 
 	int PosX, PosY, key;
 	short r, g, b;
+	int font_size;
 	if (!created_form.is_main)
 	{
 		PosX = atoi(attributes[1].c_str()) + created_form.PosX;
@@ -171,35 +173,36 @@ void FormsManager::RegisterComponentButton(vector<string> attributes, form &crea
 	g = atoi(attributes[5].c_str());
 	b = atoi(attributes[6].c_str());
 
+	font_size = atoi(attributes[7].c_str());
 
 	if (attributes[3] == "RESUME")
 	{
 		function_to_pass_int = disabling_function;
 		if (forms.empty())
-			created_form.buttons.push_back(ComponentButton(function_to_pass_int, PosX, PosY, this->forms.size() - 1, attributes[3], al_map_rgb(r, g, b),0));
+			created_form.buttons.push_back(ComponentButton(function_to_pass_int, PosX, PosY, this->forms.size() - 1, attributes[8], al_map_rgb(r, g, b),0,font_size));
 		else
-			created_form.buttons.push_back(ComponentButton(function_to_pass_int, PosX, PosY, this->forms.size() - 1, attributes[3], al_map_rgb(r, g, b),this->forms.size()-1));
+			created_form.buttons.push_back(ComponentButton(function_to_pass_int, PosX, PosY, this->forms.size() - 1, attributes[8], al_map_rgb(r, g, b), this->forms.size() - 1, font_size));
 
 	}
 	else if (attributes[3] == "EXIT"&&!created_form.is_main)
 	{
 		function_to_pass_void = exit_function;
-		created_form.buttons.push_back(ComponentButton(function_to_pass_void, PosX, PosY, this->forms.size() - 1, attributes[3], al_map_rgb(r, g, b)));
+		created_form.buttons.push_back(ComponentButton(function_to_pass_void, PosX, PosY, this->forms.size() - 1, attributes[8], al_map_rgb(r, g, b), font_size));
 	}
 	else if (attributes[3] == "Exit"&&created_form.is_main)
 	{
 		function_to_pass_int = &std::exit;
-		created_form.buttons.push_back(ComponentButton(function_to_pass_int, PosX, PosY, this->forms.size() - 1, attributes[3], al_map_rgb(r, g, b),125));
+		created_form.buttons.push_back(ComponentButton(function_to_pass_int, PosX, PosY, this->forms.size() - 1, attributes[8], al_map_rgb(r, g, b), 125, font_size));
 	}
 	else if (attributes[3] == "Start")
 	{
 		function_to_pass_void = &main_game;
-		created_form.buttons.push_back(ComponentButton(function_to_pass_void, PosX, PosY, this->forms.size() - 1, attributes[3], al_map_rgb(r, g, b)));
+		created_form.buttons.push_back(ComponentButton(function_to_pass_void, PosX, PosY, this->forms.size() - 1, attributes[8], al_map_rgb(r, g, b), font_size));
 	}
 	else if (attributes[3] == "Level Editor")
 	{
 		function_to_pass_void = &level_editor;
-		created_form.buttons.push_back(ComponentButton(function_to_pass_void, PosX, PosY, this->forms.size() - 1, attributes[3], al_map_rgb(r, g, b)));
+		created_form.buttons.push_back(ComponentButton(function_to_pass_void, PosX, PosY, this->forms.size() - 1, attributes[8], al_map_rgb(r, g, b), font_size));
 	}
 
 

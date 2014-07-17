@@ -1,7 +1,6 @@
 #pragma once
 class GuiMainComponent
 {
-	
 public:
 	int connected_to_form;
 	int posX, posY;

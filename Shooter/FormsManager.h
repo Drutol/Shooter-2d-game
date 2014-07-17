@@ -1,4 +1,5 @@
 #pragma once
+#include "link.h"
 #include "GameFunctions.h"
 #include "ComponentButton.h"
 #include "ComponentTextBox.h"
@@ -30,7 +31,7 @@ class FormsManager
 private:
 	gui_event collected_data;
 	int prevMousePosX, prevMousePosY;
-	
+	ALLEGRO_FONT *shjds;
 	
 	
 	
