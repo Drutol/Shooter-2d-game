@@ -55,6 +55,7 @@
     <Text Include="Forma-PauseMenu.txt">
       <DeploymentContent>true</DeploymentContent>
     </Text>
+    <Text Include="ExampleForm.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4EE97995-2737-4ED9-8A05-D98A54BD2B45}</ProjectGuid>

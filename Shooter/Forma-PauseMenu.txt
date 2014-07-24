@@ -8,14 +8,10 @@ Height=350
 
 
 +Buttons:
-button=10=10=RESUME=255=255=255
-button=10=110=EXIT=255=255=255
+button=10=10=RESUME=255=255=255=40=Resume!
+button=10=110=EXIT=255=255=255=40=Exit!
 +Triggers:
-trigkey=P
-+Conditions:
+trigkey=ESC
 condition=game_running
 +TextBox:
-Textbox1=30=30=Pause Menu
-
-+Misc
-MAIN_FORM
+Textbox=30=30=Pause Menu

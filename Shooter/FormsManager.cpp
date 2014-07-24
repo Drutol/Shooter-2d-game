@@ -2,6 +2,13 @@
 
 gui_event container;
 
+void game_end(int with_form=-1)
+{
+	is_game_running = false;
+	with_form != -1 ? disable_form(with_form):NULL;
+}
+
+
 FormsManager::FormsManager()
 {
 	
@@ -101,6 +108,10 @@ void FormsManager::LoadForms()
 				{
 					created_form.is_main = true;
 				}
+				else if (read_attributes[0] == "Textbox")
+				{
+					RegisterComponentTextBox(read_attributes, created_form);
+				}
 				read_attributes.clear();
 			}
 			
@@ -140,9 +151,6 @@ void FormsManager::tokenize(string string_to_tokenize,std::vector<string> &attri
 	{
 		attributes.push_back(s);
 	}
-
-
-	
 }
 
 void FormsManager::RegisterComponentButton(vector<string> attributes, form &created_form)
@@ -177,17 +185,11 @@ void FormsManager::RegisterComponentButton(vector<string> attributes, form &crea
 
 	if (attributes[3] == "RESUME")
 	{
-		function_to_pass_int = disabling_function;
-		if (forms.empty())
-			created_form.buttons.push_back(ComponentButton(function_to_pass_int, PosX, PosY, this->forms.size() - 1, attributes[8], al_map_rgb(r, g, b),0,font_size));
-		else
-			created_form.buttons.push_back(ComponentButton(function_to_pass_int, PosX, PosY, this->forms.size() - 1, attributes[8], al_map_rgb(r, g, b), this->forms.size() - 1, font_size));
-
+			created_form.buttons.push_back(ComponentButton(&disable_form, PosX, PosY, this->forms.size() - 1, attributes[8], al_map_rgb(r, g, b), forms.empty() ? 0 : forms.size(),font_size));	
 	}
 	else if (attributes[3] == "EXIT"&&!created_form.is_main)
 	{
-		function_to_pass_void = exit_function;
-		created_form.buttons.push_back(ComponentButton(function_to_pass_void, PosX, PosY, this->forms.size() - 1, attributes[8], al_map_rgb(r, g, b), font_size));
+		created_form.buttons.push_back(ComponentButton(&game_end, PosX, PosY, forms.size(), attributes[8], al_map_rgb(r, g, b), forms.size(),font_size));
 	}
 	else if (attributes[3] == "Exit"&&created_form.is_main)
 	{
@@ -265,7 +267,6 @@ void FormsManager::evaluate_input(gui_event event_pkg)
 						forms[i].buttons[j].mouse_hovering = true;
 						if (get_mouse_state("LMB"))
 						{
-							al_rest(0.1);
 							forms[i].buttons[j].recv_event(GUI_KEY_PRESS);
 						}
 					}
@@ -275,27 +276,20 @@ void FormsManager::evaluate_input(gui_event event_pkg)
 				else
 					forms[i].buttons[j].mouse_hovering = false;
 			}
-
-			
-			
-			
-			
 			if(forms[i].trigger == TRIGGER_KEYPRESS && vector_contains(forms[i].trigger_conditions, event_pkg.key))
 			{
 				if (vector_contains(forms[i].trigger_conditions, CONDITION_GAME_RUNNING))
 				{
 					if (is_game_running)
 					{
-						is_form_enabled = false;
 						disable_form(i);
-						al_rest(.05);
+						al_rest(.1);
 					}
 				}
 				else
 				{
-					is_form_enabled = false;
 					disable_form(i);
-					al_rest(.05);
+					al_rest(.1);
 				}
 			}
 		}
@@ -305,22 +299,21 @@ void FormsManager::evaluate_input(gui_event event_pkg)
 		
 		for (int i = 0; i < forms.size(); i++)
 		{
+			
 			if (forms[i].trigger == TRIGGER_KEYPRESS && vector_contains(forms[i].trigger_conditions, event_pkg.key))
 			{
 				if (vector_contains(forms[i].trigger_conditions, CONDITION_GAME_RUNNING))
 				{
 					if (is_game_running)
 					{
-						is_form_enabled = false;
-						disable_form(i);
-						al_rest(.05);
+						enable_form(i);
+						al_rest(.1);
 					}
 				}
 				else
 				{
-					is_form_enabled = false;
-					disable_form(i);
-					al_rest(.05);
+					enable_form(i);
+					al_rest(.1);
 				}
 			}
 		}
@@ -371,12 +364,20 @@ void enable_form(int of_ID)
 		forms_manager.currently_enabled_forms[forms_manager.free_form_IDs[forms_manager.free_form_IDs.size()-1]] = &forms_manager.forms[of_ID];
 		forms_manager.free_form_IDs.pop_back();
 	}
+	forms_manager.is_form_enabled = true;
 
 }
 
 
 void slaughter_forms()
 {
+	if (forms_manager.currently_enabled_forms.size() == 1 && forms_manager.forms_to_be_disabled.size() == 1)
+	{
+		forms_manager.currently_enabled_forms.clear();
+		forms_manager.forms_to_be_disabled.clear();
+		forms_manager.is_form_enabled = false;
+		return;
+	}
 	
 	for (size_t i = 0; i < forms_manager.currently_enabled_forms.size(); i++)
 	{
@@ -386,7 +387,6 @@ void slaughter_forms()
 			{
 				forms_manager.currently_enabled_forms[i] = NULL;
 				forms_manager.free_form_IDs.push_back(i);
-				
 			}
 		}
 
@@ -415,7 +415,6 @@ void FormsManager::search_for_main_form()
 void disable_form(int of_ID)
 {
 	forms_manager.forms_to_be_disabled.push_back(of_ID);
-	forms_manager.is_form_enabled = false;
 }
 
 void FormsManager::init_startup_form()
@@ -423,18 +422,22 @@ void FormsManager::init_startup_form()
 	if (main_form == -1)
 	{
 		fprintf(stderr, "Failed to load startup form, you should't have messed around...!\n");
+		_getch();
+		std::exit(-1);
 	}
 	else
 	{
-		
 		enable_form(main_form);
 		while (!done)
 		{
+			cout << currently_enabled_forms.size() << endl;
 			forms_manager.draw_forms();
 			check_interactions(-1, -1, keyboard_input());
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 			al_rest(0.016);
+			if (is_game_running)
+				return;
 		}
 	}
 }

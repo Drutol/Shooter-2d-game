@@ -35,16 +35,18 @@ ComponentButton::ComponentButton(void(*function_to_be_called)(void), int PosX, i
 	this->last_event = -1;
 	int_function = false;
 	this->mouse_hovering = false;
-	cout << font_size << endl;
+
 	text_font = al_load_ttf_font("Resources/leadcoat.ttf", font_size, NULL);
 	width = al_get_text_width(text_font, Text.c_str());
 	height = al_get_font_line_height(text_font);
-	if (PosX == 450)//we want centre
+	if (PosX == 450)
 	{
 		PosX -= width /2;
 	}
 	this->posX = PosX;
 	this->posY = PosY;
+
+	
 }
 ComponentButton::ComponentButton()
 {
@@ -70,7 +72,7 @@ void ComponentButton::Render()
 			text_color = text_color_base;
 		}
 	al_draw_filled_rectangle(posX, posY, posX + width, posY + height, al_map_rgb(0, 0, 0));
-	al_draw_text(text_font,text_color , posX + 40, posY + 20, ALLEGRO_ALIGN_CENTRE, text.c_str());
+	al_draw_text(text_font,text_color , posX , posY , NULL, text.c_str());
 	check_for_events();
 }
 
@@ -94,7 +96,6 @@ void ComponentButton::check_for_events()
 		{
 			last_event = -1;
 			call_function();
-			
 		}
 
 	}

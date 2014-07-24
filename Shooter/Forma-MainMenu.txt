@@ -3,7 +3,9 @@ Form=MainMenu
 +Misc
 MAIN_FORM=1
 
-button=450=300=Start=150=100=33
-button=450=380=Level Editor=150=100=33
-button=450=460=Exit=150=100=33
+button=450=300=Start=150=100=33=40=Start!
+button=450=380=Level Editor=150=100=33=40=Level Editor!
+button=450=460=Exit=150=100=33=40=Exit...
+
+Textbox=100=100=Gra w Kwadrat!
 

@@ -76,10 +76,12 @@ void prepare_command(std::stringstream &stream,int x,int y,std::string for_obj,i
 
 void level_editor()
 {
+	disable_form(forms_manager.main_form);
+	is_game_running = true;
+	al_rest(.3);
 	load_level("LevelEditor");
-	bool edit_done=false;
-	ALLEGRO_EVENT_QUEUE *edit_event_queue = al_create_event_queue();
 	al_install_keyboard();
+	ALLEGRO_EVENT_QUEUE *edit_event_queue = al_create_event_queue();
 	al_register_event_source(edit_event_queue,al_get_mouse_event_source());
 	al_register_event_source(edit_event_queue,al_get_display_event_source(display));
 	al_register_event_source(edit_event_queue,al_get_keyboard_event_source());
@@ -92,14 +94,15 @@ void level_editor()
 	bool reload_level=false;
 	std::string filePath;
 
-	while(!edit_done)
+	while(is_game_running)
 	{
 		ALLEGRO_EVENT edit_event;
-		al_wait_for_event(edit_event_queue,&edit_event);
+		al_wait_for_event_timed(edit_event_queue,&edit_event,0.013);
 		if(edit_event.type == ALLEGRO_EVENT_DISPLAY_SWITCH_OUT)
 			is_window_active=false;
+		
 
-		while(!is_window_active)
+		while(!is_window_active&&is_game_running)
 		{		
 			ALLEGRO_EVENT edit_event_window;
 			al_wait_for_event(edit_event_queue,&edit_event_window);
@@ -114,7 +117,7 @@ void level_editor()
 		
 		al_draw_bitmap(return_appropriate_bitmap("overlay"),mouse_tile_X*TileSize-3,mouse_tile_Y*TileSize-3,NULL);
 		//--LMB--//
-		if(get_mouse_state("LMB"))
+		if(get_mouse_state("LMB")&&!forms_manager.is_form_enabled)
 			{
 				al_rest(0.1);
 				prepare_command(executable,mouse_tile_X,mouse_tile_Y,"tile");
@@ -433,16 +436,16 @@ void level_editor()
 	}
 		//--RMB--//
 
-		if(keyboard_input_specific(ALLEGRO_KEY_ESCAPE))
-			edit_done=true;
 		if(edit_event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
 			std::exit(0);									///////////APP CLOSING
-
-
-
+		
+		check_interactions(-1, -1, keyboard_input());
+		forms_manager.draw_forms();
+		cout << "editor looopp" << endl;
 		al_flip_display();
 		al_clear_to_color(al_map_rgb(0,0,0));
-		
+		if (!is_game_running)
+			break;
 		if(reload_level)
 		{
 			std::ifstream in(filePath+"/map.dat");
@@ -455,4 +458,6 @@ void level_editor()
 			reload_level=false;
 		}
 	}
+	
+	forms_manager.init_startup_form();
 }

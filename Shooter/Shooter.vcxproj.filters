@@ -148,5 +148,8 @@
     <Text Include="Forma-MainMenu.txt">
       <Filter>GUI\Components\Forms</Filter>
     </Text>
+    <Text Include="ExampleForm.txt">
+      <Filter>GUI\Components\Forms</Filter>
+    </Text>
   </ItemGroup>
 </Project>

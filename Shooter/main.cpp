@@ -5,6 +5,8 @@ ALLEGRO_DISPLAY *display;
 
 
 
+
+
 int main()
 {
 	
@@ -28,7 +30,6 @@ int main()
 	//		al_flip_display();
 	//		al_clear_to_color(al_map_rgb(0,0,0));
 	//	}
-
 
 	cameraX = cameraY = 0;
 	forms_manager.init_startup_form();

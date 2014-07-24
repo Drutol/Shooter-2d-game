@@ -216,7 +216,6 @@ void check_interactions(int tile_X,int tile_Y,int with_key)
 		}
 	}
 
-
 		//For forms
 		gui_event current_event;
 		current_event.key = with_key;
@@ -531,6 +530,9 @@ void load_level(std::string level_path,bool full_path)
 	std::fstream file;
 	std::string path_copy;
 	path_copy=level_path.c_str();
+	al_clear_to_color(al_map_rgb(255, 255, 255));	//progress
+	al_draw_filled_rectangle(100, 400, 100, 500, al_map_rgb(255, 0, 0));
+	al_flip_display();
 	if(full_path)
 		{
 			path_copy+="/map.dat";
@@ -565,6 +567,8 @@ void load_level(std::string level_path,bool full_path)
 		file.open("Levels/"+level_path+"/levers.dat");
 	std::getline(file,line);
 	int lever_number=atoi(line.c_str());
+	al_draw_filled_rectangle(300, 400, 400, 500, al_map_rgb(255, 0, 0));
+	al_flip_display();
 	if(lever_number>0)
 	{
 	
@@ -602,6 +606,8 @@ void load_level(std::string level_path,bool full_path)
 		file.open("Levels/"+level_path+"/doors.dat");
 	std::getline(file,line);
 	int door_number=atoi(line.c_str());
+	al_draw_filled_rectangle(600, 400, 700, 500, al_map_rgb(255, 0, 0));
+	al_flip_display();
 	if(door_number>0)
 	{
 

@@ -21,6 +21,10 @@ struct form
 	int trigger;
 	std::vector<int> trigger_conditions;
 	bool is_main;
+	form()
+	{
+		is_main = false;
+	}
 };
 struct gui_event
 {

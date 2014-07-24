@@ -3,7 +3,14 @@
 #include"Multiplayer_Client.h"
 
 Damage_manager damage_manager;
-
+void game_cleanup()
+{
+	doors.clear();
+	levers.clear();
+	affection_boxes.clear();
+	player_boxes_IDs.clear();
+	damage_manager.active_projectiles.clear();
+}
 void shoot(int x, int y)
 {
 
@@ -31,12 +38,12 @@ void shoot(int x, int y)
 //////////////////////////////////////////////////////////////// Drawing
 void main_game()
 {
-	disable_form(forms_manager.main_form);
+	disable_form(forms_manager.main_form); 
 	is_game_running = true;
-	//ARG PASSING ORDER: 
-	//system("LevelEditor.exe 200 300 1 1 5 dirt");
-	// Cam vars
-	cameraX=0.5,
+		//ARG PASSING ORDER: 
+		//system("LevelEditor.exe 200 300 1 1 5 dirt");
+		// Cam vars
+	cameraX = 0.5;
 	cameraY=0.5;
 	al_rest(1.0);
 	bool online = false;
@@ -57,9 +64,9 @@ void main_game()
 	//--Loading Forms--//
 	//-----------------//
 	
-	bool game_done = false;
-	while(!game_done)
+	while(is_game_running)
 	{	
+		//cout << forms_manager.currently_enabled_forms.size() << endl;
 		ALLEGRO_EVENT game_event;
 		al_wait_for_event_timed(game_events,&game_event,0.016);
 		cameraX=camera_update(keyboard_input(),cameraX,0);
@@ -138,17 +145,13 @@ void main_game()
 		
 		//----------------------//
 		
-		//LOOP ENDING//
-		//if (keyboard_input() == ALLEGRO_KEY_ESCAPE)
-		//{
-		//	break;
-		//}
-		//	
-		//END//
-		
 		//----------------------//
 
 	}
-	enable_form(forms_manager.main_form);
-	forms_manager.done = false;
+	
+	
+	game_cleanup();
+	is_game_running = false;
+	al_rest(0.4);
+	forms_manager.init_startup_form();
 }

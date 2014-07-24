@@ -16,8 +16,7 @@ ComponentTextBox::ComponentTextBox()
 
 void ComponentTextBox::draw_text()
 {
-	cout << string_to_display << endl;
-	al_draw_text(game_font, al_map_rgb(100, 100, 0), posX, posY, ALLEGRO_ALIGN_CENTRE, string_to_display.c_str());
+	al_draw_text(game_font, al_map_rgb(100, 100, 0), posX, posY, NULL, string_to_display.c_str());
 }
 
 

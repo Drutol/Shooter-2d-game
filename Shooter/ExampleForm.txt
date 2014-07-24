@@ -1,0 +1,19 @@
+Form=Name
+
+Xpos=300
+Ypos=300
+Width=200
+Height=350	//eg.
+
+button=X=Y=Function=r=g=b=font_size=text //PosX==450 -> ALIGN_CENTRE
+Textbox=X=Y=Text
+
+
+
+
+Functions(case-sensitive):
+Start
+RESUME
+Exit
+EXIT
+Level Editor
